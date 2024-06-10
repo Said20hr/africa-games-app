@@ -1,5 +1,5 @@
 export interface IReport {
-  data: string;
+  date: string;
   initialCash: string;
   finalCash: string;
   information?: string;

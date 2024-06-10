@@ -18,10 +18,10 @@ const data = [
 export default function ProfileScreen() {
   return (
     <View style={{ flex: 1 }}>
-      <Header />
+      <Header title="Favourites" image />
       <View
         style={{
-          backgroundColor: Colors.dark.background,
+          backgroundColor: Colors.dark.black,
           flex: 1,
           paddingHorizontal: 16,
           paddingTop: 12,
@@ -41,7 +41,7 @@ export default function ProfileScreen() {
         />
         <View
           style={{
-            backgroundColor: Colors.dark.accent,
+            backgroundColor: Colors.dark.background,
             borderRadius: 16,
             marginTop: 12,
             marginHorizontal: 8,

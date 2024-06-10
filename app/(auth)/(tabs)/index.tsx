@@ -1,13 +1,20 @@
-import { StyleSheet, View, FlatList, ScrollView } from "react-native";
+import {
+  StyleSheet,
+  View,
+  FlatList,
+  ScrollView,
+  TouchableOpacity,
+} from "react-native";
 
 import { ThemedText as Text } from "@/components/ThemedText";
 import Header from "@/components/Header";
 import { Colors } from "@/constants/Colors";
-import { MapPin } from "react-native-feather";
+import { ChevronDown, MapPin, Users } from "react-native-feather";
 import InfoCard from "@/components/InfoCard";
 import { useThemeColor } from "@/hooks/useThemeColor";
 import { useStatusBar } from "@/hooks/useStatusBar";
 import React from "react";
+import { IReport } from "@/shared/type/Report.type";
 
 type Customer = {
   name: string;
@@ -16,10 +23,43 @@ type Customer = {
   debts: number;
 };
 
-const customers: Customer[] = [
-  { name: "Lorem", amount: "2.3k", income: "$470", debts: 34 },
-  { name: "Ipsum", amount: "36k", income: "$1.2k", debts: 2 },
-  { name: "Dolor sit", amount: "380", income: "$4.3k", debts: 18 },
+const reports: IReport[] = [
+  {
+    date: "2024-06-01",
+    initialCash: "$1000",
+    finalCash: "$1200",
+    information: "Increased cash due to successful investment.",
+  },
+  {
+    date: "2024-06-02",
+    initialCash: "$1200",
+    finalCash: "$1100",
+    information: "Decreased cash due to unexpected expenses.",
+  },
+  {
+    date: "2024-06-03",
+    initialCash: "$1100",
+    finalCash: "$1400",
+    information: "Increased cash due to additional income.",
+  },
+  {
+    date: "2024-06-01",
+    initialCash: "$1000",
+    finalCash: "$1200",
+    information: "Increased cash due to successful investment.",
+  },
+  {
+    date: "2024-06-02",
+    initialCash: "$1200",
+    finalCash: "$1100",
+    information: "Decreased cash due to unexpected expenses.",
+  },
+  {
+    date: "2024-06-03",
+    initialCash: "$1100",
+    finalCash: "$1400",
+    information: "Increased cash due to additional income.",
+  },
 ];
 
 type TopCustomerProps = {
@@ -68,13 +108,24 @@ const TopCustomers = ({
   );
 };
 
-export default function CartScreen() {
-  const { black } = useThemeColor();
+export default function HomeScreen() {
+  const { black, background, text, primary, accent } = useThemeColor();
   useStatusBar("light-content");
+
+  const renderItem = ({ item }: { item: IReport }) => (
+    <View style={styles.row}>
+      <Text style={[styles.cell, { textAlign: "left" }]}>{item.date}</Text>
+      <Text style={[styles.cell, { textAlign: "left" }]}>
+        {item.initialCash}
+      </Text>
+      <Text style={[styles.cell, { textAlign: "left" }]}>{item.finalCash}</Text>
+    </View>
+  );
+
   return (
-    <ScrollView
-      style={{ flex: 1 }}
-      contentContainerStyle={{
+    <View
+      // style={{ flex: 1 }}
+      style={{
         flex: 1,
         backgroundColor: black,
         paddingBottom: 20,
@@ -85,38 +136,71 @@ export default function CartScreen() {
       <View
         style={{
           flex: 1,
-          paddingHorizontal: 16,
           paddingTop: 12,
+          paddingHorizontal: 8,
         }}
       >
-        <TopCustomers
-          data={customers}
-          header1="Customer"
-          header2="Amount"
-          header3="Income"
-          header4="Debts"
-          mainHeader="Top Customers"
-        />
-        <InfoCard
-          icon={
-            <MapPin fill={Colors.dark.text} color={Colors.dark.background} />
-          }
-          title="Top Routs"
-          data={[
-            { label: "Amount", value: "34K" },
-            { label: "Income", value: "$360K" },
-          ]}
-        />
-        <TopCustomers
-          data={customers}
-          header1="Member"
-          header2="Sales"
-          header3="Order"
-          header4="Debts"
-          mainHeader="Top Members"
-        />
+        <View style={[styles.cardContainer, { backgroundColor: background }]}>
+          <View
+            style={{
+              flexDirection: "row",
+              alignItems: "center",
+              flex: 0,
+            }}
+          >
+            <View style={[styles.iconContainer, { backgroundColor: primary }]}>
+              <Users color={text} />
+            </View>
+            <Text type="h4">Total days</Text>
+          </View>
+          <Text type="h2" style={{ marginTop: 20 }}>
+            3
+          </Text>
+        </View>
+        <View style={[styles.cardContainer, { backgroundColor: background }]}>
+          <View
+            style={{
+              flexDirection: "row",
+              alignItems: "center",
+              flex: 0,
+              justifyContent: "space-between",
+            }}
+          >
+            <View style={{ flexDirection: "row", alignItems: "center" }}>
+              <View
+                style={[styles.iconContainer, { backgroundColor: primary }]}
+              >
+                <Users color={text} />
+              </View>
+              <Text type="h4">Reports</Text>
+            </View>
+            <TouchableOpacity
+              style={{
+                flexDirection: "row",
+                alignItems: "center",
+                padding: 8,
+                borderRadius: 12,
+                backgroundColor: "#444444",
+              }}
+            >
+              <Text type="h6">This week</Text>
+              <ChevronDown color={text} style={{ marginLeft: 12 }} />
+            </TouchableOpacity>
+          </View>
+          <FlatList
+            data={reports}
+            renderItem={renderItem}
+            ListHeaderComponent={() => (
+              <View style={styles.tableHeader}>
+                <Text style={styles.tableHeaderText}>Date</Text>
+                <Text style={styles.tableHeaderText}>Initial Cash</Text>
+                <Text style={styles.tableHeaderText}>Final Cash</Text>
+              </View>
+            )}
+          />
+        </View>
       </View>
-    </ScrollView>
+    </View>
   );
 }
 
@@ -156,23 +240,36 @@ const styles = StyleSheet.create({
   tableHeader: {
     flexDirection: "row",
     justifyContent: "space-between",
+    marginTop: 20,
+    marginBottom: 12,
   },
   tableHeaderText: {
     color: Colors.dark.tabIconDefault,
     fontSize: 10,
     fontWeight: "bold",
+    textAlign: "left",
+    flex: 1,
   },
   row: {
     flexDirection: "row",
     justifyContent: "space-between",
-    paddingVertical: 4,
+    marginVertical: 8,
     flex: 1,
   },
   cell: {
     color: Colors.dark.text,
     fontSize: 12,
     fontWeight: "700",
-    textAlign: "right",
     flex: 1,
+  },
+  cardContainer: {
+    borderRadius: 16,
+    padding: 20,
+    marginVertical: 12,
+  },
+  iconContainer: {
+    borderRadius: 100,
+    padding: 6,
+    marginRight: 16,
   },
 });

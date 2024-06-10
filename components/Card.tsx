@@ -23,7 +23,7 @@ const Card: React.FC<CardProps> = ({ title, value, Icon }) => {
 const styles = StyleSheet.create({
   card: {
     padding: 16,
-    backgroundColor: Colors.dark.accent,
+    backgroundColor: Colors.dark.background,
     margin: 8,
     borderRadius: 16,
   },

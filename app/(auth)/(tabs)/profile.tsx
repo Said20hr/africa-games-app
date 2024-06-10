@@ -3,7 +3,7 @@ import { StyleSheet, TouchableOpacity, View } from "react-native";
 import Header from "@/components/Header";
 import Card from "@/components/Card";
 import { Colors } from "@/constants/Colors";
-import { Edit2, MapPin, User, Users } from "react-native-feather";
+import { Edit2, LogOut, MapPin, User, Users } from "react-native-feather";
 import { LineChart } from "react-native-gifted-charts";
 import React from "react";
 import { useThemeColor } from "@/hooks/useThemeColor";
@@ -11,6 +11,7 @@ import { ThemedText as Text } from "@/components/ThemedText";
 import { Image } from "expo-image";
 import NavigationButton from "@/components/profile/NavigationButton";
 import { Link } from "expo-router";
+import { useSession } from "@/app/ctx";
 const data = [
   { value: 200, label: "Mon" },
   { value: 700, label: "Tue" },
@@ -22,6 +23,7 @@ const data = [
 
 export default function ProfileScreen() {
   const { black, primary, text, background } = useThemeColor();
+  const { signOut } = useSession();
   return (
     <View style={{ flex: 1 }}>
       <Header title="Account" />
@@ -60,10 +62,11 @@ export default function ProfileScreen() {
             description="Make changes to your account"
           />
           <NavigationButton
-            icon={User}
-            text="My Profile"
+            icon={LogOut}
+            text="Log out"
             description="Make changes to your account"
             containerStyle={{ borderBottomWidth: 0 }}
+            onPress={signOut}
           />
         </View>
       </View>

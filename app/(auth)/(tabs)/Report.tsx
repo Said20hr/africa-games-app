@@ -1,4 +1,4 @@
-import { Dimensions, ScrollView, StyleSheet, View } from "react-native";
+import { Dimensions, Modal, ScrollView, StyleSheet, View } from "react-native";
 import Header from "@/components/Header";
 import { ThemedText as Text } from "@/components/ThemedText";
 import { useThemeColor } from "@/hooks/useThemeColor";
@@ -7,25 +7,82 @@ import { LinearGradient } from "expo-linear-gradient";
 import { Button, Input } from "@/components/ui";
 import {
   AlertCircle,
+  CheckCircle,
   DollarSign,
   MinusCircle,
   PlusCircle,
 } from "react-native-feather";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import AnimatedCircularProgress from "@/components/ui/AnimatedCircularProgress";
+import {
+  getProgressUntilNineAMTomorrow,
+  getTimeUntilNineAMTomorrow,
+} from "@/shared/util/moment";
 
 const { width, height } = Dimensions.get("window");
 const SVG_HEIGHT = height / 1.2;
-const CURRENT_DATE = new Date();
+let CURRENT_TIME = new Date();
 
-const ReportWaitingTimer = () => {
+enum Sections {
+  form = "FORM",
+  modal = "MODAL",
+  timer = "TIMER",
+}
+
+type ReportFormProps = {
+  handleSubmit: () => void;
+};
+
+type ReportWaitingTimerProps = {
+  onBack: () => void;
+};
+
+type ReportModalProps = {
+  continuePress: () => void;
+  visible: boolean;
+};
+
+const ReportConfirmModal = ({ continuePress, visible }: ReportModalProps) => {
+  const { black } = useThemeColor();
+  return (
+    <Modal visible={visible} animationType="slide" transparent>
+      <View
+        style={{
+          justifyContent: "space-between",
+          height: "100%",
+          paddingVertical: "50%",
+          backgroundColor: black,
+          paddingHorizontal: 16,
+          alignItems: "center",
+        }}
+      >
+        <CheckCircle color="#219653" width={100} height={100} />
+        <Text type="h4" style={{ textAlign: "center" }}>
+          You've successfully filled out the form!
+        </Text>
+        <Button label="Continue" onPress={continuePress} />
+      </View>
+    </Modal>
+  );
+};
+
+const ReportWaitingTimer = ({ onBack }: ReportWaitingTimerProps) => {
   const { black, primary } = useThemeColor();
-  const [progress, setProgress] = useState(80);
+  const [progress, setProgress] = useState(getProgressUntilNineAMTomorrow());
+  const [timeRemaining, setTimeRemaining] = useState(
+    getTimeUntilNineAMTomorrow(CURRENT_TIME)
+  );
 
-  function handleOnPress() {
-    setProgress(progress === 0 ? 100 : 0);
-  }
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setTimeRemaining(getTimeUntilNineAMTomorrow(CURRENT_TIME));
+      setProgress(getProgressUntilNineAMTomorrow());
+      CURRENT_TIME.setTime(CURRENT_TIME.getTime() + 1000);
+    }, 1000);
+
+    return () => clearInterval(interval);
+  }, []);
 
   return (
     <View
@@ -42,7 +99,7 @@ const ReportWaitingTimer = () => {
           <AnimatedCircularProgress percentage={progress} color={primary} />
           <View style={styles.timeRemaining}>
             <Text type="h3">STILL</Text>
-            <Text type="h4">02:10:00</Text>
+            <Text type="h4">{timeRemaining}</Text>
           </View>
         </View>
         <Text style={{ textAlign: "center", marginTop: 50 }} type="h4">
@@ -50,13 +107,13 @@ const ReportWaitingTimer = () => {
           données de clôture.
         </Text>
       </View>
-      <Button label="Back" onPress={handleOnPress} />
+      <Button label="Back" onPress={onBack} />
     </View>
   );
 };
 
-const ReportForm = () => {
-  const { black, accent, primary, text } = useThemeColor();
+const ReportForm = ({ handleSubmit }: ReportFormProps) => {
+  const { black, accent, primary, text, background } = useThemeColor();
   return (
     <KeyboardAwareScrollView
       style={{ flex: 1 }}
@@ -88,10 +145,10 @@ const ReportForm = () => {
               fillRule="evenodd"
               clipRule="evenodd"
               d="M142.223 33.196C123.213 18.894 102.816 0 79.027 0H21C-6.614 0-29 22.386-29 50v520c0 27.614 22.386 50 50 50h352c27.614 0 50-22.386 50-50V50c0-27.614-22.386-50-50-50h-58.027c-23.789 0-44.186 18.894-63.196 33.196C237.692 43.792 218.348 50.332 197 50.332s-40.692-6.54-54.777-17.136z"
-              fill={accent}
+              fill={"#272727"}
             />
           </Svg>
-          <View style={[styles.formContainer, { backgroundColor: accent }]}>
+          <View style={[styles.formContainer, { backgroundColor: "#272727" }]}>
             <Text type="b1">
               Please fill out the following fields to log your daily financial
               transactions
@@ -118,7 +175,7 @@ const ReportForm = () => {
               }}
               placeholder="Lorem ipsium..."
             />
-            <Button label="Submit" />
+            <Button label="Submit" onPress={handleSubmit} />
           </View>
         </View>
       </View>
@@ -127,10 +184,30 @@ const ReportForm = () => {
 };
 
 export default function HomeScreen() {
+  const [activeSection, setActiveSection] = useState<Sections>(Sections.form);
+  const [showModal, toggleModal] = useState(false);
+  const { black } = useThemeColor();
+
   return (
-    <View style={{ flex: 1 }}>
+    <View style={{ flex: 1, backgroundColor: black }}>
       <Header image title="Daily Report" />
-      {false ? <ReportForm /> : <ReportWaitingTimer />}
+      {activeSection === Sections.form ? (
+        <ReportForm
+          handleSubmit={() => {
+            setActiveSection(Sections.modal);
+            toggleModal(true);
+          }}
+        />
+      ) : activeSection === Sections.modal ? null : (
+        <ReportWaitingTimer onBack={() => setActiveSection(Sections.form)} />
+      )}
+      <ReportConfirmModal
+        visible={showModal}
+        continuePress={() => {
+          toggleModal(false);
+          setActiveSection(Sections.timer);
+        }}
+      />
     </View>
   );
 }

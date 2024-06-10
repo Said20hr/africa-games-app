@@ -74,8 +74,12 @@ const TextInput = (props: MyTextInputProps) => {
   };
 
   return (
-    <>
-      {label && <Text>{label}</Text>}
+    <View style={{ flexDirection: "column", flex: 1 }}>
+      {label && (
+        <Text type="b2" style={{ marginBottom: 6 }}>
+          {label}
+        </Text>
+      )}
       <View
         {...containerProps}
         style={[
@@ -113,7 +117,7 @@ const TextInput = (props: MyTextInputProps) => {
         )}
       </View>
       {props.error && <Text style={{ color: "#EB617A" }}>{props.error}</Text>}
-    </>
+    </View>
   );
 };
 
