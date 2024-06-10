@@ -17,6 +17,7 @@ export const Colors = {
     accent: "#2c2c2c",
     success: "green",
     danger: "red",
+    primary: "#E99213",
   },
   dark: {
     text: "#ECEDEE",
@@ -28,5 +29,6 @@ export const Colors = {
     accent: "#2c2c2c",
     success: "green",
     danger: "red",
+    primary: "#E99213",
   },
 };
