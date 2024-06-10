@@ -1,31 +1,36 @@
-import { Text, type TextProps, StyleSheet } from 'react-native';
+import { Text, type TextProps, StyleSheet } from "react-native";
 
-import { useThemeColor } from '@/hooks/useThemeColor';
+import { useThemeColor } from "@/hooks/useThemeColor";
+import React from "react";
 
 export type ThemedTextProps = TextProps & {
   lightColor?: string;
   darkColor?: string;
-  type?: 'default' | 'title' | 'defaultSemiBold' | 'subtitle' | 'link';
+  type?: "default" | "h1" | "h2" | "h3" | "h4" | "h5" | "h6" | "b1" | "b2";
 };
 
 export function ThemedText({
   style,
   lightColor,
   darkColor,
-  type = 'default',
+  type = "default",
   ...rest
 }: ThemedTextProps) {
-  const color = useThemeColor({ light: lightColor, dark: darkColor }, 'text');
+  const { text } = useThemeColor();
 
   return (
     <Text
       style={[
-        { color },
-        type === 'default' ? styles.default : undefined,
-        type === 'title' ? styles.title : undefined,
-        type === 'defaultSemiBold' ? styles.defaultSemiBold : undefined,
-        type === 'subtitle' ? styles.subtitle : undefined,
-        type === 'link' ? styles.link : undefined,
+        { color: text },
+        type === "default" ? styles.default : undefined,
+        type === "h1" ? styles.h1 : undefined,
+        type === "h2" ? styles.h2 : undefined,
+        type === "h3" ? styles.h3 : undefined,
+        type === "h4" ? styles.h4 : undefined,
+        type === "h5" ? styles.h5 : undefined,
+        type === "h6" ? styles.h6 : undefined,
+        type === "b1" ? styles.b1 : undefined,
+        type === "b2" ? styles.b2 : undefined,
         style,
       ]}
       {...rest}
@@ -36,25 +41,37 @@ export function ThemedText({
 const styles = StyleSheet.create({
   default: {
     fontSize: 16,
-    lineHeight: 24,
   },
-  defaultSemiBold: {
-    fontSize: 16,
-    lineHeight: 24,
-    fontWeight: '600',
+  h2: {
+    fontSize: 24,
+    fontWeight: "700",
   },
-  title: {
+  h1: {
     fontSize: 32,
-    fontWeight: 'bold',
-    lineHeight: 32,
+    fontWeight: "bold",
   },
-  subtitle: {
+  h3: {
     fontSize: 20,
-    fontWeight: 'bold',
+    fontWeight: "700",
   },
-  link: {
-    lineHeight: 30,
+  h4: {
     fontSize: 16,
-    color: '#0a7ea4',
+    fontWeight: "700",
+  },
+  h5: {
+    fontSize: 14,
+    fontWeight: "700",
+  },
+  h6: {
+    fontSize: 12,
+    fontWeight: "700",
+  },
+  b1: {
+    fontSize: 14,
+    fontWeight: "400",
+  },
+  b2: {
+    fontSize: 12,
+    fontWeight: "400",
   },
 });

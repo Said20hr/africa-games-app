@@ -36,8 +36,15 @@ export default function Login() {
             contentFit="contain"
           />
         </View>
-        <ThemedText>Welcome back!</ThemedText>
-        <ThemedText>Login to continue using this app</ThemedText>
+        <ThemedText type="h1" style={{ textAlign: "center" }}>
+          Welcome back!
+        </ThemedText>
+        <ThemedText
+          type="h5"
+          style={{ textAlign: "center", marginTop: 8, marginBottom: 24 }}
+        >
+          Login to continue using this app
+        </ThemedText>
         <Input
           InitialIcon={<Mail color={Colors.dark.text} />}
           placeholder="Enter your email"

@@ -5,6 +5,9 @@ import Header from "@/components/Header";
 import { Colors } from "@/constants/Colors";
 import { MapPin } from "react-native-feather";
 import InfoCard from "@/components/InfoCard";
+import { useThemeColor } from "@/hooks/useThemeColor";
+import { useStatusBar } from "@/hooks/useStatusBar";
+import React from "react";
 
 type Customer = {
   name: string;
@@ -66,17 +69,19 @@ const TopCustomers = ({
 };
 
 export default function CartScreen() {
+  const { black } = useThemeColor();
+  useStatusBar("light-content");
   return (
     <ScrollView
       style={{ flex: 1 }}
       contentContainerStyle={{
         flex: 1,
-        backgroundColor: Colors.dark.background,
+        backgroundColor: black,
         paddingBottom: 20,
         flexGrow: 1,
       }}
     >
-      <Header title="Overview" />
+      <Header image text1="Hi, Welcome Back !" text2="Chloe Smith" />
       <View
         style={{
           flex: 1,
@@ -133,10 +138,10 @@ const styles = StyleSheet.create({
     position: "absolute",
   },
   container: {
-    backgroundColor: Colors.dark.accent,
+    backgroundColor: Colors.dark.background,
     padding: 16,
     borderRadius: 16,
-    margin: 8,
+    // margin: 8,
   },
   header: {
     flexDirection: "row",

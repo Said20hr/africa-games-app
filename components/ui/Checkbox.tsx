@@ -1,9 +1,8 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import {
   View,
   Text,
   StyleSheet,
-  TouchableOpacity,
   Animated,
   ViewStyle,
   TextStyle,
@@ -30,26 +29,34 @@ const Checkbox: React.FC<CheckboxProps> = ({
   textStyle,
 }) => {
   const [checked, setChecked] = useState(initialChecked);
-  const scaleValue = new Animated.Value(checked ? 1 : 0);
-  const backgroundColorValue = new Animated.Value(checked ? 1 : 0);
+  const opacityValue = useRef(
+    new Animated.Value(initialChecked ? 1 : 0)
+  ).current;
+  const backgroundColorValue = useRef(
+    new Animated.Value(initialChecked ? 1 : 0)
+  ).current;
+
+  useEffect(() => {
+    const toValue = checked ? 1 : 0;
+
+    Animated.parallel([
+      Animated.timing(opacityValue, {
+        toValue,
+        duration: 250,
+        useNativeDriver: true,
+      }),
+      Animated.timing(backgroundColorValue, {
+        toValue,
+        duration: 250,
+        useNativeDriver: false,
+      }),
+    ]).start();
+  }, [checked, opacityValue, backgroundColorValue]);
 
   const toggleCheckbox = () => {
     const newCheckedState = !checked;
     setChecked(newCheckedState);
     onToggle && onToggle(newCheckedState);
-
-    Animated.parallel([
-      Animated.timing(scaleValue, {
-        toValue: newCheckedState ? 1 : 0,
-        duration: 200,
-        useNativeDriver: true,
-      }),
-      Animated.timing(backgroundColorValue, {
-        toValue: newCheckedState ? 1 : 0,
-        duration: 200,
-        useNativeDriver: false,
-      }),
-    ]).start();
   };
 
   const backgroundColor = backgroundColorValue.interpolate({
@@ -65,9 +72,7 @@ const Checkbox: React.FC<CheckboxProps> = ({
       <Animated.View
         style={[styles.checkbox, checkboxStyle, { backgroundColor }]}
       >
-        <Animated.View
-          style={[styles.checkIcon, { transform: [{ scale: scaleValue }] }]}
-        >
+        <Animated.View style={[styles.checkIcon, { opacity: opacityValue }]}>
           <Check
             stroke={Colors.dark.text}
             width={18}

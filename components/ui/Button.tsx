@@ -27,7 +27,9 @@ const Button = (props: ButtonProps): JSX.Element => {
       {props.loading ? (
         <ActivityIndicator />
       ) : (
-        <Text style={[styles.text, props.textStyle]}>{props.label}</Text>
+        <Text type="h5" style={props.textStyle}>
+          {props.label}
+        </Text>
       )}
     </TouchableOpacity>
   );
@@ -40,11 +42,6 @@ const styles = StyleSheet.create({
     padding: 16,
     justifyContent: "center",
     alignItems: "center",
-  },
-  text: {
-    color: Colors.dark.text,
-    fontWeight: "700",
-    // fontFamily: "Poppins-SemiBold",
   },
 });
 

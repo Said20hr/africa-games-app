@@ -4,61 +4,61 @@ import { View, Text, StyleSheet } from "react-native";
 import { Calendar, UserPlus } from "react-native-feather";
 import { ThemedText } from "./ThemedText";
 import { Colors } from "@/constants/Colors";
+import { useThemeColor } from "@/hooks/useThemeColor";
+import { Image } from "expo-image";
 
 interface HeaderProps {
-  title: string;
+  image?: boolean;
+  text1?: string;
+  text2?: string;
+  title?: string;
 }
 
-const Header: React.FC<HeaderProps> = ({ title }) => {
+const Header: React.FC<HeaderProps> = ({ image, text1, text2, title }) => {
   const { top } = useSafeAreaInsets();
+  const { black } = useThemeColor();
+
   return (
-    <View style={styles.header}>
-      <View style={[styles.headerTop, { paddingTop: top }]}>
-        <Text style={styles.title}>{title}</Text>
-        <UserPlus color={Colors.dark.text} />
-      </View>
+    <View
+      style={{ backgroundColor: black, paddingTop: top, paddingBottom: 10 }}
+    >
       <View style={styles.headerBottom}>
         <View>
-          <ThemedText style={styles.dateText}>Thursday, October 26</ThemedText>
-          <ThemedText
-            style={[
-              styles.dateText,
-              { fontSize: 10, color: Colors.dark.tabIconDefault },
-            ]}
-          >
-            Friday, October 27
-          </ThemedText>
+          {text1 && text2 ? (
+            <>
+              <ThemedText type="h4">{text1}</ThemedText>
+              <ThemedText type="b1" style={{ marginTop: 8 }}>
+                {text2}
+              </ThemedText>
+            </>
+          ) : title ? (
+            <ThemedText type="h3">{title}</ThemedText>
+          ) : null}
         </View>
-        <Calendar color={Colors.dark.text} />
+        {image && (
+          <Image
+            source={require("@/assets/images/user-header.png")}
+            style={styles.image}
+          />
+        )}
       </View>
     </View>
   );
 };
 
 const styles = StyleSheet.create({
-  header: {
-    backgroundColor: "#2c2c2e",
-  },
-  headerTop: {
-    padding: 16,
-    borderBottomWidth: 1,
-    borderBottomColor: "#3a3a3c",
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
-  },
   headerBottom: {
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
     paddingHorizontal: 16,
   },
-  title: {
-    color: "#fff",
-    fontSize: 18,
-    fontWeight: "bold",
+  image: {
+    width: 32,
+    aspectRatio: 1,
+    borderRadius: 100,
+    height: 32,
   },
-  dateText: { color: Colors.dark.text, fontWeight: "700", fontSize: 12 },
 });
 
 export default Header;

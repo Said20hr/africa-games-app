@@ -55,7 +55,7 @@ export default InfoCard;
 
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: Colors.dark.accent,
+    backgroundColor: Colors.dark.background,
     padding: 16,
     borderRadius: 16,
     margin: 8,

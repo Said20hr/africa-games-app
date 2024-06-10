@@ -4,13 +4,15 @@ import { Colors } from "@/constants/Colors";
 import { Button, Container } from "@/components/ui";
 import { Image } from "expo-image";
 import { ThemedText } from "@/components/ThemedText";
-import { useNavigation, useRouter } from "expo-router";
+import { useRouter } from "expo-router";
+import { useStatusBar } from "@/hooks/useStatusBar";
 
 export default function OnBoarding() {
-  const { push, navigate } = useRouter();
+  const { push } = useRouter();
   function handleOnPress() {
     push("/login");
   }
+  useStatusBar("light-content");
 
   return (
     <Container style={{ paddingHorizontal: 0, paddingTop: 0 }}>
@@ -26,11 +28,7 @@ export default function OnBoarding() {
             style={styles.logoImage}
             contentFit="contain"
           />
-          <ThemedText
-            style={{ color: Colors.dark.text, fontSize: 24, fontWeight: "700" }}
-          >
-            Welcome
-          </ThemedText>
+          <ThemedText type="h2">Welcome</ThemedText>
           <ThemedText
             style={{ color: Colors.dark.text, marginTop: 20, fontSize: 12 }}
           >

@@ -4,41 +4,46 @@ import React from "react";
 import { TabBarIcon } from "@/components/navigation/TabBarIcon";
 import { Colors } from "@/constants/Colors";
 import { useColorScheme } from "@/hooks/useColorScheme";
+import { useThemeColor } from "@/hooks/useThemeColor";
+import { ThemedText } from "@/components/ThemedText";
 
 export default function TabLayout() {
-  const colorScheme = useColorScheme();
+  const { background, primary, text } = useThemeColor();
 
   return (
     <Tabs
       screenOptions={{
-        tabBarActiveTintColor: Colors[colorScheme ?? "light"].tint,
+        tabBarActiveTintColor: primary,
         headerShown: false,
         tabBarStyle: {
-          backgroundColor: "#000",
+          backgroundColor: background,
           borderTopColor: "transparent",
+        },
+        tabBarLabelStyle: {
+          fontSize: 8,
         },
       }}
     >
       <Tabs.Screen
         name="index"
         options={{
-          title: "",
+          title: "Home",
           tabBarIcon: ({ color, focused }) => (
             <TabBarIcon
-              name={"pie-chart"}
-              color={focused ? Colors.dark.text : color}
+              name={"home-outline"}
+              color={focused ? primary : text}
             />
           ),
         }}
       />
       <Tabs.Screen
-        name="cart"
+        name="Report"
         options={{
-          title: "",
+          title: "Reports",
           tabBarIcon: ({ color, focused }) => (
             <TabBarIcon
-              name={"cart"}
-              color={focused ? Colors.dark.text : color}
+              name={"file-tray-full-outline"}
+              color={focused ? primary : text}
             />
           ),
         }}
@@ -46,24 +51,21 @@ export default function TabLayout() {
       <Tabs.Screen
         name="explore"
         options={{
-          title: "",
+          title: "Favourite",
           tabBarIcon: ({ color, focused }) => (
             <TabBarIcon
-              name={focused ? "code-slash" : "code-slash-outline"}
-              color={focused ? Colors.dark.text : color}
+              name={"heart-outline"}
+              color={focused ? primary : text}
             />
           ),
         }}
       />
       <Tabs.Screen
-        name="profile"
+        name="Profile"
         options={{
-          title: "",
+          title: "Account",
           tabBarIcon: ({ color, focused }) => (
-            <TabBarIcon
-              name={"people"}
-              color={focused ? Colors.dark.text : color}
-            />
+            <TabBarIcon name={"people"} color={focused ? primary : text} />
           ),
         }}
       />

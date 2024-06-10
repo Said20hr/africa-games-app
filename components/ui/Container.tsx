@@ -11,7 +11,7 @@ const Container = (props: ViewProps) => {
         {
           paddingTop: top,
           paddingHorizontal: 16,
-          backgroundColor: Colors.dark.background,
+          backgroundColor: Colors.dark.black,
           flex: 1,
         },
         props.style,

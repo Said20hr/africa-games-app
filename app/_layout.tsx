@@ -3,6 +3,10 @@ import { useFonts } from "expo-font";
 import * as SplashScreen from "expo-splash-screen";
 import { useEffect } from "react";
 import { SessionProvider } from "./ctx";
+import { Slot } from "expo-router";
+import { View } from "react-native";
+import { GestureHandlerRootView } from "react-native-gesture-handler";
+// import MMKVManager from "@/shared/util/mmkv";
 
 export {
   // Catch any errors thrown by the Layout component.
@@ -40,14 +44,14 @@ export default function RootLayout() {
 
   return <RootLayoutNav />;
 }
-import { Slot } from "expo-router";
-import { View } from "react-native";
 
 function RootLayoutNav() {
   return (
     <View style={{ flex: 1 }}>
       <SessionProvider>
-        <Slot />
+        <GestureHandlerRootView>
+          <Slot />
+        </GestureHandlerRootView>
       </SessionProvider>
     </View>
   );

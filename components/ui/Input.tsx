@@ -9,25 +9,44 @@ import {
 import { Eye, EyeOff } from "react-native-feather";
 import { ThemedText as Text } from "../ThemedText";
 import { Colors } from "@/constants/Colors";
+import { TouchableOpacity } from "react-native-gesture-handler";
+import { useThemeColor } from "@/hooks/useThemeColor";
+import React from "react";
 
 interface MyTextInputProps extends TextInputProps {
   containerProps?: ViewProps;
   error?: string | null;
   showError?: boolean;
   InitialIcon?: JSX.Element;
+  RightIcon1?: JSX.Element;
+  RightIcon2?: JSX.Element;
+  onPressRightIcon1?: () => void;
+  onPressRightIcon2?: () => void;
+  label?: string;
 }
 
 const TextInput = (props: MyTextInputProps) => {
-  const { textContentType, style, containerProps, InitialIcon } = props;
+  const {
+    textContentType,
+    style,
+    containerProps,
+    InitialIcon,
+    RightIcon1,
+    RightIcon2,
+    onPressRightIcon1,
+    onPressRightIcon2,
+    label,
+  } = props;
 
   const [passwordVisible, setPasswordVisible] = useState(false);
   const [focus, setFocus] = useState(false);
+  const { text } = useThemeColor();
 
   const isPasswordField = textContentType?.toLowerCase().includes("password");
   const showPassword = passwordVisible || !isPasswordField;
 
   const containerFocus = {
-    borderColor: focus ? "#000" : "#DFDFDF",
+    // borderColor: focus ? "#000" : "#DFDFDF",
   };
 
   const onFocus = () => {
@@ -56,6 +75,7 @@ const TextInput = (props: MyTextInputProps) => {
 
   return (
     <>
+      {label && <Text>{label}</Text>}
       <View
         {...containerProps}
         style={[
@@ -69,15 +89,28 @@ const TextInput = (props: MyTextInputProps) => {
           secureTextEntry={!showPassword}
           onFocus={onFocus}
           onBlur={onBlur}
-          {...props}
-          style={[styles.input, style, { marginLeft: InitialIcon ? 8 : 0 }]}
           placeholderTextColor="#9E9D9D"
+          {...props}
+          style={[
+            styles.input,
+            style,
+            { marginLeft: InitialIcon ? 8 : 0, color: text },
+          ]}
         />
-        {isPasswordField ? (
+        {isPasswordField && !(RightIcon1 || RightIcon2) ? (
           <View>
             <EyeIcon />
           </View>
-        ) : null}
+        ) : (
+          <View style={styles.iconsContainer}>
+            <TouchableOpacity onPress={onPressRightIcon1}>
+              {RightIcon1}
+            </TouchableOpacity>
+            <TouchableOpacity onPress={onPressRightIcon2}>
+              {RightIcon2}
+            </TouchableOpacity>
+          </View>
+        )}
       </View>
       {props.error && <Text style={{ color: "#EB617A" }}>{props.error}</Text>}
     </>
@@ -99,10 +132,13 @@ const styles = StyleSheet.create({
   input: {
     flex: 1,
     fontSize: 14,
-    color: "#000",
     paddingBottom: 0,
-    height: 40,
     fontWeight: "700",
+  },
+
+  iconsContainer: {
+    gap: 6,
+    flexDirection: "row",
   },
 });
 
