@@ -46,6 +46,7 @@ export default function TabLayout() {
               color={focused ? primary : text}
             />
           ),
+          unmountOnBlur: true,
         }}
       />
       <Tabs.Screen

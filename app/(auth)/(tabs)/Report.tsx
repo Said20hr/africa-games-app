@@ -13,16 +13,21 @@ import {
   PlusCircle,
 } from "react-native-feather";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import AnimatedCircularProgress from "@/components/ui/AnimatedCircularProgress";
 import {
   getProgressUntilNineAMTomorrow,
   getTimeUntilNineAMTomorrow,
 } from "@/shared/util/moment";
+import { IAuthContext, useSession } from "@/app/ctx";
 
 const { width, height } = Dimensions.get("window");
 const SVG_HEIGHT = height / 1.2;
 let CURRENT_TIME = new Date();
+
+const originalWidth = 393;
+const originalHeight = 604;
+const aspectRatio = originalWidth / originalHeight;
 
 enum Sections {
   form = "FORM",
@@ -68,11 +73,40 @@ const ReportConfirmModal = ({ continuePress, visible }: ReportModalProps) => {
 };
 
 const ReportWaitingTimer = ({ onBack }: ReportWaitingTimerProps) => {
-  const { black, primary } = useThemeColor();
+  const { black, primary, success, danger } = useThemeColor();
   const [progress, setProgress] = useState(getProgressUntilNineAMTomorrow());
   const [timeRemaining, setTimeRemaining] = useState(
     getTimeUntilNineAMTomorrow(CURRENT_TIME)
   );
+  const { session } = useSession() as IAuthContext;
+  const [startTime, endTime] = useMemo(() => {
+    if (!session?.casino.shift) return [null, null];
+
+    const [start, end] = session?.casino.shift.split(" - ");
+
+    const [startHour, startMinute] = start.split("h").map(Number);
+    const [endHour, endMinute] = end.split("h").map(Number);
+
+    const currentDate = new Date();
+
+    const startTime = new Date(
+      currentDate.getFullYear(),
+      currentDate.getMonth(),
+      currentDate.getDate(),
+      startHour,
+      startMinute
+    );
+
+    const endTime = new Date(
+      currentDate.getFullYear(),
+      currentDate.getMonth(),
+      currentDate.getDate(),
+      endHour,
+      endMinute
+    );
+
+    return [startTime, endTime];
+  }, []);
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -96,7 +130,7 @@ const ReportWaitingTimer = ({ onBack }: ReportWaitingTimerProps) => {
     >
       <View>
         <View style={styles.timeContainer}>
-          <AnimatedCircularProgress percentage={progress} color={primary} />
+          <AnimatedCircularProgress percentage={progress} color={danger} />
           <View style={styles.timeRemaining}>
             <Text type="h3">STILL</Text>
             <Text type="h4">{timeRemaining}</Text>
@@ -133,21 +167,23 @@ const ReportForm = ({ handleSubmit }: ReportFormProps) => {
           </Text>
           <Text type="h3">12:10 AM</Text>
         </LinearGradient>
-        <View style={{ position: "relative", flex: 1 }}>
-          <Svg
-            width={width}
-            height={height}
-            viewBox={`0 0 ${width} ${height}`}
-            fill="none"
-            style={styles.svg}
-          >
-            <Path
-              fillRule="evenodd"
-              clipRule="evenodd"
-              d="M142.223 33.196C123.213 18.894 102.816 0 79.027 0H21C-6.614 0-29 22.386-29 50v520c0 27.614 22.386 50 50 50h352c27.614 0 50-22.386 50-50V50c0-27.614-22.386-50-50-50h-58.027c-23.789 0-44.186 18.894-63.196 33.196C237.692 43.792 218.348 50.332 197 50.332s-40.692-6.54-54.777-17.136z"
-              fill={"#272727"}
-            />
-          </Svg>
+        <View style={{ position: "relative", flex: 1, marginTop: 10 }}>
+          <View style={{ width, aspectRatio }}>
+            <Svg
+              width="100%"
+              height="100%"
+              viewBox={`0 0 ${originalWidth} ${originalHeight}`}
+              fill="none"
+              style={styles.svg}
+            >
+              <Path
+                fillRule="evenodd"
+                clipRule="evenodd"
+                d="M142.223 33.196C123.213 18.894 102.816 0 79.027 0H21C-6.614 0-29 22.386-29 50v520c0 27.614 22.386 50 50 50h352c27.614 0 50-22.386 50-50V50c0-27.614-22.386-50-50-50h-58.027c-23.789 0-44.186 18.894-63.196 33.196C237.692 43.792 218.348 50.332 197 50.332s-40.692-6.54-54.777-17.136z"
+                fill={"#272727"}
+              />
+            </Svg>
+          </View>
           <View style={[styles.formContainer, { backgroundColor: "#272727" }]}>
             <Text type="b1">
               Please fill out the following fields to log your daily financial
@@ -183,10 +219,11 @@ const ReportForm = ({ handleSubmit }: ReportFormProps) => {
   );
 };
 
-export default function HomeScreen() {
+export default function ReportScreen() {
   const [activeSection, setActiveSection] = useState<Sections>(Sections.form);
   const [showModal, toggleModal] = useState(false);
   const { black } = useThemeColor();
+  const { session } = useSession() as IAuthContext;
 
   return (
     <View style={{ flex: 1, backgroundColor: black }}>

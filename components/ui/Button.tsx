@@ -7,6 +7,7 @@ import {
 } from "react-native";
 import { ThemedText as Text } from "../ThemedText";
 import { Colors } from "@/constants/Colors";
+import React from "react";
 
 interface ButtonProps extends TouchableOpacityProps {
   label: string;

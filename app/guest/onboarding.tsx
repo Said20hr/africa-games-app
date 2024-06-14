@@ -6,11 +6,12 @@ import { Image } from "expo-image";
 import { ThemedText } from "@/components/ThemedText";
 import { useRouter } from "expo-router";
 import { useStatusBar } from "@/hooks/useStatusBar";
+import React from "react";
 
 export default function OnBoarding() {
   const { push } = useRouter();
   function handleOnPress() {
-    push("/login");
+    push("guest/login");
   }
   useStatusBar("light-content");
 

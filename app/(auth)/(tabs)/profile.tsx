@@ -1,17 +1,14 @@
 import { StyleSheet, TouchableOpacity, View } from "react-native";
 
 import Header from "@/components/Header";
-import Card from "@/components/Card";
-import { Colors } from "@/constants/Colors";
-import { Edit2, LogOut, MapPin, User, Users } from "react-native-feather";
-import { LineChart } from "react-native-gifted-charts";
-import React from "react";
+import { Edit2, LogOut, User } from "react-native-feather";
 import { useThemeColor } from "@/hooks/useThemeColor";
 import { ThemedText as Text } from "@/components/ThemedText";
 import { Image } from "expo-image";
 import NavigationButton from "@/components/profile/NavigationButton";
 import { Link } from "expo-router";
 import { useSession } from "@/app/ctx";
+import React from "react";
 const data = [
   { value: 200, label: "Mon" },
   { value: 700, label: "Tue" },

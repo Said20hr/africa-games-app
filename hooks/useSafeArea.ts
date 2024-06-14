@@ -7,7 +7,7 @@ function useSafeAreaInsets(): EdgeInsets {
 
   return {
     ...insets,
-    top: StatusBar.currentHeight ?? insets.top,
+    top: StatusBar.currentHeight ? StatusBar.currentHeight + 6 : insets.top,
   };
 }
 

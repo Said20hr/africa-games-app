@@ -6,19 +6,18 @@ import { SessionProvider } from "./ctx";
 import { Slot } from "expo-router";
 import { View } from "react-native";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
-// import MMKVManager from "@/shared/util/mmkv";
+import React from "react";
+import Toast from "react-native-toast-message";
+import { QueryClientProvider } from "@tanstack/react-query";
+import { queryClient } from "@/api/query-client";
+import { toastConfig } from "@/constants/Config";
 
-export {
-  // Catch any errors thrown by the Layout component.
-  ErrorBoundary,
-} from "expo-router";
+export { ErrorBoundary } from "expo-router";
 
 export const unstable_settings = {
-  // Ensure that reloading on `/modal` keeps a back button present.
   initialRouteName: "onboarding",
 };
 
-// Prevent the splash screen from auto-hiding before asset loading is complete.
 SplashScreen.preventAutoHideAsync();
 
 export default function RootLayout() {
@@ -27,7 +26,6 @@ export default function RootLayout() {
     ...FontAwesome.font,
   });
 
-  // Expo Router uses Error Boundaries to catch errors in the navigation tree.
   useEffect(() => {
     if (error) throw error;
   }, [error]);
@@ -47,12 +45,13 @@ export default function RootLayout() {
 
 function RootLayoutNav() {
   return (
-    <View style={{ flex: 1 }}>
+    <QueryClientProvider client={queryClient}>
       <SessionProvider>
         <GestureHandlerRootView>
           <Slot />
+          <Toast config={toastConfig} />
         </GestureHandlerRootView>
       </SessionProvider>
-    </View>
+    </QueryClientProvider>
   );
 }
