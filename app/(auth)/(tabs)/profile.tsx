@@ -3,7 +3,7 @@ import { StyleSheet, TouchableOpacity, View } from "react-native";
 import Header from "@/components/Header";
 import { Edit2, LogOut, User } from "react-native-feather";
 import { useThemeColor } from "@/hooks/useThemeColor";
-import { ThemedText as Text } from "@/components/ThemedText";
+import Text from "@/components/ThemedText";
 import { Image } from "expo-image";
 import NavigationButton from "@/components/profile/NavigationButton";
 import { Link } from "expo-router";

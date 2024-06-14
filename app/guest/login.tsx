@@ -14,7 +14,7 @@ import {
   TextButton,
 } from "@/components/ui";
 import { Image } from "expo-image";
-import { ThemedText } from "@/components/ThemedText";
+import ThemedText from "@/components/ThemedText";
 import { useRouter } from "expo-router";
 import { Lock, Mail } from "react-native-feather";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";

@@ -9,7 +9,7 @@ export type ThemedTextProps = TextProps & {
   type?: "default" | "h1" | "h2" | "h3" | "h4" | "h5" | "h6" | "b1" | "b2";
 };
 
-export function ThemedText({
+export default function ThemedText({
   style,
   lightColor,
   darkColor,

@@ -1,6 +1,6 @@
 import React from "react";
 import { StyleSheet, View } from "react-native";
-import { ThemedText as Text } from "./ThemedText";
+import Text from "./ThemedText";
 import { Colors } from "@/constants/Colors";
 
 type CardProps = {

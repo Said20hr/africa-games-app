@@ -1,6 +1,6 @@
 import { Dimensions, Modal, ScrollView, StyleSheet, View } from "react-native";
 import Header from "@/components/Header";
-import { ThemedText as Text } from "@/components/ThemedText";
+import Text from "@/components/ThemedText";
 import { useThemeColor } from "@/hooks/useThemeColor";
 import Svg, { Path } from "react-native-svg";
 import { LinearGradient } from "expo-linear-gradient";
@@ -79,6 +79,7 @@ const ReportWaitingTimer = ({ onBack }: ReportWaitingTimerProps) => {
     getTimeUntilNineAMTomorrow(CURRENT_TIME)
   );
   const { session } = useSession() as IAuthContext;
+
   const [startTime, endTime] = useMemo(() => {
     if (!session?.casino.shift) return [null, null];
 
@@ -107,6 +108,7 @@ const ReportWaitingTimer = ({ onBack }: ReportWaitingTimerProps) => {
 
     return [startTime, endTime];
   }, []);
+  const shouldWaitForShift = true;
 
   useEffect(() => {
     const interval = setInterval(() => {

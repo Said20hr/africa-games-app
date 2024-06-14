@@ -11,7 +11,7 @@ import {
   MapPin,
   User,
 } from "react-native-feather";
-import { ThemedText as Text } from "@/components/ThemedText";
+import Text from "@/components/ThemedText";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 import { Image } from "expo-image";
 

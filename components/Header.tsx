@@ -2,7 +2,7 @@ import useSafeAreaInsets from "@/hooks/useSafeArea";
 import React from "react";
 import { View, Text, StyleSheet, Image, ViewStyle } from "react-native";
 import { Calendar, UserPlus } from "react-native-feather";
-import { ThemedText } from "./ThemedText";
+import ThemedText from "./ThemedText";
 import { Colors } from "@/constants/Colors";
 import { useThemeColor } from "@/hooks/useThemeColor";
 // import { Image } from "expo-image";

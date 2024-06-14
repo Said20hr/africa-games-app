@@ -5,7 +5,7 @@ import {
   TouchableOpacity,
   TouchableOpacityProps,
 } from "react-native";
-import { ThemedText as Text } from "../ThemedText";
+import Text from "../ThemedText";
 import { Colors } from "@/constants/Colors";
 import React from "react";
 

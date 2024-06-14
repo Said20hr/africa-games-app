@@ -3,7 +3,7 @@ import { StyleSheet, ImageBackground, View } from "react-native";
 import { Colors } from "@/constants/Colors";
 import { Button, Container } from "@/components/ui";
 import { Image } from "expo-image";
-import { ThemedText } from "@/components/ThemedText";
+import ThemedText from "@/components/ThemedText";
 import { useRouter } from "expo-router";
 import { useStatusBar } from "@/hooks/useStatusBar";
 import React from "react";
@@ -33,8 +33,7 @@ export default function OnBoarding() {
           <ThemedText
             style={{ color: Colors.dark.text, marginTop: 20, fontSize: 12 }}
           >
-            Lorem ipsum dolor sit amet. Et voluptatum vitae ut voluptatem
-            numquam ea eaque .
+            Hello from africa games, good to have you
           </ThemedText>
           <Button
             label="Login"

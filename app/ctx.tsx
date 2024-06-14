@@ -63,8 +63,10 @@ export function SessionProvider(props: { children: ReactNode }) {
 
   useEffect(() => {
     if (!isLoading) {
-      if (data) setSession(data.data);
-      else if (error) {
+      if (data) {
+        setSession(data.data);
+        console.log(data.data);
+      } else if (error) {
         console.log(error);
         // signOut()
       }

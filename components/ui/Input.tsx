@@ -7,7 +7,7 @@ import {
   ViewProps,
 } from "react-native";
 import { Eye, EyeOff } from "react-native-feather";
-import { ThemedText as Text } from "../ThemedText";
+import Text from "../ThemedText";
 import { Colors } from "@/constants/Colors";
 import { TouchableOpacity } from "react-native-gesture-handler";
 import { useThemeColor } from "@/hooks/useThemeColor";

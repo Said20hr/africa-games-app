@@ -10,7 +10,7 @@ import {
   ModalProps,
   Modal,
 } from "react-native";
-import { ThemedText as Text } from "@/components/ThemedText";
+import Text from "@/components/ThemedText";
 import Header from "@/components/Header";
 import {
   AlertCircle,
@@ -25,43 +25,38 @@ import { IReport } from "@/shared/type/Report.type";
 import { Colors } from "@/constants/Colors";
 import useSafeAreaInsets from "@/hooks/useSafeArea";
 import { LinearGradient } from "expo-linear-gradient";
+import Table from "@/components/Table";
 
 const reports: IReport[] = [
   {
     date: "2024-06-01",
     initialCash: "1000 XAF",
     finalCash: "1200 XAF",
-    information: "Increased cash due to successful investment.",
   },
   {
     date: "2024-06-02",
     initialCash: "1200 XAF",
     finalCash: "1100 XAF",
-    information: "Decreased cash due to unexpected expenses.",
   },
   {
     date: "2024-06-03",
     initialCash: "1100 XAF",
     finalCash: "1400 XAF",
-    information: "Increased cash due to additional income.",
   },
   {
     date: "2024-06-04",
     initialCash: "1000 XAF",
     finalCash: "1200 XAF",
-    information: "Increased cash due to successful investment.",
   },
   {
     date: "2024-06-05",
     initialCash: "1200 XAF",
     finalCash: "1100 XAF",
-    information: "Decreased cash due to unexpected expenses.",
   },
   {
     date: "2024-06-06",
     initialCash: "1100 XAF",
     finalCash: "1400 XAF",
-    information: "Increased cash due to additional income.",
   },
 ];
 
@@ -329,7 +324,7 @@ export default function HomeScreen() {
               </TouchableOpacity>
             }
           >
-            <FlatList
+            {/* <FlatList
               data={reports}
               renderItem={renderItem}
               ListHeaderComponent={() => (
@@ -341,6 +336,10 @@ export default function HomeScreen() {
                   <Text style={styles.tableHeaderText}>Final Cash</Text>
                 </View>
               )}
+            /> */}
+            <Table
+              reports={reports}
+              headers={["Date", "Initial Cash", "Final Cash"]}
             />
           </InfoCard>
         </View>

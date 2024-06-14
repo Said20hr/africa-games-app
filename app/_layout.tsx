@@ -11,6 +11,7 @@ import Toast from "react-native-toast-message";
 import { QueryClientProvider } from "@tanstack/react-query";
 import { queryClient } from "@/api/query-client";
 import { toastConfig } from "@/constants/Config";
+import { TranslationProvider, useTranslation } from "@/hooks/useTranslation";
 
 export { ErrorBoundary } from "expo-router";
 
@@ -46,12 +47,14 @@ export default function RootLayout() {
 function RootLayoutNav() {
   return (
     <QueryClientProvider client={queryClient}>
+      {/* <TranslationProvider> */}
       <SessionProvider>
         <GestureHandlerRootView>
           <Slot />
           <Toast config={toastConfig} />
         </GestureHandlerRootView>
       </SessionProvider>
+      {/* </TranslationProvider> */}
     </QueryClientProvider>
   );
 }
