@@ -135,9 +135,10 @@ const styles = StyleSheet.create({
 
   input: {
     flex: 1,
-    fontSize: 14,
+    fontSize: 12,
     paddingBottom: 0,
     fontWeight: "700",
+    fontFamily: "Poppins-SemiBold",
   },
 
   iconsContainer: {

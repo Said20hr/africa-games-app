@@ -1,5 +1,5 @@
 import { useEffect, useMemo } from "react";
-import { PixelRatio, StyleSheet } from "react-native";
+import { Dimensions, PixelRatio, StyleSheet } from "react-native";
 import { Circle, Svg } from "react-native-svg";
 import Animated, {
   useAnimatedProps,
@@ -7,6 +7,8 @@ import Animated, {
   withTiming,
 } from "react-native-reanimated";
 import React from "react";
+
+const width = Dimensions.get("screen").width;
 
 type ReadOnlyProps<T> = {
   readonly [P in keyof T]: T[P];
@@ -25,7 +27,7 @@ const AnimatedCircle = Animated.createAnimatedComponent(Circle);
 const AnimatedCircularProgress: React.FC<
   ReadOnlyProps<AnimatedCircularProgressProps>
 > = ({
-  radius = 100,
+  radius = width * 0.35,
   color,
   percentage = 0,
   borderWidth = 20,

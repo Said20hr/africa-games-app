@@ -84,18 +84,24 @@ export default function Login() {
 
   return (
     <Container>
-      <KeyboardAwareScrollView>
+      <KeyboardAwareScrollView
+        contentContainerStyle={{
+          justifyContent: "flex-end",
+          flexGrow: 1,
+          paddingBottom: "20%",
+        }}
+      >
         <View style={styles.detailsContainer}>
           <Image
             source={require("@/assets/images/africa-games-login.png")}
             style={styles.logoImage}
             contentFit="contain"
           />
-          <ThemedText type="h1" style={{ textAlign: "center" }}>
+          <ThemedText type="h1" style={{ textAlign: "center", marginTop: -60 }}>
             Welcome back!
           </ThemedText>
           <ThemedText
-            type="h5"
+            type="h6"
             style={{ textAlign: "center", marginTop: 8, marginBottom: 24 }}
           >
             Login to continue using this app
@@ -120,7 +126,7 @@ export default function Login() {
             InitialIcon={<Lock color={Colors.dark.text} />}
             placeholder="Enter your password"
             textContentType="password"
-            containerProps={{ style: { marginTop: 24 } }}
+            containerProps={{ style: { marginTop: 16 } }}
             onChangeText={(text) => setValue("password", text)}
             {...register("password", {
               required: "Password is required",
@@ -162,10 +168,8 @@ const styles = StyleSheet.create({
     height: "100%",
   },
   detailsContainer: {
-    flex: 1,
+    // flex: 1,
     justifyContent: "flex-end",
-    // paddingBottom: 60,
-    // alignItems: "center",
   },
   logoImage: {
     width: "80%",

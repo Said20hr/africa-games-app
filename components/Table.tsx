@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useCallback } from "react";
 import {
   FlatList,
   FlatListProps,
@@ -15,81 +15,163 @@ interface TableProps
   reports: unknown[];
   headers: string[];
   rowTextSize?: number;
+  isFlatList?: boolean;
 }
 
-const Table = (props: TableProps) => {
+type TableRowProps = {
+  item: unknown;
+  rowTextSize?: number;
+  headers: string[];
+};
+
+const TableRow = ({ item, rowTextSize, headers }: TableRowProps) => {
   const { primary, success, danger } = useThemeColor();
-  const renderItem = ({ item }: { item: unknown }) => (
-    <View style={styles.row}>
-      {typeof item === "object" &&
-        item &&
-        Object.values(item).map((item, index) =>
-          props.headers[index] !== "Status" ? (
-            <Text
-              style={[
-                styles.cell,
-                {
-                  textAlign: index === 0 ? "left" : "right",
-                  fontSize: props.rowTextSize ?? 12,
-                },
-              ]}
-            >
-              {item ?? ""}
-            </Text>
-          ) : (
-            <TouchableOpacity
-              style={[
-                {
-                  alignSelf: "flex-start",
-                  backgroundColor:
-                    item === "Pending"
-                      ? primary
-                      : item === "Refused"
-                      ? danger
-                      : success,
-                  paddingHorizontal: 4,
-                  paddingVertical: 4,
-                  alignItems: "center",
-                  borderRadius: 16,
-                  width: 78,
-                  marginLeft: 20,
-                },
-              ]}
-            >
-              <Text type="b2" style={{ fontSize: props.rowTextSize ?? 12 }}>
-                {item}
+  return (
+    <>
+      <View style={styles.row}>
+        {typeof item === "object" &&
+          item &&
+          Object.values(item).map((item, index) =>
+            headers[index] !== "Status" ? (
+              <Text
+                style={[
+                  styles.cell,
+                  {
+                    textAlign: index === 0 ? "left" : "left",
+                    fontSize: rowTextSize ?? 12,
+                  },
+                ]}
+              >
+                {item ?? ""}
               </Text>
-            </TouchableOpacity>
-          )
-        )}
+            ) : (
+              <TouchableOpacity
+                style={[
+                  {
+                    alignSelf: "flex-start",
+                    backgroundColor:
+                      item === "Pending"
+                        ? primary
+                        : item === "Refused"
+                        ? danger
+                        : success,
+                    paddingHorizontal: 4,
+                    paddingVertical: 4,
+                    alignItems: "center",
+                    borderRadius: 16,
+                    width: 78,
+                    marginLeft: 20,
+                  },
+                ]}
+              >
+                <Text type="b2" style={{ fontSize: rowTextSize ?? 12 }}>
+                  {item}
+                </Text>
+              </TouchableOpacity>
+            )
+          )}
+      </View>
+    </>
+  );
+};
+
+const TableHeaderRow = ({
+  item,
+  rowTextSize,
+  index,
+}: {
+  item: string;
+  rowTextSize?: number;
+  index: number;
+}) => {
+  return (
+    <Text
+      style={[
+        styles.tableHeaderText,
+        {
+          textAlign: item === "Status" ? "center" : index > 0 ? "left" : "left",
+          fontSize: rowTextSize ?? 12,
+          width: item === "Status" ? 85 : "auto",
+          marginLeft: item === "Status" ? 20 : 0,
+        },
+      ]}
+    >
+      {item}
+    </Text>
+  );
+};
+
+const Table = (props: TableProps) => {
+  const renderItem = useCallback(
+    ({ item, index }: { item: unknown; index: number }) => (
+      <TableRow
+        headers={props.headers}
+        item={item}
+        rowTextSize={props.rowTextSize}
+        key={index}
+      />
+    ),
+    []
+  );
+
+  const renderHeaders = () => (
+    <View style={{ flexDirection: "row" }}>
+      {props.headers.map((header, index) => (
+        <TableHeaderRow
+          item={header}
+          index={index}
+          rowTextSize={props.rowTextSize}
+          key={index}
+        />
+      ))}
     </View>
   );
 
   return (
-    <FlatList
-      data={props.reports}
-      renderItem={renderItem}
-      ListHeaderComponent={() => (
-        <View style={styles.tableHeader}>
-          {props.headers.map((item, index) => (
-            <Text
-              style={[
-                styles.tableHeaderText,
-                {
-                  textAlign:
-                    item === "Status" ? "center" : index > 0 ? "right" : "left",
-                  fontSize: props.rowTextSize ?? 12,
-                  width: item === "Status" ? 85 : "auto",
-                  marginLeft: item === "Status" ? 20 : 0,
-                },
-              ]}
-            >
-              {item}
-            </Text>
-          ))}
-        </View>
+    <>
+      {!props.isFlatList ? (
+        <>
+          <View style={{ flexDirection: "row" }}>
+            {props.headers.map((item, index) => (
+              <TableHeaderRow
+                item={item}
+                index={index}
+                rowTextSize={props.rowTextSize}
+                key={item}
+              />
+            ))}
+          </View>
+          <View style={{ flexDirection: "column" }}>
+            {props.reports.map((item, index) => (
+              <TableRow
+                headers={props.headers}
+                item={item}
+                rowTextSize={props.rowTextSize}
+                key={index}
+              />
+            ))}
+          </View>
+          {/* </View> */}
+        </>
+      ) : (
+        <FlatList
+          data={props.reports}
+          renderItem={renderItem}
+          ListHeaderComponent={() => (
+            <View style={styles.tableHeader}>
+              {props.headers.map((item, index) => (
+                <TableHeaderRow
+                  item={item}
+                  index={index}
+                  rowTextSize={props.rowTextSize}
+                  key={item}
+                />
+              ))}
+            </View>
+          )}
+        />
       )}
-    />
+    </>
   );
 };
 export default Table;
@@ -98,8 +180,6 @@ const styles = StyleSheet.create({
   tableHeader: {
     flexDirection: "row",
     justifyContent: "space-between",
-    marginTop: 20,
-    marginBottom: 12,
   },
   tableHeaderText: {
     color: Colors.dark.tabIconDefault,
@@ -111,8 +191,7 @@ const styles = StyleSheet.create({
   row: {
     flexDirection: "row",
     justifyContent: "space-between",
-    marginVertical: 8,
-    flex: 1,
+    marginTop: 18,
   },
   cell: {
     fontSize: 12,

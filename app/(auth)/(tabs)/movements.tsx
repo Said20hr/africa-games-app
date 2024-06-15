@@ -100,6 +100,7 @@ export default function ProfileScreen() {
           }
           headers={["Name", "Date", "Amount", "Status"]}
           rowTextSize={10}
+          isFlatList
         />
       </View>
     </Container>
