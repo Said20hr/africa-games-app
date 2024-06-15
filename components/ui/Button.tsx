@@ -13,16 +13,26 @@ interface ButtonProps extends TouchableOpacityProps {
   label: string;
   textStyle?: TextStyle;
   loading?: boolean;
+  outlined?: boolean;
 }
 
 const Button = (props: ButtonProps): JSX.Element => {
+  const { outlined = false } = props;
   return (
     <TouchableOpacity
       {...props}
       style={[
         styles.button,
+        {
+          backgroundColor: props.loading
+            ? "#eee"
+            : outlined
+            ? "transparent"
+            : Colors.dark.primary,
+          borderWidth: 1,
+          borderColor: Colors.dark.primary,
+        },
         props.style,
-        { backgroundColor: props.loading ? "#eee" : Colors.dark.primary },
       ]}
     >
       {props.loading ? (

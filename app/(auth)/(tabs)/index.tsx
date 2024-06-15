@@ -26,6 +26,9 @@ import { Colors } from "@/constants/Colors";
 import useSafeAreaInsets from "@/hooks/useSafeArea";
 import { LinearGradient } from "expo-linear-gradient";
 import Table from "@/components/Table";
+import { useQuery } from "@tanstack/react-query";
+import { useSession } from "@/app/ctx";
+import axios from "axios";
 
 const reports: IReport[] = [
   {
@@ -224,6 +227,40 @@ export default function HomeScreen() {
   const slideAnim = useRef(new Animated.Value(-60)).current;
   const opacityAnim = useRef(new Animated.Value(0)).current;
   const [modalVisible, toggleModal] = useState<boolean>(false);
+  const { session } = useSession();
+  const [reports, setReports] = useState([]);
+  const { data, error } = useQuery({
+    queryKey: ["reports"],
+    queryFn: async () => {
+      try {
+        const token = session?.user.token;
+        if (!token || token === "") return null;
+
+        const response = await axios.get(
+          `${process.env.EXPO_PUBLIC_API_URL}/reports`,
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+        return response.data;
+      } catch (error) {}
+    },
+  });
+
+  useEffect(() => {
+    if (!data) return;
+    let reports = [];
+    data.map((item) => {
+      reports.push({
+        date: item.created_at.substring(0, 10),
+        initialCash: item.cash_initial,
+        finalCash: item.cash_final,
+      });
+    });
+    setReports(reports);
+  }, [data]);
 
   const renderItem = ({ item }: { item: IReport }) => (
     <View style={styles.row}>

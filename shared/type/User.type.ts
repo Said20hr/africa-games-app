@@ -5,10 +5,31 @@ export interface ILoginResponse {
 
 export interface Casino {
   id: number;
-  initial_amount: string;
   name: string;
-  roulette: any[];
   shift: string;
+  initial_amount: string;
+  roulettes: Roulette[];
+  hasRoulette: boolean;
+  last_operation: Date | null;
+}
+
+export interface Roulette {
+  id: number;
+  identifier: string;
+  type: string;
+  casino_id: number;
+  key_in: string;
+  key_out: string;
+  money_in: string;
+  total_key_in: string;
+  total_key_out: string;
+  total_money_in: string;
+  created_at: string;
+  updated_at: string;
+  diff_key: number;
+  diff_total_key: number;
+  status: boolean;
+  inactive_days: number;
 }
 
 export interface User {
