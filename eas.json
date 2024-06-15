@@ -5,20 +5,33 @@
   "build": {
     "development": {
       "developmentClient": true,
-      "distribution": "internal"
+      "distribution": "internal",
+      "env": {
+        "EXPO_PUBLIC_API_URL": "https://africa-games-app.online/api"
+      }
     },
     "preview": {
       "distribution": "internal",
       "android": {
         "buildType": "apk"
+      },
+      "env": {
+        "EXPO_PUBLIC_API_URL": "https://africa-games-app.online/api"
       }
     },
-    "production": {},
+    "production": {
+      "env": {
+        "EXPO_PUBLIC_API_URL": "https://africa-games-app.online/api"
+      }
+    },
     "development-simulator": {
       "developmentClient": true,
       "distribution": "internal",
       "ios": {
         "simulator": true
+      },
+      "env": {
+        "EXPO_PUBLIC_API_URL": "https://africa-games-app.online/api"
       }
     }
   },

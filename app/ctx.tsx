@@ -1,7 +1,7 @@
 // context/AuthContext.tsx
 import { REMEMBER_ME, USER_TOKEN } from "@/constants/Keys";
 import { ILoginResponse } from "@/shared/type/User.type";
-import storage from "@/shared/util/mmkv";
+import { storage } from "@/shared/util/mmkv";
 import { useQuery } from "@tanstack/react-query";
 import axios from "axios";
 import React, {
@@ -11,6 +11,7 @@ import React, {
   ReactNode,
   useEffect,
 } from "react";
+import { Alert } from "react-native";
 
 export type IAuthContext = {
   signIn: (data: ILoginResponse) => void;
@@ -44,12 +45,12 @@ export function SessionProvider(props: { children: ReactNode }) {
     queryKey: ["refetchData"],
     queryFn: async () => {
       try {
-        const token = storage.getString(USER_TOKEN);
+        const token = storage.getItem(USER_TOKEN);
         const rememberMe = storage.getBoolean(REMEMBER_ME);
         if (!token || token === "" || !rememberMe) return null;
 
         const response = await axios.get(
-          `${process.env.EXPO_PUBLIC_API_URL}/refresh-daily-data`,
+          `https://africa-games-app.online/api/refresh-daily-data`,
           {
             headers: {
               Authorization: `Bearer ${token}`,
@@ -79,7 +80,7 @@ export function SessionProvider(props: { children: ReactNode }) {
 
   const signOut = () => {
     setSession(null);
-    storage.set(USER_TOKEN, "");
+    storage.setItem(USER_TOKEN, "");
   };
 
   return (

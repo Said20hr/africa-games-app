@@ -52,7 +52,7 @@ const styles = StyleSheet.create({
     height: "100%",
   },
   overlay: {
-    backgroundColor: "rgba(0,0,0,0.85)",
+    backgroundColor: "rgba(0,0,0,0.25)",
     flex: 1,
     width: "100%",
     height: "100%",

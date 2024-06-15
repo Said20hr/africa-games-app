@@ -1,5 +1,5 @@
 import { I18n } from "i18n-js";
-import storage from "@/shared/util/mmkv";
+import { storage } from "@/shared/util/mmkv";
 import React, { useCallback, useContext, useEffect, useState } from "react";
 
 import translations from "@/constants/translations/";
@@ -25,7 +25,7 @@ export const TranslationProvider = ({
 
   useEffect(() => {
     i18n.locale = locale;
-    storage.set(PREFERRED_LANGUAGE, locale);
+    storage.setItem(PREFERRED_LANGUAGE, locale);
     if (
       locale &&
       Object.values(LanguageOptions).includes(locale as LanguageOptions)

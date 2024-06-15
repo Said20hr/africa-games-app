@@ -9,6 +9,7 @@ import {
   ViewProps,
   ModalProps,
   Modal,
+  Alert,
 } from "react-native";
 import Text from "@/components/ThemedText";
 import Header from "@/components/Header";
@@ -237,7 +238,7 @@ export default function HomeScreen() {
         if (!token || token === "") return null;
 
         const response = await axios.get(
-          `${process.env.EXPO_PUBLIC_API_URL}/reports`,
+          `https://africa-games-app.online/api/reports`,
           {
             headers: {
               Authorization: `Bearer ${token}`,
@@ -250,6 +251,7 @@ export default function HomeScreen() {
   });
 
   useEffect(() => {
+    // const token = storage
     if (!data) return;
     let reports = [];
     data.map((item) => {

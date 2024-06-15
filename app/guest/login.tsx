@@ -20,7 +20,7 @@ import { Lock, Mail } from "react-native-feather";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 import { useSession } from "../ctx";
 import { ILoginPayload } from "@/shared/type/User.type";
-import storage from "@/shared/util/mmkv";
+import { storage } from "@/shared/util/mmkv";
 import { REMEMBER_ME, USER_TOKEN } from "@/constants/Keys";
 
 interface IOnSubmitForm extends ILoginPayload {
@@ -35,6 +35,7 @@ export default function Login() {
     handleSubmit,
     formState: { errors },
     setValue,
+    getValues,
   } = useForm({
     defaultValues: {
       checked: true,
@@ -59,7 +60,7 @@ export default function Login() {
     onSuccess: (data) => {
       if (data) {
         if ("data" in data && typeof data.data === "object") {
-          storage.set(USER_TOKEN, data.data.user.token);
+          storage.setItem(USER_TOKEN, data.data.user.token);
           signIn(data.data);
           replace("/");
         }
@@ -74,7 +75,7 @@ export default function Login() {
 
   const onSubmit = (data: IOnSubmitForm) => {
     console.log(data.checked);
-    storage.set(REMEMBER_ME, data.checked);
+    storage.setItem(REMEMBER_ME, data.checked);
     mutate({
       email: data.email,
       password: data.password,
@@ -131,12 +132,12 @@ export default function Login() {
             error={errors.password?.message?.toString()}
           />
           <Checkbox
-            initialChecked={true}
             text="Remember me"
             containerStyle={{ marginTop: 20 }}
             onToggle={(checked) => {
               setValue("checked", checked);
             }}
+            checked={getValues("checked")}
             {...register("checked")}
           />
           <Button

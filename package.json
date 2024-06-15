@@ -17,7 +17,9 @@
   "dependencies": {
     "@expo/vector-icons": "^14.0.0",
     "@react-navigation/native": "^6.0.2",
+    "@tanstack/query-sync-storage-persister": "^5.45.0",
     "@tanstack/react-query": "^5.44.0",
+    "@tanstack/react-query-persist-client": "^5.45.0",
     "axios": "^1.7.2",
     "expo": "~51.0.14",
     "expo-constants": "~16.0.2",

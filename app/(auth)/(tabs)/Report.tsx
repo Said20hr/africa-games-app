@@ -324,7 +324,7 @@ const ReportForm = ({ handleSubmit }: ReportFormProps) => {
     mutationFn: async (data) => {
       try {
         const response = await axios.post(
-          `${process.env.EXPO_PUBLIC_API_URL}/reports`,
+          `https://africa-games-app.online/api/reports`,
           data,
           {
             headers: {
