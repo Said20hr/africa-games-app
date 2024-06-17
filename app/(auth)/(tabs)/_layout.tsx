@@ -6,6 +6,8 @@ import { Colors } from "@/constants/Colors";
 import { useColorScheme } from "@/hooks/useColorScheme";
 import { useThemeColor } from "@/hooks/useThemeColor";
 import ThemedText from "@/components/ThemedText";
+import { DoubleArrow, File, Home } from "@/assets/icons";
+import { User } from "react-native-feather";
 
 export default function TabLayout() {
   const { background, primary, text } = useThemeColor();
@@ -29,10 +31,7 @@ export default function TabLayout() {
         options={{
           title: "Home",
           tabBarIcon: ({ color, focused }) => (
-            <TabBarIcon
-              name={"home-outline"}
-              color={focused ? primary : text}
-            />
+            <Home stroke={focused ? primary : text} />
           ),
         }}
       />
@@ -41,12 +40,8 @@ export default function TabLayout() {
         options={{
           title: "Reports",
           tabBarIcon: ({ color, focused }) => (
-            <TabBarIcon
-              name={"file-tray-full-outline"}
-              color={focused ? primary : text}
-            />
+            <File stroke={focused ? primary : text} />
           ),
-          unmountOnBlur: true,
         }}
       />
       <Tabs.Screen
@@ -54,7 +49,7 @@ export default function TabLayout() {
         options={{
           title: "Movements",
           tabBarIcon: ({ color, focused }) => (
-            <TabBarIcon name={"arrow-back"} color={focused ? primary : text} />
+            <DoubleArrow fill={focused ? primary : text} />
           ),
         }}
       />
@@ -63,7 +58,7 @@ export default function TabLayout() {
         options={{
           title: "Account",
           tabBarIcon: ({ color, focused }) => (
-            <TabBarIcon name={"people"} color={focused ? primary : text} />
+            <User color={focused ? primary : text} />
           ),
         }}
       />

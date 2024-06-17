@@ -30,39 +30,7 @@ import Table from "@/components/Table";
 import { useQuery } from "@tanstack/react-query";
 import { useSession } from "@/app/ctx";
 import axios from "axios";
-
-const reports: IReport[] = [
-  {
-    date: "2024-06-01",
-    initialCash: "1000 XAF",
-    finalCash: "1200 XAF",
-  },
-  {
-    date: "2024-06-02",
-    initialCash: "1200 XAF",
-    finalCash: "1100 XAF",
-  },
-  {
-    date: "2024-06-03",
-    initialCash: "1100 XAF",
-    finalCash: "1400 XAF",
-  },
-  {
-    date: "2024-06-04",
-    initialCash: "1000 XAF",
-    finalCash: "1200 XAF",
-  },
-  {
-    date: "2024-06-05",
-    initialCash: "1200 XAF",
-    finalCash: "1100 XAF",
-  },
-  {
-    date: "2024-06-06",
-    initialCash: "1100 XAF",
-    finalCash: "1400 XAF",
-  },
-];
+import { ScrollView } from "react-native";
 
 type InfoCardProps = {
   title: string;
@@ -194,7 +162,7 @@ function AnimatedRequest(props: AnimatedRequestProps) {
         {
           borderRadius: 12,
           paddingVertical: 10,
-          paddingHorizontal: 15,
+          paddingHorizontal: 20,
           marginBottom: 20,
           backgroundColor: "#0C9700",
           marginHorizontal: 12,
@@ -208,6 +176,7 @@ function AnimatedRequest(props: AnimatedRequestProps) {
           flexDirection: "row",
           alignItems: "center",
           justifyContent: "space-between",
+          flex: 1,
         }}
         onPress={onViewDetails}
       >
@@ -238,7 +207,7 @@ export default function HomeScreen() {
         if (!token || token === "") return null;
 
         const response = await axios.get(
-          `https://africa-games-app.online/api/reports`,
+          `${process.env.EXPO_PUBLIC_API_URL}/reports`,
           {
             headers: {
               Authorization: `Bearer ${token}`,
@@ -257,8 +226,8 @@ export default function HomeScreen() {
     data.map((item) => {
       reports.push({
         date: item.created_at.substring(0, 10),
-        initialCash: item.cash_initial,
-        finalCash: item.cash_final,
+        initialCash: `${item.cash_initial}  XAF`,
+        finalCash: `${item.cash_final}  XAF`,
       });
     });
     setReports(reports);
@@ -325,15 +294,16 @@ export default function HomeScreen() {
   }
 
   return (
-    <View
-      style={[
+    <ScrollView
+      contentContainerStyle={[
         styles.screenContainer,
         {
-          backgroundColor: black,
           paddingTop: top,
           flex: 1,
         },
       ]}
+      style={{ backgroundColor: black }}
+      showsVerticalScrollIndicator={false}
     >
       <Animated.View
         style={{
@@ -363,23 +333,15 @@ export default function HomeScreen() {
               </TouchableOpacity>
             }
           >
-            {/* <FlatList
-              data={reports}
-              renderItem={renderItem}
-              ListHeaderComponent={() => (
-                <View style={styles.tableHeader}>
-                  <Text style={[styles.tableHeaderText, { textAlign: "left" }]}>
-                    Date
-                  </Text>
-                  <Text style={styles.tableHeaderText}>Initial Cash</Text>
-                  <Text style={styles.tableHeaderText}>Final Cash</Text>
-                </View>
+            <>
+              {reports.length > 0 && (
+                <Table
+                  reports={reports}
+                  headers={["Date", "Initial Cash", "Final Cash"]}
+                  isFlatList={false}
+                />
               )}
-            /> */}
-            <Table
-              reports={reports}
-              headers={["Date", "Initial Cash", "Final Cash"]}
-            />
+            </>
           </InfoCard>
         </View>
       </Animated.View>
@@ -391,7 +353,7 @@ export default function HomeScreen() {
         onApprove={onApproveRequest}
         onCancel={onCancelRequest}
       />
-    </View>
+    </ScrollView>
   );
 }
 

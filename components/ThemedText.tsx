@@ -21,7 +21,7 @@ export default function ThemedText({
   return (
     <Text
       style={[
-        { color: text },
+        { color: text, fontFamily: "PoppinsMedium" },
         type === "default" ? styles.default : undefined,
         type === "h1" ? styles.h1 : undefined,
         type === "h2" ? styles.h2 : undefined,
@@ -45,33 +45,41 @@ const styles = StyleSheet.create({
   h2: {
     fontSize: 24,
     fontWeight: "700",
+    fontFamily: "PoppinsSemiBold",
   },
   h1: {
     fontSize: 32,
     fontWeight: "bold",
+    fontFamily: "PoppinsBold",
   },
   h3: {
     fontSize: 20,
     fontWeight: "700",
+    fontFamily: "PoppinsSemiBold",
   },
   h4: {
     fontSize: 16,
     fontWeight: "700",
+    fontFamily: "PoppinsSemiBold",
   },
   h5: {
     fontSize: 14,
     fontWeight: "700",
+    fontFamily: "PoppinsSemiBold",
   },
   h6: {
     fontSize: 12,
     fontWeight: "700",
+    fontFamily: "PoppinsSemiBold",
   },
   b1: {
     fontSize: 14,
-    fontWeight: "400",
+    fontFamily: "PoppinsMedium",
+    fontWeight: "500",
   },
   b2: {
     fontSize: 12,
-    fontWeight: "400",
+    fontFamily: "PoppinsMedium",
+    fontWeight: "500",
   },
 });

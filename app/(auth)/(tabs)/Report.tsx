@@ -1,11 +1,4 @@
-import {
-  Dimensions,
-  FlatList,
-  Modal,
-  ScrollView,
-  StyleSheet,
-  View,
-} from "react-native";
+import { Dimensions, Modal, ScrollView, StyleSheet, View } from "react-native";
 import Header from "@/components/Header";
 import Text from "@/components/ThemedText";
 import { useThemeColor } from "@/hooks/useThemeColor";
@@ -17,8 +10,6 @@ import {
   CheckCircle,
   DollarSign,
   MapPin,
-  MinusCircle,
-  PlusCircle,
 } from "react-native-feather";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 import React, { useEffect, useMemo, useRef, useState } from "react";
@@ -34,84 +25,18 @@ import Toast from "react-native-toast-message";
 import { useMutation } from "@tanstack/react-query";
 import axios from "axios";
 import { queryClient } from "@/api/query-client";
+import LoadingScreen from "@/components/ui/LoadingScreen";
+import { CashIn, CashOut, Money } from "@/assets/icons";
 
 const { width, height } = Dimensions.get("window");
 const FORM_WIDTH = width - 32;
 const SVG_HEIGHT = height / 1.2;
-
-function generateTimes(baseTime, hourAdjustments) {
-  return hourAdjustments.map((hours) => {
-    const newTime = new Date(baseTime); // Clone the original time
-    newTime.setHours(baseTime.getHours() + hours); // Adjust the hour
-    return newTime;
-  });
-}
-
-// Array of hour adjustments
-const hourAdjustments = [12, -3, -12, -6, 6, 16, 8, 10, 2, 4, 8, 14];
-
-// Generate the array of new times
-const timesArray = generateTimes(new Date(), hourAdjustments);
-
-const testTimes = [
-  new Date("2024-06-14T00:00:00.000Z"),
-  new Date("2024-06-14T01:00:00.000Z"),
-  new Date("2024-06-14T04:00:00.000Z"),
-  new Date("2024-06-14T08:58:00.000Z"),
-  new Date("2024-06-14T09:00:00.000Z"),
-  new Date("2024-06-14T10:00:00.000Z"),
-  new Date("2024-06-14T20:00:00.000Z"),
-  new Date("2024-06-13T20:00:00.000Z"),
-];
 
 let CURRENT_TIME = new Date();
 
 const originalWidth = 393;
 const originalHeight = 604;
 const aspectRatio = originalWidth / originalHeight;
-
-const lastPaymentDates = [
-  new Date(
-    CURRENT_TIME.getFullYear(),
-    CURRENT_TIME.getMonth(),
-    CURRENT_TIME.getDate() - 1,
-    CURRENT_TIME.getHours() - 1, // One hour before current time, yesterday
-    CURRENT_TIME.getMinutes(),
-    CURRENT_TIME.getSeconds()
-  ), // Yesterday just before the current hour
-  new Date(
-    CURRENT_TIME.getFullYear(),
-    CURRENT_TIME.getMonth(),
-    CURRENT_TIME.getDate() - 2,
-    CURRENT_TIME.getHours() + 1, // One hour after current time, two days ago
-    CURRENT_TIME.getMinutes(),
-    CURRENT_TIME.getSeconds()
-  ), // Two days ago just after the current hour
-  new Date(
-    CURRENT_TIME.getFullYear(),
-    CURRENT_TIME.getMonth(),
-    CURRENT_TIME.getDate() - 7,
-    2, // Very early in the morning (2 AM), a week ago
-    0,
-    0
-  ), // A week ago at 2 AM
-  new Date(
-    CURRENT_TIME.getFullYear(),
-    CURRENT_TIME.getMonth(),
-    CURRENT_TIME.getDate() - 14,
-    23, // Late night (11 PM), two weeks ago
-    59,
-    59
-  ), // Two weeks ago at one minute before midnight
-  new Date(
-    CURRENT_TIME.getFullYear(),
-    CURRENT_TIME.getMonth(),
-    CURRENT_TIME.getDate() - 30,
-    12, // Noon, a month ago
-    0,
-    0
-  ), // A month ago at noon
-];
 
 interface RouletteData {
   id: number;
@@ -141,6 +66,7 @@ type ReportWaitingTimerProps = {
   color: string;
   progress: number;
   timeRemaining: string;
+  description: string;
 };
 
 type ReportModalProps = {
@@ -173,10 +99,10 @@ const ReportConfirmModal = ({ continuePress, visible }: ReportModalProps) => {
 };
 
 const ReportWaitingTimer = ({
-  onBack,
   color,
   progress,
   timeRemaining,
+  description,
 }: ReportWaitingTimerProps) => {
   const { black } = useThemeColor();
 
@@ -194,16 +120,16 @@ const ReportWaitingTimer = ({
         <View style={styles.timeContainer}>
           <AnimatedCircularProgress percentage={progress} color={color} />
           <View style={styles.timeRemaining}>
-            <Text type="h3">STILL</Text>
-            <Text type="h4">{timeRemaining}</Text>
+            <Text type="h2">STILL</Text>
+            <Text type="h1" style={{ color }}>
+              {timeRemaining}
+            </Text>
           </View>
         </View>
         <Text style={{ textAlign: "center", marginTop: 50 }} type="h4">
-          Veuillez attendre la fin de votre shift pour pouvoir remplir les
-          données de clôture.
+          {description}
         </Text>
       </View>
-      <Button label="Back" onPress={onBack} />
     </View>
   );
 };
@@ -239,7 +165,7 @@ const RouletteForm = ({
             width: "60%",
             maxWidth: 300,
             paddingVertical: 14,
-            gap: 10,
+            gap: 8,
             flexDirection: "row",
             justifyContent: "center",
             alignItems: "center",
@@ -265,7 +191,7 @@ const RouletteForm = ({
           <Text type="h6">{rouletteData.key_in} XAF</Text>
         </View>
         <Input
-          InitialIcon={<DollarSign color={text} />}
+          InitialIcon={<CashIn color={text} />}
           placeholder="Enter your initial cash"
           keyboardType="decimal-pad"
           onChangeText={keyInChange}
@@ -281,7 +207,7 @@ const RouletteForm = ({
           <Text type="h6">{rouletteData.key_out} XAF</Text>
         </View>
         <Input
-          InitialIcon={<DollarSign color={text} />}
+          InitialIcon={<CashOut color={text} />}
           placeholder="Enter your final cash"
           keyboardType="decimal-pad"
           onChangeText={keyOutChange}
@@ -324,7 +250,7 @@ const ReportForm = ({ handleSubmit }: ReportFormProps) => {
     mutationFn: async (data) => {
       try {
         const response = await axios.post(
-          `https://africa-games-app.online/api/reports`,
+          `${process.env.EXPO_PUBLIC_API_URL}/reports`,
           data,
           {
             headers: {
@@ -409,12 +335,13 @@ const ReportForm = ({ handleSubmit }: ReportFormProps) => {
 
   return (
     <KeyboardAwareScrollView
+      style={{ paddingBottom: 60 }}
       contentContainerStyle={{
         flex: 1,
         backgroundColor: black,
         flexGrow: 1,
       }}
-      bounces={false}
+      // bounces={false}
     >
       <View style={{ flex: 1, height }}>
         <LinearGradient
@@ -516,7 +443,7 @@ const ReportForm = ({ handleSubmit }: ReportFormProps) => {
                   <Text type="h6">{session?.casino.initial_amount} XAF</Text>
                 </View>
                 <Input
-                  InitialIcon={<DollarSign color={text} />}
+                  InitialIcon={<Money color={text} />}
                   placeholder="Enter your final cash"
                   keyboardType="decimal-pad"
                   onChangeText={(value: string) =>
@@ -578,7 +505,9 @@ const ReportForm = ({ handleSubmit }: ReportFormProps) => {
 };
 
 export default function ReportScreen() {
-  const [activeSection, setActiveSection] = useState<Sections>(Sections.FORM);
+  const [activeSection, setActiveSection] = useState<Sections | null>(
+    Sections.FORM
+  );
   const [showModal, toggleModal] = useState(false);
   const { black, success, danger } = useThemeColor();
   const { session } = useSession() as IAuthContext;
@@ -616,47 +545,45 @@ export default function ReportScreen() {
   const [timeRemaining, setTimeRemaining] = useState(
     getTimeUntilNineAMTomorrow(CURRENT_TIME)
   );
-  useEffect(() => {
-    const interval = setInterval(() => {
-      CURRENT_TIME.setSeconds(CURRENT_TIME.getSeconds() + 1);
-      if (!startTime || !endTime || !lastPaymentTime) {
-        setActiveSection(Sections.FORM);
-        return;
-      }
+  // useEffect(() => {
+  //   const interval = setInterval(() => {
+  //     CURRENT_TIME.setSeconds(CURRENT_TIME.getSeconds() + 1);
+  //     if (!startTime || !endTime || !lastPaymentTime) {
+  //       setActiveSection(Sections.FORM);
+  //       return;
+  //     }
 
-      const previousShiftEnd = new Date(endTime);
-      if (CURRENT_TIME < endTime)
-        previousShiftEnd.setDate(previousShiftEnd.getDate() - 1);
-      if (previousShiftEnd > lastPaymentTime) {
-        setActiveSection(Sections.FORM);
-        return;
-      } else if (CURRENT_TIME >= startTime && CURRENT_TIME <= endTime)
-        setActiveSection(Sections.DURING_SHIFT_TIMER);
-      else setActiveSection(Sections.AFTER_SHIFT_TIMER);
-      // console.log("START TIME: ", startTime);
-      // console.log("END TIME: ", endTime);
-      // console.log("CURRENT TIME: ", CURRENT_TIME);
-      // console.log("LAST PAYMENT TIME: ", lastPaymentTime);
+  //     const previousShiftEnd = new Date(endTime);
+  //     if (CURRENT_TIME < endTime)
+  //       previousShiftEnd.setDate(previousShiftEnd.getDate() - 1);
+  //     if (previousShiftEnd > lastPaymentTime) {
+  //       setActiveSection(Sections.FORM);
+  //       return;
+  //     } else if (CURRENT_TIME >= startTime && CURRENT_TIME <= endTime)
+  //       setActiveSection(Sections.DURING_SHIFT_TIMER);
+  //     else setActiveSection(Sections.AFTER_SHIFT_TIMER);
 
-      if (activeSection === Sections.AFTER_SHIFT_TIMER) {
-        const nextStartTime = new Date(startTime);
-        if (CURRENT_TIME > nextStartTime)
-          nextStartTime.setDate(nextStartTime.getDate() + 1);
-        const previousEndTime = new Date(endTime);
-        if (CURRENT_TIME < previousEndTime)
-          previousEndTime.setDate(previousEndTime.getDate() - 1);
-        setTimeRemaining(getTimeRemaining(CURRENT_TIME, nextStartTime));
-        setProgress(
-          getProgressPercentage(previousEndTime, CURRENT_TIME, nextStartTime)
-        );
-      } else if (activeSection === Sections.DURING_SHIFT_TIMER) {
-        setTimeRemaining(getTimeRemaining(CURRENT_TIME, endTime));
-        setProgress(getProgressPercentage(startTime, CURRENT_TIME, endTime));
-      }
-    }, 1000);
+  //     if (activeSection === Sections.AFTER_SHIFT_TIMER) {
+  //       const nextStartTime = new Date(startTime);
+  //       if (CURRENT_TIME > nextStartTime)
+  //         nextStartTime.setDate(nextStartTime.getDate() + 1);
+  //       const previousEndTime = new Date(endTime);
+  //       if (CURRENT_TIME < previousEndTime)
+  //         previousEndTime.setDate(previousEndTime.getDate() - 1);
+  //       setTimeRemaining(getTimeRemaining(CURRENT_TIME, nextStartTime));
+  //       setProgress(
+  //         getProgressPercentage(previousEndTime, CURRENT_TIME, nextStartTime)
+  //       );
+  //     } else if (activeSection === Sections.DURING_SHIFT_TIMER) {
+  //       setTimeRemaining(getTimeRemaining(CURRENT_TIME, endTime));
+  //       setProgress(getProgressPercentage(startTime, CURRENT_TIME, endTime));
+  //     }
+  //   }, 1000);
 
-    return () => clearInterval(interval);
-  }, [startTime, endTime, lastPaymentTime, activeSection]);
+  //   return () => clearInterval(interval);
+  // }, [startTime, endTime, lastPaymentTime, activeSection]);
+
+  if (activeSection === null) return <LoadingScreen />;
 
   return (
     <View style={{ flex: 1, backgroundColor: black }}>
@@ -674,6 +601,7 @@ export default function ReportScreen() {
           onBack={() => setActiveSection(Sections.FORM)}
           progress={progress}
           timeRemaining={timeRemaining}
+          description="Please wait until the end of your shift to be able to fill out the form."
         />
       ) : activeSection === Sections.AFTER_SHIFT_TIMER ? (
         <ReportWaitingTimer
@@ -681,6 +609,7 @@ export default function ReportScreen() {
           onBack={() => setActiveSection(Sections.FORM)}
           progress={progress}
           timeRemaining={timeRemaining}
+          description="Please wait until the end of your next shift to be to fill the form"
         />
       ) : null}
       <ReportConfirmModal

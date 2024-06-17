@@ -2,7 +2,13 @@ import { Button, Input } from "@/components/ui";
 import { useThemeColor } from "@/hooks/useThemeColor";
 import { Stack, useNavigation } from "expo-router";
 import React from "react";
-import { StyleSheet, Touchable, TouchableOpacity, View } from "react-native";
+import {
+  Dimensions,
+  StyleSheet,
+  Touchable,
+  TouchableOpacity,
+  View,
+} from "react-native";
 import {
   ArrowLeft,
   Edit,
@@ -14,10 +20,17 @@ import {
 import Text from "@/components/ThemedText";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 import { Image } from "expo-image";
+import { useSession } from "@/app/ctx";
+
+const IMAGE_WIDTH = Dimensions.get("screen").width * 0.45;
 
 const EditProfile: React.FC = () => {
   const { black, text, primary, accent } = useThemeColor();
   const { goBack } = useNavigation();
+  const { session } = useSession();
+
+  console.log(session?.user);
+
   return (
     <>
       <Stack.Screen
@@ -57,9 +70,10 @@ const EditProfile: React.FC = () => {
                 <Edit color={text} strokeWidth={3} />
               </View>
             </TouchableOpacity>
-            <Text type="h4">CHLOE SMITH</Text>
+            <Text type="h4">{session?.user.name.toUpperCase()}</Text>
             <Text type="b1" style={{ color: accent }}>
-              Gamer
+              {session?.user.role.charAt(0).toUpperCase()}
+              {session?.user.role.slice(1)}
             </Text>
           </View>
           <View style={styles.spacedRow}>
@@ -67,11 +81,13 @@ const EditProfile: React.FC = () => {
               label="Name"
               InitialIcon={<User color={text} />}
               placeholder="xxxxxx"
+              value={session?.user.name}
             />
             <Input
               label="Username"
               InitialIcon={<User color={text} />}
               placeholder="xxxxxx"
+              // value={session?.user.}
             />
           </View>
           <View>
@@ -81,14 +97,16 @@ const EditProfile: React.FC = () => {
               placeholder="+92363663632"
               keyboardType="email-address"
               autoCapitalize="none"
+              value={session?.user.email}
             />
           </View>
           <View>
             <Input
               label="Password"
               InitialIcon={<Lock color={text} />}
-              placeholder="+92363663632"
+              placeholder="xxxxxxxxxx"
               textContentType="password"
+              // value={session?.user.}
             />
           </View>
           <View>
@@ -96,6 +114,7 @@ const EditProfile: React.FC = () => {
               label="Working store"
               InitialIcon={<MapPin color={text} />}
               placeholder="Store number 206"
+              value={session?.casino.name}
             />
           </View>
         </View>
@@ -112,8 +131,8 @@ const styles = StyleSheet.create({
     gap: 8,
   },
   image: {
-    width: 120,
-    height: 120,
+    width: IMAGE_WIDTH,
+    height: IMAGE_WIDTH,
     borderRadius: 200,
   },
   imageContainer: {

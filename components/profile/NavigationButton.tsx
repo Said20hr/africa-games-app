@@ -74,8 +74,8 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     padding: 16,
-    borderBottomWidth: 1,
-    borderBottomColor: "#333",
+    // borderBottomWidth: 1,
+    // borderBottomColor: "#333",
   },
   iconContainer: {
     backgroundColor: "rgba(233, 146, 19, 0.1)",

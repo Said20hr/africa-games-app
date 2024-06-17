@@ -1,7 +1,6 @@
 import React, { useState, useEffect, useRef } from "react";
 import {
   View,
-  Text,
   StyleSheet,
   Animated,
   ViewStyle,
@@ -10,6 +9,7 @@ import {
 } from "react-native";
 import { Check } from "react-native-feather";
 import { Colors } from "@/constants/Colors";
+import Text from "../ThemedText";
 
 type CheckboxProps = {
   text?: string;
@@ -77,7 +77,11 @@ const Checkbox: React.FC<CheckboxProps> = ({
           />
         </Animated.View>
       </Animated.View>
-      {text && <Text style={[styles.text, textStyle]}>{text}</Text>}
+      {text && (
+        <Text type="b1" style={[styles.text, textStyle]}>
+          {text}
+        </Text>
+      )}
     </Pressable>
   );
 };
@@ -102,10 +106,7 @@ const styles = StyleSheet.create({
     width: 18,
     height: 18,
   },
-  text: {
-    color: Colors.dark.text,
-    fontSize: 16,
-  },
+  text: {},
 });
 
 export default Checkbox;
