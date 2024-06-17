@@ -1,26 +1,38 @@
 import useSafeAreaInsets from "@/hooks/useSafeArea";
 import React from "react";
-import { View, Text, StyleSheet } from "react-native";
+import { View, Text, StyleSheet, Image, ViewStyle } from "react-native";
 import { Calendar, UserPlus } from "react-native-feather";
-import { ThemedText } from "./ThemedText";
+import ThemedText from "./ThemedText";
 import { Colors } from "@/constants/Colors";
 import { useThemeColor } from "@/hooks/useThemeColor";
-import { Image } from "expo-image";
+// import { Image } from "expo-image";
+import { IAuthContext, useSession } from "@/app/ctx";
 
 interface HeaderProps {
   image?: boolean;
   text1?: string;
   text2?: string;
   title?: string;
+  containerStyle?: ViewStyle;
 }
 
-const Header: React.FC<HeaderProps> = ({ image, text1, text2, title }) => {
+const Header: React.FC<HeaderProps> = ({
+  image,
+  text1,
+  text2,
+  title,
+  containerStyle,
+}) => {
   const { top } = useSafeAreaInsets();
   const { black } = useThemeColor();
+  const { session } = useSession() as IAuthContext;
 
   return (
     <View
-      style={{ backgroundColor: black, paddingTop: top, paddingBottom: 10 }}
+      style={[
+        { backgroundColor: black, paddingTop: top, paddingBottom: 10 },
+        containerStyle,
+      ]}
     >
       <View style={styles.headerBottom}>
         <View>
@@ -28,7 +40,7 @@ const Header: React.FC<HeaderProps> = ({ image, text1, text2, title }) => {
             <>
               <ThemedText type="h4">{text1}</ThemedText>
               <ThemedText type="b1" style={{ marginTop: 8 }}>
-                {text2}
+                {session?.user.name}
               </ThemedText>
             </>
           ) : title ? (
@@ -38,7 +50,7 @@ const Header: React.FC<HeaderProps> = ({ image, text1, text2, title }) => {
         {image && (
           <Image
             source={require("@/assets/images/user-header.png")}
-            style={styles.image}
+            style={{ uri: session?.user.photo }}
           />
         )}
       </View>

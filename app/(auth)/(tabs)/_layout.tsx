@@ -5,7 +5,7 @@ import { TabBarIcon } from "@/components/navigation/TabBarIcon";
 import { Colors } from "@/constants/Colors";
 import { useColorScheme } from "@/hooks/useColorScheme";
 import { useThemeColor } from "@/hooks/useThemeColor";
-import { ThemedText } from "@/components/ThemedText";
+import ThemedText from "@/components/ThemedText";
 
 export default function TabLayout() {
   const { background, primary, text } = useThemeColor();
@@ -46,22 +46,20 @@ export default function TabLayout() {
               color={focused ? primary : text}
             />
           ),
+          unmountOnBlur: true,
         }}
       />
       <Tabs.Screen
-        name="explore"
+        name="movements"
         options={{
-          title: "Favourite",
+          title: "Movements",
           tabBarIcon: ({ color, focused }) => (
-            <TabBarIcon
-              name={"heart-outline"}
-              color={focused ? primary : text}
-            />
+            <TabBarIcon name={"arrow-back"} color={focused ? primary : text} />
           ),
         }}
       />
       <Tabs.Screen
-        name="Profile"
+        name="profile"
         options={{
           title: "Account",
           tabBarIcon: ({ color, focused }) => (

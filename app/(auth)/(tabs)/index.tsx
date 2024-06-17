@@ -1,241 +1,420 @@
+import React, { useEffect, useLayoutEffect, useRef, useState } from "react";
 import {
   StyleSheet,
   View,
   FlatList,
-  ScrollView,
   TouchableOpacity,
+  Animated,
+  Easing,
+  ViewProps,
+  ModalProps,
+  Modal,
+  Alert,
 } from "react-native";
-
-import { ThemedText as Text } from "@/components/ThemedText";
+import Text from "@/components/ThemedText";
 import Header from "@/components/Header";
-import { Colors } from "@/constants/Colors";
-import { ChevronDown, MapPin, Users } from "react-native-feather";
-import InfoCard from "@/components/InfoCard";
+import {
+  AlertCircle,
+  Check,
+  ChevronDown,
+  Users,
+  X,
+} from "react-native-feather";
 import { useThemeColor } from "@/hooks/useThemeColor";
 import { useStatusBar } from "@/hooks/useStatusBar";
-import React from "react";
 import { IReport } from "@/shared/type/Report.type";
-
-type Customer = {
-  name: string;
-  amount: string;
-  income: string;
-  debts: number;
-};
+import { Colors } from "@/constants/Colors";
+import useSafeAreaInsets from "@/hooks/useSafeArea";
+import { LinearGradient } from "expo-linear-gradient";
+import Table from "@/components/Table";
+import { useQuery } from "@tanstack/react-query";
+import { useSession } from "@/app/ctx";
+import axios from "axios";
 
 const reports: IReport[] = [
   {
     date: "2024-06-01",
-    initialCash: "$1000",
-    finalCash: "$1200",
-    information: "Increased cash due to successful investment.",
+    initialCash: "1000 XAF",
+    finalCash: "1200 XAF",
   },
   {
     date: "2024-06-02",
-    initialCash: "$1200",
-    finalCash: "$1100",
-    information: "Decreased cash due to unexpected expenses.",
+    initialCash: "1200 XAF",
+    finalCash: "1100 XAF",
   },
   {
     date: "2024-06-03",
-    initialCash: "$1100",
-    finalCash: "$1400",
-    information: "Increased cash due to additional income.",
+    initialCash: "1100 XAF",
+    finalCash: "1400 XAF",
   },
   {
-    date: "2024-06-01",
-    initialCash: "$1000",
-    finalCash: "$1200",
-    information: "Increased cash due to successful investment.",
+    date: "2024-06-04",
+    initialCash: "1000 XAF",
+    finalCash: "1200 XAF",
   },
   {
-    date: "2024-06-02",
-    initialCash: "$1200",
-    finalCash: "$1100",
-    information: "Decreased cash due to unexpected expenses.",
+    date: "2024-06-05",
+    initialCash: "1200 XAF",
+    finalCash: "1100 XAF",
   },
   {
-    date: "2024-06-03",
-    initialCash: "$1100",
-    finalCash: "$1400",
-    information: "Increased cash due to additional income.",
+    date: "2024-06-06",
+    initialCash: "1100 XAF",
+    finalCash: "1400 XAF",
   },
 ];
 
-type TopCustomerProps = {
-  mainHeader: string;
-  header1: string;
-  header2: string;
-  header3: string;
-  header4: string;
-  data: Customer[];
+type InfoCardProps = {
+  title: string;
+  value: string;
+  icon?: React.ReactNode;
+  action?: React.ReactNode;
+  children?: JSX.Element;
 };
 
-const TopCustomers = ({
-  data,
-  header1,
-  header2,
-  header3,
-  header4,
-  mainHeader,
-}: TopCustomerProps) => {
-  const renderItem = ({ item }: { item: Customer }) => (
-    <View style={styles.row}>
-      <Text style={[styles.cell, { textAlign: "left" }]}>{item.name}</Text>
-      <Text style={styles.cell}>{item.amount}</Text>
-      <Text style={styles.cell}>{item.income}</Text>
-      <Text style={styles.cell}>{item.debts}</Text>
-    </View>
+interface WithdrawalRequestModalProps extends ModalProps {
+  onCancel: () => void;
+  onApprove: () => void;
+  onClose: () => void;
+}
+
+const WithdrawalRequestModal = (props: WithdrawalRequestModalProps) => {
+  const { primary, background, text, accent, danger, success } =
+    useThemeColor();
+  const { onCancel, onClose, onApprove } = props;
+  return (
+    <Modal {...props}>
+      <View
+        style={{
+          flex: 1,
+          justifyContent: "center",
+          alignItems: "center",
+          backgroundColor: "rgba(0,0,0,0.8)",
+        }}
+      >
+        <View
+          style={{
+            backgroundColor: background,
+            width: "90%",
+            paddingHorizontal: 16,
+            paddingVertical: 20,
+            gap: 16,
+            borderRadius: 12,
+          }}
+        >
+          <TouchableOpacity style={{ alignSelf: "flex-end" }} onPress={onClose}>
+            <X color={text} />
+          </TouchableOpacity>
+          <LinearGradient
+            colors={["rgba(217, 205, 189, 1)", "rgba(233, 146, 19, 1)"]}
+            style={[styles.content, { backgroundColor: primary }]}
+          >
+            <Text type="h1" style={{ marginBottom: 12 }}>
+              24 JAN
+            </Text>
+            <Text type="h3">12:10 AM</Text>
+          </LinearGradient>
+          <View style={styles.spacedRow}>
+            <Text type="h5">FROM:</Text>
+            <Text type="b1" style={{ color: accent }}>
+              Chloe Smith
+            </Text>
+          </View>
+          <View style={styles.spacedRow}>
+            <Text type="h5">TO:</Text>
+            <Text type="b1" style={{ color: accent }}>
+              Store 01
+            </Text>
+          </View>
+          <View style={styles.spacedRow}>
+            <Text type="h5">AMOUNT:</Text>
+            <Text type="b1" style={{ color: accent }}>
+              2000 XAF
+            </Text>
+          </View>
+          <View style={[styles.spacedRow, { gap: 40, marginTop: 20 }]}>
+            <TouchableOpacity
+              style={[styles.iconButton, { backgroundColor: danger }]}
+              onPress={onCancel}
+            >
+              <X color={text} width={16} strokeWidth={3} />
+              <Text type="h6">Cancel</Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={[styles.iconButton, { backgroundColor: success }]}
+              onPress={onApprove}
+            >
+              <Check color={text} width={16} strokeWidth={3} />
+              <Text type="h6">Approve</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+      </View>
+    </Modal>
   );
+};
+
+const InfoCard = ({ title, value, icon, action, children }: InfoCardProps) => {
+  const { background, text, primary } = useThemeColor();
 
   return (
-    <View style={styles.container}>
+    <View style={[styles.cardContainer, { backgroundColor: background }]}>
       <View style={styles.header}>
-        <Text style={styles.headerText}>{mainHeader}</Text>
+        <View style={styles.headerInfoContainer}>
+          <View style={[styles.iconContainer, { backgroundColor: primary }]}>
+            {icon || <Users color={text} />}
+          </View>
+          <Text type="h4">{title}</Text>
+        </View>
+        {action && <View style={styles.actionContainer}>{action}</View>}
       </View>
-      <View style={styles.tableHeader}>
-        <Text style={styles.tableHeaderText}>{header1}</Text>
-        <Text style={styles.tableHeaderText}>{header2}</Text>
-        <Text style={styles.tableHeaderText}>{header3}</Text>
-        <Text style={styles.tableHeaderText}>{header4}</Text>
-      </View>
-      <FlatList
-        data={data}
-        renderItem={renderItem}
-        keyExtractor={(item) => item.name}
-      />
+      <Text type="h2" style={styles.value}>
+        {value}
+      </Text>
+      {children}
     </View>
   );
 };
 
+interface AnimatedRequestProps extends ViewProps {
+  onRequestHandlerPress: () => void;
+}
+
+function AnimatedRequest(props: AnimatedRequestProps) {
+  const { text } = useThemeColor();
+
+  function onViewDetails() {
+    props.onRequestHandlerPress();
+  }
+
+  return (
+    <Animated.View
+      {...props}
+      style={[
+        {
+          borderRadius: 12,
+          paddingVertical: 10,
+          paddingHorizontal: 15,
+          marginBottom: 20,
+          backgroundColor: "#0C9700",
+          marginHorizontal: 12,
+          height: 60,
+        },
+        props.style,
+      ]}
+    >
+      <TouchableOpacity
+        style={{
+          flexDirection: "row",
+          alignItems: "center",
+          justifyContent: "space-between",
+        }}
+        onPress={onViewDetails}
+      >
+        <AlertCircle color={text} />
+        <Text style={{ color: text, marginLeft: 8 }} type="b2">
+          There are pending withdrawals that need your approval
+          <Text type="h6">{"    "} View Details</Text>
+        </Text>
+      </TouchableOpacity>
+    </Animated.View>
+  );
+}
+
 export default function HomeScreen() {
-  const { black, background, text, primary, accent } = useThemeColor();
+  const { black, background, text, primary } = useThemeColor();
   useStatusBar("light-content");
+  const { top } = useSafeAreaInsets();
+  const slideAnim = useRef(new Animated.Value(-60)).current;
+  const opacityAnim = useRef(new Animated.Value(0)).current;
+  const [modalVisible, toggleModal] = useState<boolean>(false);
+  const { session } = useSession();
+  const [reports, setReports] = useState([]);
+  const { data, error } = useQuery({
+    queryKey: ["reports"],
+    queryFn: async () => {
+      try {
+        const token = session?.user.token;
+        if (!token || token === "") return null;
+
+        const response = await axios.get(
+          `https://africa-games-app.online/api/reports`,
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+        return response.data;
+      } catch (error) {}
+    },
+  });
+
+  useEffect(() => {
+    // const token = storage
+    if (!data) return;
+    let reports = [];
+    data.map((item) => {
+      reports.push({
+        date: item.created_at.substring(0, 10),
+        initialCash: item.cash_initial,
+        finalCash: item.cash_final,
+      });
+    });
+    setReports(reports);
+  }, [data]);
 
   const renderItem = ({ item }: { item: IReport }) => (
     <View style={styles.row}>
       <Text style={[styles.cell, { textAlign: "left" }]}>{item.date}</Text>
-      <Text style={[styles.cell, { textAlign: "left" }]}>
+      <Text style={[styles.cell, { textAlign: "right" }]}>
         {item.initialCash}
       </Text>
-      <Text style={[styles.cell, { textAlign: "left" }]}>{item.finalCash}</Text>
+      <Text style={[styles.cell, { textAlign: "right" }]}>
+        {item.finalCash}
+      </Text>
     </View>
   );
 
+  useLayoutEffect(() => {
+    Animated.timing(slideAnim, {
+      toValue: 0,
+      duration: 500,
+      easing: Easing.out(Easing.quad),
+      useNativeDriver: true,
+    }).start();
+    Animated.timing(opacityAnim, {
+      toValue: 1,
+      duration: 500,
+      easing: Easing.out(Easing.quad),
+      useNativeDriver: true,
+    }).start();
+  }, []);
+
+  function hideRequest() {
+    Animated.timing(slideAnim, {
+      toValue: -80,
+      duration: 500,
+      easing: Easing.out(Easing.quad),
+      useNativeDriver: true,
+    }).start();
+    Animated.timing(opacityAnim, {
+      toValue: 0,
+      duration: 500,
+      easing: Easing.out(Easing.quad),
+      useNativeDriver: true,
+    }).start();
+  }
+
+  function onRequestPressHandler() {
+    toggleModal(true);
+  }
+
+  function onCloseModal() {
+    toggleModal(false);
+  }
+
+  function onApproveRequest() {
+    toggleModal(false);
+    hideRequest();
+  }
+
+  function onCancelRequest() {
+    toggleModal(false);
+    hideRequest();
+  }
+
   return (
     <View
-      // style={{ flex: 1 }}
-      style={{
-        flex: 1,
-        backgroundColor: black,
-        paddingBottom: 20,
-        flexGrow: 1,
-      }}
-    >
-      <Header image text1="Hi, Welcome Back !" text2="Chloe Smith" />
-      <View
-        style={{
+      style={[
+        styles.screenContainer,
+        {
+          backgroundColor: black,
+          paddingTop: top,
           flex: 1,
-          paddingTop: 12,
-          paddingHorizontal: 8,
+        },
+      ]}
+    >
+      <Animated.View
+        style={{
+          transform: [{ translateY: slideAnim }],
+          flex: 1,
         }}
       >
-        <View style={[styles.cardContainer, { backgroundColor: background }]}>
-          <View
-            style={{
-              flexDirection: "row",
-              alignItems: "center",
-              flex: 0,
-            }}
+        <AnimatedRequest
+          onRequestHandlerPress={onRequestPressHandler}
+          style={{ opacity: opacityAnim }}
+        />
+        <Header
+          image
+          text1="Hi, Welcome Back!"
+          text2="Chloe Smith"
+          containerStyle={{ paddingTop: 0 }}
+        />
+        <View style={styles.contentContainer}>
+          <InfoCard title="Total days" value="3" />
+          <InfoCard
+            title="Reports"
+            value=""
+            action={
+              <TouchableOpacity style={styles.actionButton}>
+                <Text type="h6">This week</Text>
+                <ChevronDown color={text} style={styles.chevronIcon} />
+              </TouchableOpacity>
+            }
           >
-            <View style={[styles.iconContainer, { backgroundColor: primary }]}>
-              <Users color={text} />
-            </View>
-            <Text type="h4">Total days</Text>
-          </View>
-          <Text type="h2" style={{ marginTop: 20 }}>
-            3
-          </Text>
+            {/* <FlatList
+              data={reports}
+              renderItem={renderItem}
+              ListHeaderComponent={() => (
+                <View style={styles.tableHeader}>
+                  <Text style={[styles.tableHeaderText, { textAlign: "left" }]}>
+                    Date
+                  </Text>
+                  <Text style={styles.tableHeaderText}>Initial Cash</Text>
+                  <Text style={styles.tableHeaderText}>Final Cash</Text>
+                </View>
+              )}
+            /> */}
+            <Table
+              reports={reports}
+              headers={["Date", "Initial Cash", "Final Cash"]}
+            />
+          </InfoCard>
         </View>
-        <View style={[styles.cardContainer, { backgroundColor: background }]}>
-          <View
-            style={{
-              flexDirection: "row",
-              alignItems: "center",
-              flex: 0,
-              justifyContent: "space-between",
-            }}
-          >
-            <View style={{ flexDirection: "row", alignItems: "center" }}>
-              <View
-                style={[styles.iconContainer, { backgroundColor: primary }]}
-              >
-                <Users color={text} />
-              </View>
-              <Text type="h4">Reports</Text>
-            </View>
-            <TouchableOpacity
-              style={{
-                flexDirection: "row",
-                alignItems: "center",
-                padding: 8,
-                borderRadius: 12,
-                backgroundColor: "#444444",
-              }}
-            >
-              <Text type="h6">This week</Text>
-              <ChevronDown color={text} style={{ marginLeft: 12 }} />
-            </TouchableOpacity>
-          </View>
-          <FlatList
-            data={reports}
-            renderItem={renderItem}
-            ListHeaderComponent={() => (
-              <View style={styles.tableHeader}>
-                <Text style={styles.tableHeaderText}>Date</Text>
-                <Text style={styles.tableHeaderText}>Initial Cash</Text>
-                <Text style={styles.tableHeaderText}>Final Cash</Text>
-              </View>
-            )}
-          />
-        </View>
-      </View>
+      </Animated.View>
+      <WithdrawalRequestModal
+        visible={modalVisible}
+        animationType="slide"
+        transparent
+        onClose={onCloseModal}
+        onApprove={onApproveRequest}
+        onCancel={onCancelRequest}
+      />
     </View>
   );
 }
 
 const styles = StyleSheet.create({
-  titleContainer: {
+  screenContainer: {
+    flex: 1,
+    paddingBottom: 20,
+  },
+  contentContainer: {
+    flex: 1,
+    paddingTop: 12,
+    paddingHorizontal: 8,
+  },
+  row: {
     flexDirection: "row",
-    alignItems: "center",
-    gap: 8,
+    justifyContent: "space-between",
+    marginVertical: 8,
+    flex: 1,
   },
-  stepContainer: {
-    gap: 8,
-    marginBottom: 8,
-  },
-  reactLogo: {
-    height: 178,
-    width: 290,
-    bottom: 0,
-    left: 0,
-    position: "absolute",
-  },
-  container: {
-    backgroundColor: Colors.dark.background,
-    padding: 16,
-    borderRadius: 16,
-    // margin: 8,
-  },
-  header: {
-    flexDirection: "row",
-    alignItems: "center",
-    marginBottom: 16,
-  },
-  headerText: {
-    color: Colors.dark.text,
-    fontSize: 18,
-    fontWeight: "bold",
+  cell: {
+    fontSize: 12,
+    fontWeight: "700",
+    flex: 1,
   },
   tableHeader: {
     flexDirection: "row",
@@ -247,29 +426,72 @@ const styles = StyleSheet.create({
     color: Colors.dark.tabIconDefault,
     fontSize: 10,
     fontWeight: "bold",
-    textAlign: "left",
+    textAlign: "right",
     flex: 1,
   },
-  row: {
+  actionButton: {
     flexDirection: "row",
-    justifyContent: "space-between",
-    marginVertical: 8,
-    flex: 1,
+    alignItems: "center",
+    padding: 8,
+    borderRadius: 12,
+    backgroundColor: "#444444",
   },
-  cell: {
-    color: Colors.dark.text,
-    fontSize: 12,
-    fontWeight: "700",
-    flex: 1,
+  chevronIcon: {
+    marginLeft: 12,
   },
   cardContainer: {
     borderRadius: 16,
     padding: 20,
     marginVertical: 12,
   },
+  header: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+  },
+  headerInfoContainer: { flexDirection: "row", alignItems: "center" },
   iconContainer: {
     borderRadius: 100,
     padding: 6,
     marginRight: 16,
+  },
+  actionContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+    padding: 8,
+    borderRadius: 12,
+    backgroundColor: "#444444",
+  },
+  value: {
+    marginTop: 20,
+  },
+  button: {
+    borderRadius: 15,
+    paddingVertical: 5,
+    paddingHorizontal: 10,
+    marginLeft: 10,
+  },
+  content: {
+    alignItems: "center",
+    justifyContent: "center",
+    padding: 12,
+    borderRadius: 12,
+    alignSelf: "center",
+    width: "75%",
+    marginBottom: 20,
+  },
+  spacedRow: {
+    justifyContent: "space-between",
+    flexDirection: "row",
+    alignItems: "center",
+  },
+  iconButton: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 12,
+    paddingVertical: 6,
+    borderRadius: 20,
+    flex: 1,
+    justifyContent: "center",
   },
 });

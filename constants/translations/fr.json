@@ -1,0 +1,9 @@
+{
+  "common": {},
+  "screens": {},
+  "login": {},
+  "onboarding": {
+    "welcome": "Bienvenue",
+    "greeting": "Bonjour de Africa Games, heureux de vous avoir"
+  }
+}

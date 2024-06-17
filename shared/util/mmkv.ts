@@ -1,22 +1,25 @@
-// import { MMKVInstance, MMKVLoader } from "react-native-mmkv-storage";
+import { createSyncStoragePersister } from "@tanstack/query-sync-storage-persister";
+import { MMKV } from "react-native-mmkv";
 
-// class MMKVManager {
-//   private static instance: MMKVInstance;
+const storageMMKV = new MMKV();
 
-//   private constructor() {}
+export const storage = {
+  setItem: (key: string, value: any) => {
+    storageMMKV.set(key, value);
+  },
+  getItem: (key: string) => {
+    const value = storageMMKV.getString(key);
+    return value === undefined ? null : value;
+  },
+  getBoolean: (key: string) => {
+    const value = storageMMKV.getBoolean(key);
+    return value === undefined ? null : value;
+  },
+  removeItem: (key: string) => {
+    storageMMKV.delete(key);
+  },
+};
 
-//   public static initialize() {
-//     if (!MMKVManager.instance) {
-//       MMKVManager.instance = new MMKVLoader().initialize();
-//     }
-//   }
-
-//   public static getInstance(): MMKVInstance {
-//     if (!MMKVManager.instance) {
-//       throw new Error("MMKV is not initialized. Call initialize() first.");
-//     }
-//     return MMKVManager.instance;
-//   }
-// }
-
-// export default MMKVManager;
+export const clientPersister = createSyncStoragePersister({
+  storage,
+});

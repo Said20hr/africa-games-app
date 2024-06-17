@@ -13,27 +13,24 @@ import { Colors } from "@/constants/Colors";
 
 type CheckboxProps = {
   text?: string;
-  initialChecked?: boolean;
   onToggle?: (checked: boolean) => void;
   containerStyle?: ViewStyle;
   checkboxStyle?: ViewStyle;
   textStyle?: TextStyle;
+  checked: boolean;
 };
 
 const Checkbox: React.FC<CheckboxProps> = ({
   text,
-  initialChecked = false,
   onToggle,
   containerStyle,
   checkboxStyle,
   textStyle,
+  checked,
 }) => {
-  const [checked, setChecked] = useState(initialChecked);
-  const opacityValue = useRef(
-    new Animated.Value(initialChecked ? 1 : 0)
-  ).current;
+  const opacityValue = useRef(new Animated.Value(checked ? 1 : 0)).current;
   const backgroundColorValue = useRef(
-    new Animated.Value(initialChecked ? 1 : 0)
+    new Animated.Value(checked ? 1 : 0)
   ).current;
 
   useEffect(() => {
@@ -55,7 +52,6 @@ const Checkbox: React.FC<CheckboxProps> = ({
 
   const toggleCheckbox = () => {
     const newCheckedState = !checked;
-    setChecked(newCheckedState);
     onToggle && onToggle(newCheckedState);
   };
 

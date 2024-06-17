@@ -1,5 +1,6 @@
 import { Colors } from "@/constants/Colors";
 import useSafeAreaInsets from "@/hooks/useSafeArea";
+import React from "react";
 import { View, ViewProps } from "react-native";
 
 const Container = (props: ViewProps) => {

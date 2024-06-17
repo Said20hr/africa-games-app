@@ -11,7 +11,7 @@ import {
 } from "react-native";
 import { ChevronRight } from "react-native-feather";
 import { SvgProps } from "react-native-svg";
-import { ThemedText as Text } from "../ThemedText";
+import Text from "../ThemedText";
 
 interface NavigationButtonProps {
   icon: React.FC<SvgProps>;
