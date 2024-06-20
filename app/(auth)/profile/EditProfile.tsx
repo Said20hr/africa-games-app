@@ -4,6 +4,7 @@ import { Stack, useNavigation } from "expo-router";
 import React from "react";
 import {
   Dimensions,
+  Platform,
   StyleSheet,
   Touchable,
   TouchableOpacity,
@@ -21,6 +22,7 @@ import Text from "@/components/ThemedText";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 import { Image } from "expo-image";
 import { useSession } from "@/app/ctx";
+import { fontPixel, heightPixel } from "@/shared/util/normalise";
 
 const IMAGE_WIDTH = Dimensions.get("screen").width * 0.45;
 
@@ -29,33 +31,40 @@ const EditProfile: React.FC = () => {
   const { goBack } = useNavigation();
   const { session } = useSession();
 
-  console.log(session?.user);
-
   return (
     <>
       <Stack.Screen
         options={{
           headerLeft: () => (
-            <TouchableOpacity onPress={goBack}>
-              <ArrowLeft color={text} />
-            </TouchableOpacity>
+            <>
+              {Platform.OS === "ios" && (
+                <TouchableOpacity onPress={goBack}>
+                  <ArrowLeft color={text} />
+                </TouchableOpacity>
+              )}
+            </>
           ),
-          headerTitle: () => <Text type="h4">My Profile</Text>,
+          headerTitle: "My Profile",
           headerShadowVisible: false,
-          headerStyle: { backgroundColor: black },
-          headerTitleAlign: "left",
+          headerTitleStyle: {
+            color: text,
+            fontFamily: "PoppinsMedium",
+            fontSize: fontPixel(20),
+          },
+          headerTitleAlign: "center",
+          // headerTitleAlign: "left",
         }}
       />
       <KeyboardAwareScrollView
         contentContainerStyle={{
           // flex: 1,
-          backgroundColor: black,
+
           paddingHorizontal: 16,
           flexGrow: 1,
           justifyContent: "space-between",
           paddingBottom: 30,
         }}
-        style={{ flex: 1 }}
+        style={{ flex: 1, backgroundColor: black }}
       >
         <View style={{ flex: 1, gap: 16 }}>
           <View style={styles.imageContainer}>
@@ -70,25 +79,31 @@ const EditProfile: React.FC = () => {
                 <Edit color={text} strokeWidth={3} />
               </View>
             </TouchableOpacity>
-            <Text type="h4">{session?.user.name.toUpperCase()}</Text>
-            <Text type="b1" style={{ color: accent }}>
+            <Text type="TitleMedium">{session?.user.name.toUpperCase()}</Text>
+            <Text type="BodySmall" style={{ color: accent }}>
               {session?.user.role.charAt(0).toUpperCase()}
               {session?.user.role.slice(1)}
             </Text>
           </View>
           <View style={styles.spacedRow}>
-            <Input
-              label="Name"
-              InitialIcon={<User color={text} />}
-              placeholder="xxxxxx"
-              value={session?.user.name}
-            />
-            <Input
-              label="Username"
-              InitialIcon={<User color={text} />}
-              placeholder="xxxxxx"
-              // value={session?.user.}
-            />
+            <View style={{ flex: 1 }}>
+              <Input
+                label="Name"
+                InitialIcon={<User color={text} />}
+                placeholder="xxxxxx"
+                value={session?.user.name}
+                // containerProps={{ style: { width: "70%" } }}
+              />
+            </View>
+            <View style={{ flex: 1 }}>
+              <Input
+                label="Username"
+                InitialIcon={<User color={text} />}
+                placeholder="xxxxxx"
+                // containerProps={{ style: { width: "70%" } }}
+                // value={session?.user.}
+              />
+            </View>
           </View>
           <View>
             <Input
@@ -118,7 +133,7 @@ const EditProfile: React.FC = () => {
             />
           </View>
         </View>
-        <Button label="Update" />
+        <Button label="Update" style={{ marginTop: heightPixel(30) }} />
       </KeyboardAwareScrollView>
     </>
   );
@@ -128,7 +143,7 @@ const styles = StyleSheet.create({
   spacedRow: {
     flexDirection: "row",
     justifyContent: "space-between",
-    gap: 8,
+    gap: 12,
   },
   image: {
     width: IMAGE_WIDTH,

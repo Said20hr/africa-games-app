@@ -38,13 +38,13 @@ const Header: React.FC<HeaderProps> = ({
         <View>
           {text1 && text2 ? (
             <>
-              <ThemedText type="h4">{text1}</ThemedText>
-              <ThemedText type="b1" style={{ marginTop: 8 }}>
+              <ThemedText type="TitleMedium">{text1}</ThemedText>
+              <ThemedText type="SubtitleLight" style={{ marginTop: 8 }}>
                 {session?.user.name}
               </ThemedText>
             </>
           ) : title ? (
-            <ThemedText type="h3">{title}</ThemedText>
+            <ThemedText type="TitleMedium">{title}</ThemedText>
           ) : null}
         </View>
         {image && (

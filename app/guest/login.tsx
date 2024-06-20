@@ -97,11 +97,14 @@ export default function Login() {
             style={styles.logoImage}
             contentFit="contain"
           />
-          <ThemedText type="h1" style={{ textAlign: "center", marginTop: -60 }}>
+          <ThemedText
+            type="HeadingLargestBold"
+            style={{ textAlign: "center", marginTop: -60 }}
+          >
             Welcome back!
           </ThemedText>
           <ThemedText
-            type="h6"
+            type="HeadingBoldSmall"
             style={{ textAlign: "center", marginTop: 8, marginBottom: 24 }}
           >
             Login to continue using this app
@@ -110,10 +113,10 @@ export default function Login() {
             autoCapitalize="none"
             keyboardType="email-address"
             InitialIcon={<Mail color={Colors.dark.text} />}
-            placeholder="Enter your email"
+            placeholder="Enter your matricule"
             onChangeText={(text) => setValue("email", text)}
             {...register("email", {
-              required: "Email is required",
+              required: "Matricule is required",
               pattern: {
                 value: /\S+@\S+\.\S+/,
                 message: "Invalid email address",

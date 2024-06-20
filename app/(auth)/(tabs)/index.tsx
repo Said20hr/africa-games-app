@@ -2,14 +2,14 @@ import React, { useEffect, useLayoutEffect, useRef, useState } from "react";
 import {
   StyleSheet,
   View,
-  FlatList,
   TouchableOpacity,
   Animated,
   Easing,
   ViewProps,
   ModalProps,
   Modal,
-  Alert,
+  ViewStyle,
+  ScrollView,
 } from "react-native";
 import Text from "@/components/ThemedText";
 import Header from "@/components/Header";
@@ -22,7 +22,6 @@ import {
 } from "react-native-feather";
 import { useThemeColor } from "@/hooks/useThemeColor";
 import { useStatusBar } from "@/hooks/useStatusBar";
-import { IReport } from "@/shared/type/Report.type";
 import { Colors } from "@/constants/Colors";
 import useSafeAreaInsets from "@/hooks/useSafeArea";
 import { LinearGradient } from "expo-linear-gradient";
@@ -30,7 +29,7 @@ import Table from "@/components/Table";
 import { useQuery } from "@tanstack/react-query";
 import { useSession } from "@/app/ctx";
 import axios from "axios";
-import { ScrollView } from "react-native";
+import { fontPixel, heightPixel, widthPixel } from "@/shared/util/normalise";
 
 type InfoCardProps = {
   title: string;
@@ -38,6 +37,7 @@ type InfoCardProps = {
   icon?: React.ReactNode;
   action?: React.ReactNode;
   children?: JSX.Element;
+  containerStyle?: ViewStyle;
 };
 
 interface WithdrawalRequestModalProps extends ModalProps {
@@ -66,7 +66,7 @@ const WithdrawalRequestModal = (props: WithdrawalRequestModalProps) => {
             width: "90%",
             paddingHorizontal: 16,
             paddingVertical: 20,
-            gap: 16,
+            gap: heightPixel(17),
             borderRadius: 12,
           }}
         >
@@ -77,26 +77,26 @@ const WithdrawalRequestModal = (props: WithdrawalRequestModalProps) => {
             colors={["rgba(217, 205, 189, 1)", "rgba(233, 146, 19, 1)"]}
             style={[styles.content, { backgroundColor: primary }]}
           >
-            <Text type="h1" style={{ marginBottom: 12 }}>
+            <Text type="DateLargeHeavy" style={{ marginBottom: 12 }}>
               24 JAN
             </Text>
-            <Text type="h3">12:10 AM</Text>
+            <Text type="TimeMedium">12:10 AM</Text>
           </LinearGradient>
           <View style={styles.spacedRow}>
-            <Text type="h5">FROM:</Text>
-            <Text type="b1" style={{ color: accent }}>
+            <Text type="AlertTitleBold">FROM:</Text>
+            <Text type="BodyMedium" style={{ color: accent }}>
               Chloe Smith
             </Text>
           </View>
           <View style={styles.spacedRow}>
-            <Text type="h5">TO:</Text>
-            <Text type="b1" style={{ color: accent }}>
+            <Text type="AlertTitleBold">TO:</Text>
+            <Text type="BodyMedium" style={{ color: accent }}>
               Store 01
             </Text>
           </View>
           <View style={styles.spacedRow}>
-            <Text type="h5">AMOUNT:</Text>
-            <Text type="b1" style={{ color: accent }}>
+            <Text type="AlertTitleBold">AMOUNT:</Text>
+            <Text type="BodyMedium" style={{ color: accent }}>
               2000 XAF
             </Text>
           </View>
@@ -106,14 +106,14 @@ const WithdrawalRequestModal = (props: WithdrawalRequestModalProps) => {
               onPress={onCancel}
             >
               <X color={text} width={16} strokeWidth={3} />
-              <Text type="h6">Cancel</Text>
+              <Text type="HeadingBoldSmall">Cancel</Text>
             </TouchableOpacity>
             <TouchableOpacity
               style={[styles.iconButton, { backgroundColor: success }]}
               onPress={onApprove}
             >
               <Check color={text} width={16} strokeWidth={3} />
-              <Text type="h6">Approve</Text>
+              <Text type="HeadingBoldSmall">Approve</Text>
             </TouchableOpacity>
           </View>
         </View>
@@ -122,23 +122,34 @@ const WithdrawalRequestModal = (props: WithdrawalRequestModalProps) => {
   );
 };
 
-const InfoCard = ({ title, value, icon, action, children }: InfoCardProps) => {
+const InfoCard = ({
+  title,
+  value,
+  icon,
+  action,
+  children,
+  containerStyle,
+}: InfoCardProps) => {
   const { background, text, primary } = useThemeColor();
 
   return (
-    <View style={[styles.cardContainer, { backgroundColor: background }]}>
+    <View
+      style={[
+        styles.cardContainer,
+        { backgroundColor: background },
+        containerStyle,
+      ]}
+    >
       <View style={styles.header}>
         <View style={styles.headerInfoContainer}>
           <View style={[styles.iconContainer, { backgroundColor: primary }]}>
             {icon || <Users color={text} />}
           </View>
-          <Text type="h4">{title}</Text>
+          <Text type="TitleMedium">{title}</Text>
         </View>
         {action && <View style={styles.actionContainer}>{action}</View>}
       </View>
-      <Text type="h2" style={styles.value}>
-        {value}
-      </Text>
+      {value && value !== "" && <Text type="HeadingLargeBold">{value}</Text>}
       {children}
     </View>
   );
@@ -166,7 +177,7 @@ function AnimatedRequest(props: AnimatedRequestProps) {
           marginBottom: 20,
           backgroundColor: "#0C9700",
           marginHorizontal: 12,
-          height: 60,
+          minHeight: 60,
         },
         props.style,
       ]}
@@ -176,14 +187,15 @@ function AnimatedRequest(props: AnimatedRequestProps) {
           flexDirection: "row",
           alignItems: "center",
           justifyContent: "space-between",
-          flex: 1,
         }}
         onPress={onViewDetails}
       >
         <AlertCircle color={text} />
-        <Text style={{ color: text, marginLeft: 8 }} type="b2">
+        <Text style={{ marginLeft: 8 }} type="SubtitleLight">
           There are pending withdrawals that need your approval
-          <Text type="h6">{"    "} View Details</Text>
+          <Text style={{ fontSize: fontPixel(14) }} type="AlertTitleBold">
+            {"    "} View Details
+          </Text>
         </Text>
       </TouchableOpacity>
     </Animated.View>
@@ -191,7 +203,7 @@ function AnimatedRequest(props: AnimatedRequestProps) {
 }
 
 export default function HomeScreen() {
-  const { black, background, text, primary } = useThemeColor();
+  const { black, text } = useThemeColor();
   useStatusBar("light-content");
   const { top } = useSafeAreaInsets();
   const slideAnim = useRef(new Animated.Value(-60)).current;
@@ -232,18 +244,6 @@ export default function HomeScreen() {
     });
     setReports(reports);
   }, [data]);
-
-  const renderItem = ({ item }: { item: IReport }) => (
-    <View style={styles.row}>
-      <Text style={[styles.cell, { textAlign: "left" }]}>{item.date}</Text>
-      <Text style={[styles.cell, { textAlign: "right" }]}>
-        {item.initialCash}
-      </Text>
-      <Text style={[styles.cell, { textAlign: "right" }]}>
-        {item.finalCash}
-      </Text>
-    </View>
-  );
 
   useLayoutEffect(() => {
     Animated.timing(slideAnim, {
@@ -294,57 +294,61 @@ export default function HomeScreen() {
   }
 
   return (
-    <ScrollView
-      contentContainerStyle={[
-        styles.screenContainer,
-        {
-          paddingTop: top,
-          flex: 1,
-        },
-      ]}
-      style={{ backgroundColor: black }}
-      showsVerticalScrollIndicator={false}
-    >
-      <Animated.View
-        style={{
-          transform: [{ translateY: slideAnim }],
-          flex: 1,
-        }}
+    <View style={{ flex: 1 }}>
+      <ScrollView
+        contentContainerStyle={[
+          styles.screenContainer,
+          {
+            paddingTop: top,
+            flexGrow: 1,
+          },
+        ]}
+        style={{ backgroundColor: black, paddingBottom: 20 }}
+        showsVerticalScrollIndicator={false}
       >
-        <AnimatedRequest
-          onRequestHandlerPress={onRequestPressHandler}
-          style={{ opacity: opacityAnim }}
-        />
-        <Header
-          image
-          text1="Hi, Welcome Back!"
-          text2="Chloe Smith"
-          containerStyle={{ paddingTop: 0 }}
-        />
-        <View style={styles.contentContainer}>
-          <InfoCard title="Total days" value="3" />
-          <InfoCard
-            title="Reports"
-            value=""
-            action={
-              <TouchableOpacity style={styles.actionButton}>
-                <Text type="h6">This week</Text>
-                <ChevronDown color={text} style={styles.chevronIcon} />
-              </TouchableOpacity>
-            }
-          >
-            <>
-              {reports.length > 0 && (
-                <Table
-                  reports={reports}
-                  headers={["Date", "Initial Cash", "Final Cash"]}
-                  isFlatList={false}
-                />
-              )}
-            </>
-          </InfoCard>
-        </View>
-      </Animated.View>
+        <Animated.View
+          style={{
+            transform: [{ translateY: slideAnim }],
+          }}
+        >
+          <AnimatedRequest
+            onRequestHandlerPress={onRequestPressHandler}
+            style={{ opacity: opacityAnim }}
+          />
+          <Header
+            image
+            text1="Hi, Welcome Back!"
+            text2="Chloe Smith"
+            containerStyle={{ paddingTop: 0 }}
+          />
+          <View style={styles.contentContainer}>
+            <InfoCard title="Total days" value="3" />
+            <InfoCard
+              title="Reports"
+              containerStyle={{ marginBottom: 20 }}
+              value=""
+              action={
+                <TouchableOpacity style={styles.actionButton}>
+                  <Text type="SubtitleLight">This week</Text>
+                  <ChevronDown color={text} style={styles.chevronIcon} />
+                </TouchableOpacity>
+              }
+            >
+              <View>
+                {reports.length > 0 ? (
+                  <Table
+                    reports={reports}
+                    headers={["Date", "Initial Cash", "Final Cash"]}
+                    isFlatList={false}
+                  />
+                ) : (
+                  <Text>No reports to show</Text>
+                )}
+              </View>
+            </InfoCard>
+          </View>
+        </Animated.View>
+      </ScrollView>
       <WithdrawalRequestModal
         visible={modalVisible}
         animationType="slide"
@@ -353,30 +357,18 @@ export default function HomeScreen() {
         onApprove={onApproveRequest}
         onCancel={onCancelRequest}
       />
-    </ScrollView>
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
   screenContainer: {
-    flex: 1,
     paddingBottom: 20,
   },
   contentContainer: {
-    flex: 1,
     paddingTop: 12,
     paddingHorizontal: 8,
-  },
-  row: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    marginVertical: 8,
-    flex: 1,
-  },
-  cell: {
-    fontSize: 12,
-    fontWeight: "700",
-    flex: 1,
+    gap: heightPixel(17),
   },
   tableHeader: {
     flexDirection: "row",
@@ -394,7 +386,8 @@ const styles = StyleSheet.create({
   actionButton: {
     flexDirection: "row",
     alignItems: "center",
-    padding: 8,
+    paddingHorizontal: widthPixel(5),
+    paddingVertical: heightPixel(5),
     borderRadius: 12,
     backgroundColor: "#444444",
   },
@@ -404,7 +397,7 @@ const styles = StyleSheet.create({
   cardContainer: {
     borderRadius: 16,
     padding: 20,
-    marginVertical: 12,
+    gap: heightPixel(20),
   },
   header: {
     flexDirection: "row",
@@ -423,9 +416,6 @@ const styles = StyleSheet.create({
     padding: 8,
     borderRadius: 12,
     backgroundColor: "#444444",
-  },
-  value: {
-    marginTop: 20,
   },
   button: {
     borderRadius: 15,

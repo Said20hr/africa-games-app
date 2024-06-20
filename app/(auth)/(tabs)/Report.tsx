@@ -27,6 +27,8 @@ import axios from "axios";
 import { queryClient } from "@/api/query-client";
 import LoadingScreen from "@/components/ui/LoadingScreen";
 import { CashIn, CashOut, Money } from "@/assets/icons";
+import { useNavigation, useRouter } from "expo-router";
+import { fontPixel, heightPixel, widthPixel } from "@/shared/util/normalise";
 
 const { width, height } = Dimensions.get("window");
 const FORM_WIDTH = width - 32;
@@ -74,7 +76,10 @@ type ReportModalProps = {
   visible: boolean;
 };
 
-const ReportConfirmModal = ({ continuePress, visible }: ReportModalProps) => {
+export const ReportConfirmModal = ({
+  continuePress,
+  visible,
+}: ReportModalProps) => {
   const { black } = useThemeColor();
   return (
     <Modal visible={visible} animationType="slide" transparent>
@@ -89,7 +94,7 @@ const ReportConfirmModal = ({ continuePress, visible }: ReportModalProps) => {
         }}
       >
         <CheckCircle color="#219653" width={100} height={100} />
-        <Text type="h4" style={{ textAlign: "center" }}>
+        <Text type="TitleMedium" style={{ textAlign: "center" }}>
           You've successfully filled out the form!
         </Text>
         <Button label="Continue" onPress={continuePress} />
@@ -105,7 +110,7 @@ const ReportWaitingTimer = ({
   description,
 }: ReportWaitingTimerProps) => {
   const { black } = useThemeColor();
-
+  const { back, navigate } = useRouter();
   return (
     <View
       style={{
@@ -120,16 +125,22 @@ const ReportWaitingTimer = ({
         <View style={styles.timeContainer}>
           <AnimatedCircularProgress percentage={progress} color={color} />
           <View style={styles.timeRemaining}>
-            <Text type="h2">STILL</Text>
-            <Text type="h1" style={{ color }}>
+            <Text type="HeadingLargeBold" style={{ fontSize: fontPixel(30) }}>
+              STILL
+            </Text>
+            <Text
+              type="HeadingLargeBold"
+              style={{ color, fontSize: fontPixel(30) }}
+            >
               {timeRemaining}
             </Text>
           </View>
         </View>
-        <Text style={{ textAlign: "center", marginTop: 50 }} type="h4">
+        <Text style={{ textAlign: "center", marginTop: 50 }} type="TitleMedium">
           {description}
         </Text>
       </View>
+      {/* <Button label="Back" onPress={() => navigate("(tabs)")} /> */}
     </View>
   );
 };
@@ -156,8 +167,12 @@ const RouletteForm = ({
   const { primary, text } = useThemeColor();
 
   return (
-    <View style={{ justifyContent: "space-between", gap: 20 }}>
-      <View style={{ gap: 20 }}>
+    <View
+      style={{
+        justifyContent: "space-between",
+      }}
+    >
+      <View style={{ gap: heightPixel(37), marginTop: heightPixel(30) }}>
         <LinearGradient
           colors={["rgba(217, 205, 189, 1)", "rgba(233, 146, 19, 1)"]}
           style={{
@@ -165,56 +180,65 @@ const RouletteForm = ({
             width: "60%",
             maxWidth: 300,
             paddingVertical: 14,
-            gap: 8,
             flexDirection: "row",
             justifyContent: "center",
             alignItems: "center",
             alignSelf: "center",
             borderRadius: 12,
+            gap: widthPixel(6),
           }}
         >
           <MapPin color={text} width={18} />
-          <Text type="h4">{rouletteData.identifier}</Text>
+          <Text type="HeadingMediumBold">{rouletteData.identifier}</Text>
         </LinearGradient>
-        <Text type="b1">
-          Please fill out the following fields to log your daily financial
-          transactions
-        </Text>
-        <View
-          style={{
-            flexDirection: "row",
-            justifyContent: "space-between",
-            alignItems: "center",
-          }}
-        >
-          <Text type="h6">Key in start</Text>
-          <Text type="h6">{rouletteData.key_in} XAF</Text>
+        <View style={{ gap: heightPixel(17) }}>
+          <Text type="BodySmall">
+            Please fill out the following fields to log your daily financial
+            transactions
+          </Text>
+          <View style={{ gap: heightPixel(11) }}>
+            <View
+              style={{
+                flexDirection: "row",
+                justifyContent: "space-between",
+                alignItems: "center",
+              }}
+            >
+              <Text type="SubtitleLight">Key in start</Text>
+              <Text type="SubtitleLight">{rouletteData.key_in} XAF</Text>
+            </View>
+            <Input
+              InitialIcon={<CashIn color={text} />}
+              placeholder="Enter your initial cash"
+              keyboardType="decimal-pad"
+              onChangeText={keyInChange}
+            />
+            <View
+              style={{
+                flexDirection: "row",
+                justifyContent: "space-between",
+                alignItems: "center",
+                // marginBottom: -10,
+              }}
+            >
+              <Text type="SubtitleLight">Key out start</Text>
+              <Text type="SubtitleLight">{rouletteData.key_out} XAF</Text>
+            </View>
+            <Input
+              InitialIcon={<CashOut color={text} />}
+              placeholder="Enter your final cash"
+              keyboardType="decimal-pad"
+              onChangeText={keyOutChange}
+            />
+          </View>
         </View>
-        <Input
-          InitialIcon={<CashIn color={text} />}
-          placeholder="Enter your initial cash"
-          keyboardType="decimal-pad"
-          onChangeText={keyInChange}
-        />
-        <View
-          style={{
-            flexDirection: "row",
-            justifyContent: "space-between",
-            alignItems: "center",
-          }}
-        >
-          <Text type="h6">Key out start</Text>
-          <Text type="h6">{rouletteData.key_out} XAF</Text>
-        </View>
-        <Input
-          InitialIcon={<CashOut color={text} />}
-          placeholder="Enter your final cash"
-          keyboardType="decimal-pad"
-          onChangeText={keyOutChange}
-        />
       </View>
       {currentIndex === 0 && totalIndexes > 0 ? (
-        <Button label="Next" onPress={() => nextHandler(currentIndex)} />
+        <Button
+          label="Next"
+          style={{ marginVertical: heightPixel(17) }}
+          onPress={() => nextHandler(currentIndex)}
+        />
       ) : totalIndexes === 0 ? (
         <Button label="Submit" />
       ) : (
@@ -224,16 +248,17 @@ const RouletteForm = ({
             justifyContent: "space-between",
             alignItems: "center",
             gap: 20,
+            marginVertical: heightPixel(17),
           }}
         >
-          <View style={{ flex: 1 }}>
+          <View>
             <Button
               label="Back"
               outlined
               onPress={() => backHandler(currentIndex)}
             />
           </View>
-          <View style={{ flex: 1 }}>
+          <View>
             <Button label="Next" onPress={() => nextHandler(currentIndex)} />
           </View>
         </View>
@@ -242,7 +267,7 @@ const RouletteForm = ({
   );
 };
 
-const ReportForm = ({ handleSubmit }: ReportFormProps) => {
+export const ReportForm = ({ handleSubmit }: ReportFormProps) => {
   const { black, accent, primary, text, background } = useThemeColor();
   const { session } = useSession();
   const scrollRef = useRef<ScrollView>(null);
@@ -334,180 +359,208 @@ const ReportForm = ({ handleSubmit }: ReportFormProps) => {
   }
 
   return (
-    <KeyboardAwareScrollView
-      style={{ paddingBottom: 60 }}
-      contentContainerStyle={{
-        flex: 1,
-        backgroundColor: black,
-        flexGrow: 1,
-      }}
-      // bounces={false}
-    >
-      <View style={{ flex: 1, height }}>
-        <LinearGradient
-          colors={["rgba(217, 205, 189, 1)", "rgba(233, 146, 19, 1)"]}
-          style={[styles.content, { backgroundColor: primary }]}
-        >
-          <Text type="h1" style={{ marginBottom: 12 }}>
-            {CURRENT_TIME.toLocaleDateString("en-GB", {
-              day: "2-digit",
-              month: "short",
-            }).toUpperCase()}
-          </Text>
-          <Text type="h3">
-            {CURRENT_TIME.toLocaleTimeString("en-US", {
-              hour: "2-digit",
-              minute: "2-digit",
-              hour12: true,
-            })}
-          </Text>
-        </LinearGradient>
-        <View style={{ position: "relative", flex: 1, marginTop: 10 }}>
-          <View style={{ width, aspectRatio }}>
-            <Svg
-              width="100%"
-              height="100%"
-              viewBox={`0 0 ${originalWidth} ${originalHeight}`}
-              fill="none"
-              style={styles.svg}
+    <View style={{ flex: 1 }}>
+      <KeyboardAwareScrollView
+        // style={{ paddingBottom: 60 }}
+        contentContainerStyle={{
+          // flex: 1,
+          backgroundColor: black,
+        }}
+        // bounces={false}
+      >
+        <View>
+          <LinearGradient
+            colors={["rgba(217, 205, 189, 1)", "rgba(233, 146, 19, 1)"]}
+            style={[styles.content, { backgroundColor: primary }]}
+          >
+            <Text type="DateLargeHeavy" style={{ marginBottom: 12 }}>
+              {CURRENT_TIME.toLocaleDateString("en-GB", {
+                day: "2-digit",
+                month: "short",
+              }).toUpperCase()}
+            </Text>
+            <Text type="TimeMedium">
+              {CURRENT_TIME.toLocaleTimeString("en-US", {
+                hour: "2-digit",
+                minute: "2-digit",
+                hour12: true,
+              })}
+            </Text>
+          </LinearGradient>
+          <View
+            style={{
+              position: "relative",
+              marginTop: 10,
+            }}
+          >
+            <View
+              style={{ width, aspectRatio, position: "absolute", zIndex: -1 }}
             >
-              <Path
-                fillRule="evenodd"
-                clipRule="evenodd"
-                d="M142.223 33.196C123.213 18.894 102.816 0 79.027 0H21C-6.614 0-29 22.386-29 50v520c0 27.614 22.386 50 50 50h352c27.614 0 50-22.386 50-50V50c0-27.614-22.386-50-50-50h-58.027c-23.789 0-44.186 18.894-63.196 33.196C237.692 43.792 218.348 50.332 197 50.332s-40.692-6.54-54.777-17.136z"
-                fill={"#272727"}
-              />
-            </Svg>
-          </View>
-          <View style={styles.formContainer}>
-            <ScrollView
-              showsHorizontalScrollIndicator={false}
-              horizontal
-              pagingEnabled
-              scrollEnabled={false}
-              ref={scrollRef}
-              contentContainerStyle={{
-                width: width * (roulettes.length + 1),
-                flexDirection: "row",
-              }}
+              <Svg
+                width="100%"
+                height="100%"
+                viewBox={`0 0 ${originalWidth} ${originalHeight}`}
+                fill="none"
+                style={styles.svg}
+              >
+                <Path
+                  fillRule="evenodd"
+                  clipRule="evenodd"
+                  d="M142.223 33.196C123.213 18.894 102.816 0 79.027 0H21C-6.614 0-29 22.386-29 50v520c0 27.614 22.386 50 50 50h352c27.614 0 50-22.386 50-50V50c0-27.614-22.386-50-50-50h-58.027c-23.789 0-44.186 18.894-63.196 33.196C237.692 43.792 218.348 50.332 197 50.332s-40.692-6.54-54.777-17.136z"
+                  fill={"#272727"}
+                />
+              </Svg>
+            </View>
+            <View
+              style={[
+                // styles.formContainer,
+                {
+                  backgroundColor: "#272727",
+                  paddingHorizontal: 16,
+                },
+              ]}
             >
-              {roulettes.map((item, index) => (
-                <View
-                  style={{
-                    width: FORM_WIDTH,
-                  }}
-                  key={index}
-                >
-                  <RouletteForm
-                    rouletteData={item}
-                    currentIndex={index}
-                    totalIndexes={roulettes.length}
-                    nextHandler={nextHandler}
-                    backHandler={backHandler}
-                    keyInChange={(value) =>
-                      handleChangeRouletteValue(
-                        index,
-                        "keyInEnd",
-                        parseFloat(value)
-                      )
-                    }
-                    keyOutChange={(value) =>
-                      handleChangeRouletteValue(
-                        index,
-                        "keyOutEnd",
-                        parseFloat(value)
-                      )
-                    }
-                  />
-                </View>
-              ))}
-              <View
-                style={{
-                  justifyContent: "space-between",
-                  gap: 20,
-                  width: FORM_WIDTH,
+              <ScrollView
+                showsHorizontalScrollIndicator={false}
+                horizontal
+                pagingEnabled
+                scrollEnabled={false}
+                ref={scrollRef}
+                contentContainerStyle={{
+                  width: width * (roulettes.length + 1),
+                  flexDirection: "row",
+                  // flex: 1,
+                  // flexGrow: 1,
+                  backgroundColor: "#272727",
                 }}
               >
-                <Text type="b1">
-                  Please fill out the following fields to log your daily
-                  financial transactions
-                </Text>
-                <View
-                  style={{
-                    flexDirection: "row",
-                    justifyContent: "space-between",
-                    alignItems: "center",
-                  }}
-                >
-                  <Text type="h6">Initial Cash</Text>
-                  <Text type="h6">{session?.casino.initial_amount} XAF</Text>
-                </View>
-                <Input
-                  InitialIcon={<Money color={text} />}
-                  placeholder="Enter your final cash"
-                  keyboardType="decimal-pad"
-                  onChangeText={(value: string) =>
-                    setReportForm({
-                      ...reportForm,
-                      finalCash: parseFloat(value),
-                    })
-                  }
-                />
-                <Input
-                  multiline
-                  InitialIcon={<AlertCircle color={text} />}
-                  containerProps={{
-                    style: { height: 120, alignItems: "flex-start" },
-                  }}
-                  placeholder="Lorem ipsium..."
-                  onChangeText={(value: string) =>
-                    setReportForm({ ...reportForm, information: value })
-                  }
-                />
-                {roulettes.length === 0 ? (
-                  <Button
-                    label="Submit"
-                    onPress={handleSubmitForm}
-                    loading={isPending}
-                  />
-                ) : (
+                {roulettes.map((item, index) => (
                   <View
                     style={{
-                      flexDirection: "row",
-                      justifyContent: "space-between",
-                      alignItems: "center",
-                      gap: 20,
+                      width: FORM_WIDTH,
+                      height: "100%",
                     }}
+                    key={index}
                   >
-                    <View style={{ flex: 1 }}>
-                      <Button
-                        label="Back"
-                        outlined
-                        onPress={() => backHandler(roulettes.length)}
+                    <RouletteForm
+                      rouletteData={item}
+                      currentIndex={index}
+                      totalIndexes={roulettes.length}
+                      nextHandler={nextHandler}
+                      backHandler={backHandler}
+                      keyInChange={(value) =>
+                        handleChangeRouletteValue(
+                          index,
+                          "keyInEnd",
+                          parseFloat(value)
+                        )
+                      }
+                      keyOutChange={(value) =>
+                        handleChangeRouletteValue(
+                          index,
+                          "keyOutEnd",
+                          parseFloat(value)
+                        )
+                      }
+                    />
+                  </View>
+                ))}
+                <View
+                  style={{
+                    justifyContent: "space-between",
+                    width: FORM_WIDTH,
+                  }}
+                >
+                  <View style={{ gap: heightPixel(17), flex: 1 }}>
+                    <Text type="BodySmall">
+                      Please fill out the following fields to log your daily
+                      financial transactions
+                    </Text>
+                    <View style={{ gap: heightPixel(11) }}>
+                      <View
+                        style={{
+                          flexDirection: "row",
+                          justifyContent: "space-between",
+                          alignItems: "center",
+                        }}
+                      >
+                        <Text type="SubtitleLight">Initial Cash</Text>
+                        <Text type="SubtitleLight">
+                          {session?.casino.initial_amount} XAF
+                        </Text>
+                      </View>
+                      <Input
+                        InitialIcon={<Money color={text} />}
+                        placeholder="Enter your final cash"
+                        keyboardType="decimal-pad"
+                        onChangeText={(value: string) =>
+                          setReportForm({
+                            ...reportForm,
+                            finalCash: parseFloat(value),
+                          })
+                        }
                       />
-                    </View>
-                    <View style={{ flex: 1 }}>
-                      <Button
-                        label="Next"
-                        onPress={handleSubmitForm}
-                        loading={isPending}
+                      <Input
+                        multiline
+                        InitialIcon={<AlertCircle color={text} />}
+                        containerProps={{
+                          style: {
+                            height: heightPixel(150),
+                            alignItems: "flex-start",
+                          },
+                        }}
+                        placeholder="Lorem ipsium..."
+                        onChangeText={(value: string) =>
+                          setReportForm({ ...reportForm, information: value })
+                        }
                       />
                     </View>
                   </View>
-                )}
-              </View>
-            </ScrollView>
+                  {roulettes.length === 0 ? (
+                    <Button
+                      label="Submit"
+                      onPress={handleSubmitForm}
+                      loading={isPending}
+                      style={{ marginVertical: heightPixel(17) }}
+                    />
+                  ) : (
+                    <View
+                      style={{
+                        flexDirection: "row",
+                        justifyContent: "space-between",
+                        alignItems: "center",
+                        gap: 20,
+                        marginVertical: heightPixel(17),
+                      }}
+                    >
+                      <View style={{ flex: 1 }}>
+                        <Button
+                          label="Back"
+                          outlined
+                          onPress={() => backHandler(roulettes.length)}
+                        />
+                      </View>
+                      <View style={{ flex: 1 }}>
+                        <Button
+                          label="Next"
+                          onPress={handleSubmitForm}
+                          loading={isPending}
+                        />
+                      </View>
+                    </View>
+                  )}
+                </View>
+              </ScrollView>
+            </View>
           </View>
         </View>
-      </View>
-    </KeyboardAwareScrollView>
+      </KeyboardAwareScrollView>
+    </View>
   );
 };
 
 export default function ReportScreen() {
-  const [activeSection, setActiveSection] = useState<Sections | null>(
-    Sections.FORM
-  );
+  const [activeSection, setActiveSection] = useState<Sections | null>(null);
   const [showModal, toggleModal] = useState(false);
   const { black, success, danger } = useThemeColor();
   const { session } = useSession() as IAuthContext;
@@ -545,43 +598,43 @@ export default function ReportScreen() {
   const [timeRemaining, setTimeRemaining] = useState(
     getTimeUntilNineAMTomorrow(CURRENT_TIME)
   );
-  // useEffect(() => {
-  //   const interval = setInterval(() => {
-  //     CURRENT_TIME.setSeconds(CURRENT_TIME.getSeconds() + 1);
-  //     if (!startTime || !endTime || !lastPaymentTime) {
-  //       setActiveSection(Sections.FORM);
-  //       return;
-  //     }
+  useEffect(() => {
+    const interval = setInterval(() => {
+      CURRENT_TIME.setSeconds(CURRENT_TIME.getSeconds() + 1);
+      if (!startTime || !endTime || !lastPaymentTime) {
+        setActiveSection(Sections.FORM);
+        return;
+      }
 
-  //     const previousShiftEnd = new Date(endTime);
-  //     if (CURRENT_TIME < endTime)
-  //       previousShiftEnd.setDate(previousShiftEnd.getDate() - 1);
-  //     if (previousShiftEnd > lastPaymentTime) {
-  //       setActiveSection(Sections.FORM);
-  //       return;
-  //     } else if (CURRENT_TIME >= startTime && CURRENT_TIME <= endTime)
-  //       setActiveSection(Sections.DURING_SHIFT_TIMER);
-  //     else setActiveSection(Sections.AFTER_SHIFT_TIMER);
+      const previousShiftEnd = new Date(endTime);
+      if (CURRENT_TIME < endTime)
+        previousShiftEnd.setDate(previousShiftEnd.getDate() - 1);
+      if (previousShiftEnd > lastPaymentTime) {
+        setActiveSection(Sections.FORM);
+        return;
+      } else if (CURRENT_TIME >= startTime && CURRENT_TIME <= endTime)
+        setActiveSection(Sections.DURING_SHIFT_TIMER);
+      else setActiveSection(Sections.AFTER_SHIFT_TIMER);
 
-  //     if (activeSection === Sections.AFTER_SHIFT_TIMER) {
-  //       const nextStartTime = new Date(startTime);
-  //       if (CURRENT_TIME > nextStartTime)
-  //         nextStartTime.setDate(nextStartTime.getDate() + 1);
-  //       const previousEndTime = new Date(endTime);
-  //       if (CURRENT_TIME < previousEndTime)
-  //         previousEndTime.setDate(previousEndTime.getDate() - 1);
-  //       setTimeRemaining(getTimeRemaining(CURRENT_TIME, nextStartTime));
-  //       setProgress(
-  //         getProgressPercentage(previousEndTime, CURRENT_TIME, nextStartTime)
-  //       );
-  //     } else if (activeSection === Sections.DURING_SHIFT_TIMER) {
-  //       setTimeRemaining(getTimeRemaining(CURRENT_TIME, endTime));
-  //       setProgress(getProgressPercentage(startTime, CURRENT_TIME, endTime));
-  //     }
-  //   }, 1000);
+      if (activeSection === Sections.AFTER_SHIFT_TIMER) {
+        const nextStartTime = new Date(startTime);
+        if (CURRENT_TIME > nextStartTime)
+          nextStartTime.setDate(nextStartTime.getDate() + 1);
+        const previousEndTime = new Date(endTime);
+        if (CURRENT_TIME < previousEndTime)
+          previousEndTime.setDate(previousEndTime.getDate() - 1);
+        setTimeRemaining(getTimeRemaining(CURRENT_TIME, nextStartTime));
+        setProgress(
+          getProgressPercentage(previousEndTime, CURRENT_TIME, nextStartTime)
+        );
+      } else if (activeSection === Sections.DURING_SHIFT_TIMER) {
+        setTimeRemaining(getTimeRemaining(CURRENT_TIME, endTime));
+        setProgress(getProgressPercentage(startTime, CURRENT_TIME, endTime));
+      }
+    }, 1000);
 
-  //   return () => clearInterval(interval);
-  // }, [startTime, endTime, lastPaymentTime, activeSection]);
+    return () => clearInterval(interval);
+  }, [startTime, endTime, lastPaymentTime, activeSection]);
 
   if (activeSection === null) return <LoadingScreen />;
 
@@ -625,15 +678,14 @@ export default function ReportScreen() {
 
 const styles = StyleSheet.create({
   svg: {
-    position: "absolute",
+    // position: "absolute",
     top: "-8%",
     left: 0,
     right: 0,
     zIndex: 1000,
-    height: SVG_HEIGHT,
+    // height: SVG_HEIGHT,
   },
   formContainer: {
-    flex: 1,
     paddingHorizontal: 16,
     position: "absolute",
     zIndex: 1001,

@@ -38,7 +38,7 @@ const Button = (props: ButtonProps): JSX.Element => {
       {props.loading ? (
         <ActivityIndicator />
       ) : (
-        <Text type="h5" style={props.textStyle}>
+        <Text type="HeadingBoldSmall" style={props.textStyle}>
           {props.label}
         </Text>
       )}

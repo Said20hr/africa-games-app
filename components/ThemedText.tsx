@@ -1,12 +1,41 @@
-import { Text, type TextProps, StyleSheet } from "react-native";
-
-import { useThemeColor } from "@/hooks/useThemeColor";
 import React from "react";
+import { Text, type TextProps, StyleSheet } from "react-native";
+import { useThemeColor } from "@/hooks/useThemeColor";
+import { fontPixel } from "@/shared/util/normalise";
+
+/*
+  h1 -> headings (fw-700, fs-36)
+  h2 -> sub headings (fw-700, fs-14)
+  h3 -> title (fw-600, fs-20) 
+  h4 -> sub title (fw-500, fs-14)
+  b1 -> (fw-400, fs-16)
+  b2 -> (fw-400, fs-14)
+  b3 -> input (fw-400, fs-12)
+  b4 -> (fw-400, fs-11)
+  other styles
+  Date (fw-900, fs-30)
+  Time (fw-500, fs-25)
+  Alert Heading (fw-800, fs-16)
+*/
 
 export type ThemedTextProps = TextProps & {
   lightColor?: string;
   darkColor?: string;
-  type?: "default" | "h1" | "h2" | "h3" | "h4" | "h5" | "h6" | "b1" | "b2";
+  type?:
+    | "default"
+    | "HeadingLargestBold"
+    | "HeadingBoldSmall"
+    | "TitleMedium"
+    | "SubtitleLight"
+    | "BodyMedium"
+    | "BodySmall"
+    | "InputText"
+    | "FinePrint"
+    | "DateLargeHeavy"
+    | "TimeMedium"
+    | "HeadingLargeBold"
+    | "HeadingMediumBold"
+    | "AlertTitleBold";
 };
 
 export default function ThemedText({
@@ -22,15 +51,7 @@ export default function ThemedText({
     <Text
       style={[
         { color: text, fontFamily: "PoppinsMedium" },
-        type === "default" ? styles.default : undefined,
-        type === "h1" ? styles.h1 : undefined,
-        type === "h2" ? styles.h2 : undefined,
-        type === "h3" ? styles.h3 : undefined,
-        type === "h4" ? styles.h4 : undefined,
-        type === "h5" ? styles.h5 : undefined,
-        type === "h6" ? styles.h6 : undefined,
-        type === "b1" ? styles.b1 : undefined,
-        type === "b2" ? styles.b2 : undefined,
+        styles[type] || styles.default,
         style,
       ]}
       {...rest}
@@ -40,46 +61,72 @@ export default function ThemedText({
 
 const styles = StyleSheet.create({
   default: {
-    fontSize: 16,
+    fontSize: fontPixel(16),
+    fontFamily: "PoppinsMedium",
   },
-  h2: {
-    fontSize: 24,
+  HeadingLargestBold: {
+    fontSize: fontPixel(36),
     fontWeight: "700",
-    fontFamily: "PoppinsSemiBold",
-  },
-  h1: {
-    fontSize: 32,
-    fontWeight: "bold",
     fontFamily: "PoppinsBold",
   },
-  h3: {
-    fontSize: 20,
+  HeadingLargeBold: {
+    fontSize: fontPixel(32),
     fontWeight: "700",
-    fontFamily: "PoppinsSemiBold",
+    fontFamily: "PoppinsBold",
   },
-  h4: {
-    fontSize: 16,
+  HeadingMediumBold: {
+    fontSize: fontPixel(16),
     fontWeight: "700",
-    fontFamily: "PoppinsSemiBold",
+    fontFamily: "PoppinsBold",
   },
-  h5: {
-    fontSize: 14,
+  HeadingBoldSmall: {
+    fontSize: fontPixel(14),
     fontWeight: "700",
-    fontFamily: "PoppinsSemiBold",
+    fontFamily: "PoppinsBold",
   },
-  h6: {
-    fontSize: 12,
-    fontWeight: "700",
-    fontFamily: "PoppinsSemiBold",
-  },
-  b1: {
-    fontSize: 14,
+  TitleMedium: {
+    fontSize: fontPixel(20),
+    fontWeight: "600",
     fontFamily: "PoppinsMedium",
-    fontWeight: "500",
   },
-  b2: {
-    fontSize: 12,
-    fontFamily: "PoppinsMedium",
+  SubtitleLight: {
+    fontSize: fontPixel(14),
     fontWeight: "500",
+    fontFamily: "PoppinsMedium",
+  },
+  BodyMedium: {
+    fontSize: fontPixel(16),
+    fontWeight: "400",
+    fontFamily: "PoppinsRegular",
+  },
+  BodySmall: {
+    fontSize: fontPixel(14),
+    fontWeight: "400",
+    fontFamily: "PoppinsRegular",
+  },
+  InputText: {
+    fontSize: fontPixel(12),
+    fontWeight: "400",
+    fontFamily: "PoppinsRegular",
+  },
+  FinePrint: {
+    fontSize: fontPixel(11),
+    fontWeight: "400",
+    fontFamily: "PoppinsRegular",
+  },
+  DateLargeHeavy: {
+    fontSize: fontPixel(30),
+    fontWeight: "900",
+    fontFamily: "PoppinsBlack",
+  },
+  TimeMedium: {
+    fontSize: fontPixel(25),
+    fontWeight: "500",
+    fontFamily: "PoppinsMedium",
+  },
+  AlertTitleBold: {
+    fontSize: fontPixel(16),
+    fontWeight: "800",
+    fontFamily: "PoppinsExtraBold",
   },
 });

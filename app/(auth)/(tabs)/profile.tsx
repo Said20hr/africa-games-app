@@ -41,7 +41,7 @@ export default function ProfileScreen() {
               source={require("@/assets/images/user-header.png")}
               style={styles.image}
             />
-            <Text type="h5">Chloe Smith</Text>
+            <Text type="HeadingBoldSmall">Chloe Smith</Text>
           </View>
           <Edit2 color={text} strokeWidth={3} />
         </TouchableOpacity>

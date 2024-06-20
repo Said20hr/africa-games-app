@@ -1,13 +1,12 @@
 import { Tabs } from "expo-router";
 import React from "react";
-
-import { TabBarIcon } from "@/components/navigation/TabBarIcon";
-import { Colors } from "@/constants/Colors";
-import { useColorScheme } from "@/hooks/useColorScheme";
 import { useThemeColor } from "@/hooks/useThemeColor";
-import ThemedText from "@/components/ThemedText";
-import { DoubleArrow, File, Home } from "@/assets/icons";
+import { BottomTabAdd, DoubleArrow, File, Home } from "@/assets/icons";
 import { User } from "react-native-feather";
+import { LinearGradient } from "expo-linear-gradient";
+import { TouchableOpacity } from "react-native-gesture-handler";
+import { fontPixel, heightPixel } from "@/shared/util/normalise";
+import { Platform } from "react-native";
 
 export default function TabLayout() {
   const { background, primary, text } = useThemeColor();
@@ -20,9 +19,15 @@ export default function TabLayout() {
         tabBarStyle: {
           backgroundColor: background,
           borderTopColor: "transparent",
+          height: heightPixel(70),
+          paddingTop: heightPixel(20),
+          paddingBottom:
+            Platform.OS === "android" ? heightPixel(12) : heightPixel(20),
         },
         tabBarLabelStyle: {
-          fontSize: 8,
+          fontSize: fontPixel(8),
+          fontFamily: "Poppins",
+          marginTop: 8,
         },
       }}
     >
@@ -45,11 +50,38 @@ export default function TabLayout() {
         }}
       />
       <Tabs.Screen
+        name="AddTab"
+        options={{
+          title: "",
+          tabBarIcon: ({ color, focused }) => (
+            <TouchableOpacity
+              style={{ width: 50, aspectRatio: 1, marginTop: 10 }}
+            >
+              <LinearGradient
+                colors={["#797986", "#1D1D20"]}
+                start={{ x: 0.5, y: 0 }}
+                end={{ x: 0.5, y: 1 }}
+                style={{
+                  flex: 1,
+                  borderRadius: 200,
+                  width: 100,
+                  aspectRatio: 1,
+                  justifyContent: "center",
+                  alignItems: "center",
+                }}
+              >
+                <BottomTabAdd stroke={focused ? primary : "#fff"} />
+              </LinearGradient>
+            </TouchableOpacity>
+          ),
+        }}
+      />
+      <Tabs.Screen
         name="movements"
         options={{
           title: "Movements",
           tabBarIcon: ({ color, focused }) => (
-            <DoubleArrow fill={focused ? primary : text} />
+            <DoubleArrow fill={focused ? primary : text} width={20} />
           ),
         }}
       />

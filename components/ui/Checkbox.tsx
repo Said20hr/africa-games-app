@@ -78,7 +78,7 @@ const Checkbox: React.FC<CheckboxProps> = ({
         </Animated.View>
       </Animated.View>
       {text && (
-        <Text type="b1" style={[styles.text, textStyle]}>
+        <Text type="BodySmall" style={[styles.text, textStyle]}>
           {text}
         </Text>
       )}

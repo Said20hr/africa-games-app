@@ -12,6 +12,7 @@ import { Colors } from "@/constants/Colors";
 import { TouchableOpacity } from "react-native-gesture-handler";
 import { useThemeColor } from "@/hooks/useThemeColor";
 import React from "react";
+import { fontPixel } from "@/shared/util/normalise";
 
 interface MyTextInputProps extends TextInputProps {
   containerProps?: ViewProps;
@@ -74,9 +75,9 @@ const TextInput = (props: MyTextInputProps) => {
   };
 
   return (
-    <View style={{ flexDirection: "column", flex: 1 }}>
+    <View style={{ flexDirection: "column" }}>
       {label && (
-        <Text type="b2" style={{ marginBottom: 6 }}>
+        <Text type="InputText" style={{ marginBottom: 6 }}>
           {label}
         </Text>
       )}
@@ -116,7 +117,11 @@ const TextInput = (props: MyTextInputProps) => {
           </View>
         )}
       </View>
-      {props.error && <Text style={{ color: "#EB617A" }}>{props.error}</Text>}
+      {props.error && (
+        <Text style={{ color: "#EB617A", marginTop: 4 }} type="BodySmall">
+          {props.error}
+        </Text>
+      )}
     </View>
   );
 };
@@ -135,10 +140,10 @@ const styles = StyleSheet.create({
 
   input: {
     flex: 1,
-    fontSize: 12,
+    fontSize: fontPixel(13),
     paddingBottom: 0,
-    fontWeight: "700",
-    fontFamily: "Poppins-SemiBold",
+    fontWeight: "400",
+    fontFamily: "PoppinsRegular",
   },
 
   iconsContainer: {

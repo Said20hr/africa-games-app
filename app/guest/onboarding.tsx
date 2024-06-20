@@ -8,6 +8,7 @@ import { useRouter } from "expo-router";
 import { useStatusBar } from "@/hooks/useStatusBar";
 import React from "react";
 import { LinearGradient } from "expo-linear-gradient";
+import { heightPixel } from "@/shared/util/normalise";
 
 export default function OnBoarding() {
   const { push } = useRouter();
@@ -18,7 +19,10 @@ export default function OnBoarding() {
 
   return (
     <Container
-      style={{ paddingHorizontal: 0, paddingTop: 0, alignItems: "flex-end" }}
+      style={{
+        paddingHorizontal: 0,
+        paddingTop: 0,
+      }}
     >
       <ImageBackground
         source={require("@/assets/images/onboarding-bg.png")}
@@ -34,24 +38,29 @@ export default function OnBoarding() {
         ]}
       >
         <View style={styles.detailsContainer}>
-          <Image
-            source={require("@/assets/images/africa-games-login.png")}
-            style={styles.logoImage}
-            contentFit="contain"
-          />
-          <ThemedText type="h1" style={styles.welcomeText}>
-            Welcome
-          </ThemedText>
-          <ThemedText
-            style={{ color: Colors.dark.text, marginTop: 20, fontSize: 12 }}
+          <View
+            style={{
+              height: "50%",
+              width: "100%",
+              justifyContent: "space-between",
+            }}
           >
-            Hello from africa games, good to have you
-          </ThemedText>
-          <Button
-            label="Login"
-            style={{ marginTop: 30 }}
-            onPress={handleOnPress}
-          />
+            <View style={{ flex: 1, alignItems: "center" }}>
+              <Image
+                source={require("@/assets/images/africa-games-login.png")}
+                style={styles.logoImage}
+                contentFit="contain"
+              />
+              <ThemedText type="HeadingLargestBold" style={styles.welcomeText}>
+                Welcome
+              </ThemedText>
+            </View>
+            <Button
+              label="Login"
+              style={{ marginBottom: heightPixel(30) }}
+              onPress={handleOnPress}
+            />
+          </View>
         </View>
       </LinearGradient>
     </Container>
@@ -72,15 +81,16 @@ const styles = StyleSheet.create({
     paddingHorizontal: 12,
   },
   detailsContainer: {
-    flex: 1,
     justifyContent: "flex-end",
     alignItems: "center",
+    height: "100%",
   },
   logoImage: {
     width: "80%",
     aspectRatio: 1,
+    marginTop: heightPixel(-100),
   },
   welcomeText: {
-    marginTop: -70,
+    marginTop: heightPixel(-60),
   },
 });
