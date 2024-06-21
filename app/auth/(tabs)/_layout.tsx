@@ -25,18 +25,19 @@ export default function TabLayout() {
             Platform.OS === "android" ? heightPixel(12) : heightPixel(20),
         },
         tabBarLabelStyle: {
-          fontSize: fontPixel(8),
+          fontSize: fontPixel(10),
           fontFamily: "Poppins",
           marginTop: 8,
         },
       }}
+      initialRouteName="AddTab"
     >
       <Tabs.Screen
         name="index"
         options={{
           title: "Home",
           tabBarIcon: ({ color, focused }) => (
-            <Home stroke={focused ? primary : text} />
+            <Home stroke={focused ? primary : text} width={24} height={24} />
           ),
         }}
       />
@@ -45,7 +46,7 @@ export default function TabLayout() {
         options={{
           title: "Reports",
           tabBarIcon: ({ color, focused }) => (
-            <File stroke={focused ? primary : text} />
+            <File stroke={focused ? primary : text} width={24} height={24} />
           ),
         }}
       />
@@ -81,7 +82,11 @@ export default function TabLayout() {
         options={{
           title: "Movements",
           tabBarIcon: ({ color, focused }) => (
-            <DoubleArrow fill={focused ? primary : text} width={20} />
+            <DoubleArrow
+              fill={focused ? primary : text}
+              width={24}
+              height={24}
+            />
           ),
         }}
       />
@@ -90,7 +95,7 @@ export default function TabLayout() {
         options={{
           title: "Account",
           tabBarIcon: ({ color, focused }) => (
-            <User color={focused ? primary : text} />
+            <User color={focused ? primary : text} width={24} height={24} />
           ),
         }}
       />

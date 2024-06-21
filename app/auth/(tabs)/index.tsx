@@ -30,6 +30,7 @@ import { useQuery } from "@tanstack/react-query";
 import { useSession } from "@/app/ctx";
 import axios from "axios";
 import { fontPixel, heightPixel, widthPixel } from "@/shared/util/normalise";
+import { File } from "@/assets/icons";
 
 type InfoCardProps = {
   title: string;
@@ -173,11 +174,12 @@ function AnimatedRequest(props: AnimatedRequestProps) {
         {
           borderRadius: 12,
           paddingVertical: 10,
-          paddingHorizontal: 20,
+          paddingLeft: 12,
           marginBottom: 20,
           backgroundColor: "#0C9700",
           marginHorizontal: 12,
           minHeight: 60,
+          paddingRight: 20,
         },
         props.style,
       ]}
@@ -191,10 +193,13 @@ function AnimatedRequest(props: AnimatedRequestProps) {
         onPress={onViewDetails}
       >
         <AlertCircle color={text} />
-        <Text style={{ marginLeft: 8 }} type="SubtitleLight">
+        <Text
+          style={{ marginLeft: widthPixel(12), marginRight: 20 }}
+          type="TitleSmall"
+        >
           There are pending withdrawals that need your approval
           <Text style={{ fontSize: fontPixel(14) }} type="AlertTitleBold">
-            {"    "} View Details
+            {"  "} View Details
           </Text>
         </Text>
       </TouchableOpacity>
@@ -251,12 +256,14 @@ export default function HomeScreen() {
       duration: 500,
       easing: Easing.out(Easing.quad),
       useNativeDriver: true,
+      delay: 1000,
     }).start();
     Animated.timing(opacityAnim, {
       toValue: 1,
       duration: 500,
       easing: Easing.out(Easing.quad),
       useNativeDriver: true,
+      delay: 1000,
     }).start();
   }, []);
 
@@ -318,18 +325,23 @@ export default function HomeScreen() {
           <Header
             image
             text1="Hi, Welcome Back!"
-            text2="Chloe Smith"
+            text2={`${session?.user.firstname} ${session?.user.lastname}, ${session?.casino.name}`}
             containerStyle={{ paddingTop: 0 }}
           />
           <View style={styles.contentContainer}>
-            <InfoCard title="Total days" value="3" />
+            <InfoCard
+              title="Total days"
+              value="3"
+              icon={<AlertCircle color="#fff" />}
+            />
             <InfoCard
               title="Reports"
+              icon={<File width={24} height={24} />}
               containerStyle={{ marginBottom: 20 }}
               value=""
               action={
                 <TouchableOpacity style={styles.actionButton}>
-                  <Text type="SubtitleLight">This week</Text>
+                  <Text type="SubtitleLight">This month</Text>
                   <ChevronDown color={text} style={styles.chevronIcon} />
                 </TouchableOpacity>
               }
@@ -386,8 +398,8 @@ const styles = StyleSheet.create({
   actionButton: {
     flexDirection: "row",
     alignItems: "center",
-    paddingHorizontal: widthPixel(5),
-    paddingVertical: heightPixel(5),
+    paddingHorizontal: 5,
+    paddingVertical: 3,
     borderRadius: 12,
     backgroundColor: "#444444",
   },

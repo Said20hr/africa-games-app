@@ -122,7 +122,16 @@ const Table = (props: TableProps) => {
     <>
       {!props.isFlatList ? (
         <>
-          <View style={{ flexDirection: "row" }}>
+          <View
+            style={{
+              flexDirection: "row",
+              backgroundColor: "#444444",
+              paddingVertical: 8,
+              paddingHorizontal: 12,
+              borderTopLeftRadius: 8,
+              borderTopRightRadius: 8,
+            }}
+          >
             {props.headers.map((item, index) => (
               <TableHeaderRow
                 item={item}
@@ -182,6 +191,10 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "space-between",
     marginTop: heightPixel(20),
+    paddingHorizontal: 12,
+    borderBottomWidth: 1,
+    borderBottomColor: "#444444",
+    paddingBottom: 10,
   },
   cell: {
     fontWeight: "700",

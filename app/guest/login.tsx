@@ -15,21 +15,22 @@ import {
 } from "@/components/ui";
 import { Image } from "expo-image";
 import ThemedText from "@/components/ThemedText";
-import { useRouter } from "expo-router";
+import { useNavigation, useRouter } from "expo-router";
 import { Lock, Mail } from "react-native-feather";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 import { useSession } from "../ctx";
 import { ILoginPayload } from "@/shared/type/User.type";
 import { storage } from "@/shared/util/mmkv";
 import { REMEMBER_ME, USER_TOKEN } from "@/constants/Keys";
+import { StackActions } from "@react-navigation/native";
 
 interface IOnSubmitForm extends ILoginPayload {
   checked: boolean;
 }
 
 export default function Login() {
-  const { replace } = useRouter();
   const { signIn } = useSession();
+  const { dispatch } = useNavigation();
   const {
     register,
     handleSubmit,
@@ -39,7 +40,7 @@ export default function Login() {
   } = useForm({
     defaultValues: {
       checked: true,
-      email: "",
+      matricule: "",
       password: "",
     },
   });
@@ -62,7 +63,7 @@ export default function Login() {
         if ("data" in data && typeof data.data === "object") {
           storage.setItem(USER_TOKEN, data.data.user.token);
           signIn(data.data);
-          replace("/");
+          dispatch(StackActions.replace("auth"));
         }
       } else {
         Toast.show({ type: "error", text1: "Invalid credentials" });
@@ -74,10 +75,9 @@ export default function Login() {
   });
 
   const onSubmit = (data: IOnSubmitForm) => {
-    console.log(data.checked);
     storage.setItem(REMEMBER_ME, data.checked);
     mutate({
-      email: data.email,
+      matricule: data.matricule,
       password: data.password,
     });
   };
@@ -110,19 +110,18 @@ export default function Login() {
             Login to continue using this app
           </ThemedText>
           <Input
-            autoCapitalize="none"
-            keyboardType="email-address"
+            autoCapitalize="characters"
             InitialIcon={<Mail color={Colors.dark.text} />}
             placeholder="Enter your matricule"
-            onChangeText={(text) => setValue("email", text)}
-            {...register("email", {
+            onChangeText={(text) => setValue("matricule", text.toUpperCase())}
+            {...register("matricule", {
               required: "Matricule is required",
-              pattern: {
-                value: /\S+@\S+\.\S+/,
-                message: "Invalid email address",
+              minLength: {
+                value: 4,
+                message: "Invalid matricule",
               },
             })}
-            error={errors.email?.message?.toString()}
+            error={errors.matricule?.message?.toString()}
           />
           <Input
             autoCapitalize="none"

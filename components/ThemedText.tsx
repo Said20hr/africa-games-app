@@ -35,6 +35,7 @@ export type ThemedTextProps = TextProps & {
     | "TimeMedium"
     | "HeadingLargeBold"
     | "HeadingMediumBold"
+    | "TitleSmall"
     | "AlertTitleBold";
 };
 
@@ -86,6 +87,11 @@ const styles = StyleSheet.create({
   },
   TitleMedium: {
     fontSize: fontPixel(20),
+    fontWeight: "600",
+    fontFamily: "PoppinsMedium",
+  },
+  TitleSmall: {
+    fontSize: fontPixel(14),
     fontWeight: "600",
     fontFamily: "PoppinsMedium",
   },

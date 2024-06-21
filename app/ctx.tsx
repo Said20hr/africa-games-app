@@ -2,8 +2,10 @@
 import { REMEMBER_ME, USER_TOKEN } from "@/constants/Keys";
 import { ILoginResponse } from "@/shared/type/User.type";
 import { storage } from "@/shared/util/mmkv";
+import { StackActions } from "@react-navigation/native";
 import { useQuery } from "@tanstack/react-query";
 import axios from "axios";
+import { useNavigation } from "expo-router";
 import React, {
   createContext,
   useState,
@@ -40,8 +42,15 @@ export function useSession() {
 }
 
 export function SessionProvider(props: { children: ReactNode }) {
-  const [session, setSession] = useState<ILoginResponse | null>(null);
-  const { data, error, isLoading } = useQuery({
+  const [session, setSession] = useState<ILoginResponse | null | undefined>(
+    undefined
+  );
+  const [isLoading, setIsLoading] = useState<boolean>(true);
+  const {
+    data,
+    error,
+    isLoading: dataLoading,
+  } = useQuery({
     queryKey: ["refetchData"],
     queryFn: async () => {
       try {
@@ -65,13 +74,15 @@ export function SessionProvider(props: { children: ReactNode }) {
   useEffect(() => {
     if (!isLoading) {
       if (data) {
-        setSession(data.data);
-        console.log(data.data);
-      } else if (error) {
-        console.log(error);
-        // signOut()
+        signIn(data.data);
+      } else {
+        signOut();
       }
     }
+  }, [isLoading]);
+
+  useEffect(() => {
+    if (!dataLoading) setIsLoading(false);
   }, [data, error]);
 
   const signIn = (data: ILoginResponse) => {
@@ -81,6 +92,7 @@ export function SessionProvider(props: { children: ReactNode }) {
   const signOut = () => {
     setSession(null);
     storage.setItem(USER_TOKEN, "");
+    // navigation.dispatch(StackActions.replace("(auth)/guest"));
   };
 
   return (

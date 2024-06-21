@@ -24,6 +24,8 @@ interface MyTextInputProps extends TextInputProps {
   onPressRightIcon1?: () => void;
   onPressRightIcon2?: () => void;
   label?: string;
+  focusColor?: string;
+  blurColor?: string;
 }
 
 const TextInput = (props: MyTextInputProps) => {
@@ -37,18 +39,16 @@ const TextInput = (props: MyTextInputProps) => {
     onPressRightIcon1,
     onPressRightIcon2,
     label,
+    focusColor,
+    blurColor,
   } = props;
 
   const [passwordVisible, setPasswordVisible] = useState(false);
   const [focus, setFocus] = useState(false);
-  const { text } = useThemeColor();
+  const { text, primary } = useThemeColor();
 
   const isPasswordField = textContentType?.toLowerCase().includes("password");
   const showPassword = passwordVisible || !isPasswordField;
-
-  const containerFocus = {
-    // borderColor: focus ? "#000" : "#DFDFDF",
-  };
 
   const onFocus = () => {
     setFocus(true);
@@ -85,8 +85,13 @@ const TextInput = (props: MyTextInputProps) => {
         {...containerProps}
         style={[
           styles.container,
-          focus ? containerFocus : null,
           containerProps?.style,
+          {
+            borderColor: focus
+              ? focusColor ?? primary
+              : blurColor ?? `${primary}80`,
+            borderWidth: 2,
+          },
         ]}
       >
         {InitialIcon}
@@ -133,8 +138,6 @@ const styles = StyleSheet.create({
     padding: 14,
     justifyContent: "space-between",
     flexDirection: "row",
-    borderWidth: 2,
-    borderColor: Colors.dark.primary,
     alignItems: "center",
   },
 

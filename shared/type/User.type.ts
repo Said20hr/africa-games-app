@@ -33,18 +33,36 @@ export interface Roulette {
 }
 
 export interface User {
-  created_at: string;
-  email: string;
   id: number;
-  is_email_verified: boolean;
-  name: string;
-  permissions: any[];
-  photo: string;
+  matricule: string;
+  email: string;
+  firstname: string;
+  lastname: string;
+  gender: string;
+  insurance_number: string;
+  service: string;
+  position: string;
+  birth_date: string;
+  hire_date: string;
+  category_level: string;
+  marital_status: string;
+  number_of_children: number;
+  status: string;
+  phone: string;
+  base_salary: string;
+  position_bonus: string;
+  dip: string;
+  bank: string;
+  account_number: string;
+  photo_access: any;
+  nationality: string;
+  created_at: string;
   role: string;
+  permissions: any[];
   token: string;
 }
 
 export interface ILoginPayload {
-  email: string;
+  matricule: string;
   password: string;
 }

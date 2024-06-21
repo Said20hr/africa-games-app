@@ -146,7 +146,7 @@ const ReportWaitingTimer = ({
 };
 
 type RouletteFormProps = {
-  rouletteData: RouletteData;
+  rouletteData: RouletteFilledData;
   currentIndex: number;
   totalIndexes: number;
   nextHandler: (index: number) => void;
@@ -165,6 +165,7 @@ const RouletteForm = ({
   keyOutChange,
 }: RouletteFormProps) => {
   const { primary, text } = useThemeColor();
+  const disableNextButton = !rouletteData.keyInEnd || !rouletteData.keyOutEnd;
 
   return (
     <View
@@ -212,6 +213,7 @@ const RouletteForm = ({
               placeholder="Enter your initial cash"
               keyboardType="decimal-pad"
               onChangeText={keyInChange}
+              focusColor={primary}
             />
             <View
               style={{
@@ -229,6 +231,7 @@ const RouletteForm = ({
               placeholder="Enter your final cash"
               keyboardType="decimal-pad"
               onChangeText={keyOutChange}
+              focusColor={primary}
             />
           </View>
         </View>
@@ -238,6 +241,7 @@ const RouletteForm = ({
           label="Next"
           style={{ marginVertical: heightPixel(17) }}
           onPress={() => nextHandler(currentIndex)}
+          disabled={disableNextButton}
         />
       ) : totalIndexes === 0 ? (
         <Button label="Submit" />
@@ -315,10 +319,16 @@ export const ReportForm = ({ handleSubmit }: ReportFormProps) => {
   });
 
   function nextHandler(index: number) {
-    scrollRef.current?.scrollTo({
-      animated: true,
-      x: FORM_WIDTH * (index + 1),
-    });
+    if (!roulettesData[index].keyInEnd || !roulettesData[index].keyOutEnd) {
+      return Toast.show({
+        type: "error",
+        text1: "Please fill all the fields in this form",
+      });
+    } else
+      scrollRef.current?.scrollTo({
+        animated: true,
+        x: FORM_WIDTH * (index + 1),
+      });
   }
   function backHandler(index: number) {
     scrollRef.current?.scrollTo({
@@ -443,7 +453,7 @@ export const ReportForm = ({ handleSubmit }: ReportFormProps) => {
                     key={index}
                   >
                     <RouletteForm
-                      rouletteData={item}
+                      rouletteData={roulettesData[index]}
                       currentIndex={index}
                       totalIndexes={roulettes.length}
                       nextHandler={nextHandler}
@@ -471,7 +481,13 @@ export const ReportForm = ({ handleSubmit }: ReportFormProps) => {
                     width: FORM_WIDTH,
                   }}
                 >
-                  <View style={{ gap: heightPixel(17), flex: 1 }}>
+                  <View
+                    style={{
+                      gap: heightPixel(17),
+                      flex: 1,
+                      marginTop: heightPixel(30),
+                    }}
+                  >
                     <Text type="BodySmall">
                       Please fill out the following fields to log your daily
                       financial transactions
@@ -542,7 +558,7 @@ export const ReportForm = ({ handleSubmit }: ReportFormProps) => {
                       </View>
                       <View style={{ flex: 1 }}>
                         <Button
-                          label="Next"
+                          label="Submit"
                           onPress={handleSubmitForm}
                           loading={isPending}
                         />
@@ -559,7 +575,7 @@ export const ReportForm = ({ handleSubmit }: ReportFormProps) => {
   );
 };
 
-export default function ReportScreen() {
+export default function AddReportScreen() {
   const [activeSection, setActiveSection] = useState<Sections | null>(null);
   const [showModal, toggleModal] = useState(false);
   const { black, success, danger } = useThemeColor();
@@ -601,8 +617,11 @@ export default function ReportScreen() {
   useEffect(() => {
     const interval = setInterval(() => {
       CURRENT_TIME.setSeconds(CURRENT_TIME.getSeconds() + 1);
+      let localActiveSection = activeSection; //Cannot wait for a re render to set new time
+
       if (!startTime || !endTime || !lastPaymentTime) {
-        setActiveSection(Sections.FORM);
+        localActiveSection = Sections.FORM;
+        setActiveSection(localActiveSection);
         return;
       }
 
@@ -610,13 +629,14 @@ export default function ReportScreen() {
       if (CURRENT_TIME < endTime)
         previousShiftEnd.setDate(previousShiftEnd.getDate() - 1);
       if (previousShiftEnd > lastPaymentTime) {
-        setActiveSection(Sections.FORM);
-        return;
-      } else if (CURRENT_TIME >= startTime && CURRENT_TIME <= endTime)
-        setActiveSection(Sections.DURING_SHIFT_TIMER);
-      else setActiveSection(Sections.AFTER_SHIFT_TIMER);
+        localActiveSection = Sections.FORM;
+      } else if (CURRENT_TIME >= startTime && CURRENT_TIME <= endTime) {
+        localActiveSection = Sections.DURING_SHIFT_TIMER;
+      } else {
+        localActiveSection = Sections.AFTER_SHIFT_TIMER;
+      }
 
-      if (activeSection === Sections.AFTER_SHIFT_TIMER) {
+      if (localActiveSection === Sections.AFTER_SHIFT_TIMER) {
         const nextStartTime = new Date(startTime);
         if (CURRENT_TIME > nextStartTime)
           nextStartTime.setDate(nextStartTime.getDate() + 1);
@@ -627,10 +647,13 @@ export default function ReportScreen() {
         setProgress(
           getProgressPercentage(previousEndTime, CURRENT_TIME, nextStartTime)
         );
-      } else if (activeSection === Sections.DURING_SHIFT_TIMER) {
+      } else if (localActiveSection === Sections.DURING_SHIFT_TIMER) {
         setTimeRemaining(getTimeRemaining(CURRENT_TIME, endTime));
         setProgress(getProgressPercentage(startTime, CURRENT_TIME, endTime));
       }
+
+      if (showModal) return;
+      else setActiveSection(localActiveSection);
     }, 1000);
 
     return () => clearInterval(interval);
@@ -669,7 +692,7 @@ export default function ReportScreen() {
         visible={showModal}
         continuePress={() => {
           toggleModal(false);
-          setActiveSection(Sections.DURING_SHIFT_TIMER);
+          setActiveSection(Sections.AFTER_SHIFT_TIMER);
         }}
       />
     </View>
