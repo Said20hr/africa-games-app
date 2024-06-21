@@ -9,6 +9,7 @@ import {
 import Text from "./ThemedText";
 import { Colors } from "@/constants/Colors";
 import { useThemeColor } from "@/hooks/useThemeColor";
+import { fontPixel, heightPixel } from "@/shared/util/normalise";
 
 interface TableProps
   extends Omit<FlatListProps<unknown>, "data" | "renderItem"> {
@@ -38,7 +39,7 @@ const TableRow = ({ item, rowTextSize, headers }: TableRowProps) => {
                   styles.cell,
                   {
                     textAlign: index === 0 ? "left" : "left",
-                    fontSize: rowTextSize ?? 12,
+                    fontSize: fontPixel(rowTextSize ?? 14),
                   },
                 ]}
               >
@@ -64,7 +65,10 @@ const TableRow = ({ item, rowTextSize, headers }: TableRowProps) => {
                   },
                 ]}
               >
-                <Text type="b2" style={{ fontSize: rowTextSize ?? 12 }}>
+                <Text
+                  type="b2"
+                  style={{ fontSize: fontPixel(rowTextSize ?? 14) }}
+                >
                   {item}
                 </Text>
               </TouchableOpacity>
@@ -90,7 +94,7 @@ const TableHeaderRow = ({
         styles.tableHeaderText,
         {
           textAlign: item === "Status" ? "center" : index > 0 ? "left" : "left",
-          fontSize: rowTextSize ?? 12,
+          fontSize: fontPixel(rowTextSize ?? 14),
           width: item === "Status" ? 85 : "auto",
           marginLeft: item === "Status" ? 20 : 0,
         },
@@ -114,24 +118,20 @@ const Table = (props: TableProps) => {
     []
   );
 
-  const renderHeaders = () => (
-    <View style={{ flexDirection: "row" }}>
-      {props.headers.map((header, index) => (
-        <TableHeaderRow
-          item={header}
-          index={index}
-          rowTextSize={props.rowTextSize}
-          key={index}
-        />
-      ))}
-    </View>
-  );
-
   return (
     <>
       {!props.isFlatList ? (
         <>
-          <View style={{ flexDirection: "row" }}>
+          <View
+            style={{
+              flexDirection: "row",
+              backgroundColor: "#444444",
+              paddingVertical: 8,
+              paddingHorizontal: 12,
+              borderTopLeftRadius: 8,
+              borderTopRightRadius: 8,
+            }}
+          >
             {props.headers.map((item, index) => (
               <TableHeaderRow
                 item={item}
@@ -183,7 +183,6 @@ const styles = StyleSheet.create({
   },
   tableHeaderText: {
     color: Colors.dark.tabIconDefault,
-    fontSize: 10,
     fontWeight: "bold",
     textAlign: "right",
     flex: 1,
@@ -191,10 +190,13 @@ const styles = StyleSheet.create({
   row: {
     flexDirection: "row",
     justifyContent: "space-between",
-    marginTop: 18,
+    marginTop: heightPixel(20),
+    paddingHorizontal: 12,
+    borderBottomWidth: 1,
+    borderBottomColor: "#444444",
+    paddingBottom: 10,
   },
   cell: {
-    fontSize: 12,
     fontWeight: "700",
     flex: 1,
   },

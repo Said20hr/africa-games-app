@@ -5,13 +5,10 @@ export default function GuestStack() {
   return (
     <>
       <Stack
-        screenOptions={{ headerShown: false }}
+        screenOptions={{ headerShown: false, animation: "slide_from_right" }}
         initialRouteName="onboarding"
       >
-        <Stack.Screen
-          name="onboarding"
-          options={{ animation: "slide_from_left" }}
-        />
+        <Stack.Screen name="onboarding" />
         <Stack.Screen name="login" />
       </Stack>
     </>

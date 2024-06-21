@@ -12,6 +12,7 @@ import { Colors } from "@/constants/Colors";
 import { TouchableOpacity } from "react-native-gesture-handler";
 import { useThemeColor } from "@/hooks/useThemeColor";
 import React from "react";
+import { fontPixel } from "@/shared/util/normalise";
 
 interface MyTextInputProps extends TextInputProps {
   containerProps?: ViewProps;
@@ -23,6 +24,8 @@ interface MyTextInputProps extends TextInputProps {
   onPressRightIcon1?: () => void;
   onPressRightIcon2?: () => void;
   label?: string;
+  focusColor?: string;
+  blurColor?: string;
 }
 
 const TextInput = (props: MyTextInputProps) => {
@@ -36,18 +39,16 @@ const TextInput = (props: MyTextInputProps) => {
     onPressRightIcon1,
     onPressRightIcon2,
     label,
+    focusColor,
+    blurColor,
   } = props;
 
   const [passwordVisible, setPasswordVisible] = useState(false);
   const [focus, setFocus] = useState(false);
-  const { text } = useThemeColor();
+  const { text, primary } = useThemeColor();
 
   const isPasswordField = textContentType?.toLowerCase().includes("password");
   const showPassword = passwordVisible || !isPasswordField;
-
-  const containerFocus = {
-    // borderColor: focus ? "#000" : "#DFDFDF",
-  };
 
   const onFocus = () => {
     setFocus(true);
@@ -74,9 +75,9 @@ const TextInput = (props: MyTextInputProps) => {
   };
 
   return (
-    <View style={{ flexDirection: "column", flex: 1 }}>
+    <View style={{ flexDirection: "column" }}>
       {label && (
-        <Text type="b2" style={{ marginBottom: 6 }}>
+        <Text type="InputText" style={{ marginBottom: 6 }}>
           {label}
         </Text>
       )}
@@ -84,8 +85,13 @@ const TextInput = (props: MyTextInputProps) => {
         {...containerProps}
         style={[
           styles.container,
-          focus ? containerFocus : null,
           containerProps?.style,
+          {
+            borderColor: focus
+              ? focusColor ?? primary
+              : blurColor ?? `${primary}80`,
+            borderWidth: 2,
+          },
         ]}
       >
         {InitialIcon}
@@ -116,7 +122,11 @@ const TextInput = (props: MyTextInputProps) => {
           </View>
         )}
       </View>
-      {props.error && <Text style={{ color: "#EB617A" }}>{props.error}</Text>}
+      {props.error && (
+        <Text style={{ color: "#EB617A", marginTop: 4 }} type="BodySmall">
+          {props.error}
+        </Text>
+      )}
     </View>
   );
 };
@@ -128,17 +138,15 @@ const styles = StyleSheet.create({
     padding: 14,
     justifyContent: "space-between",
     flexDirection: "row",
-    borderWidth: 2,
-    borderColor: Colors.dark.primary,
     alignItems: "center",
   },
 
   input: {
     flex: 1,
-    fontSize: 12,
+    fontSize: fontPixel(13),
     paddingBottom: 0,
-    fontWeight: "700",
-    fontFamily: "Poppins-SemiBold",
+    fontWeight: "400",
+    fontFamily: "PoppinsRegular",
   },
 
   iconsContainer: {

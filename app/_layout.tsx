@@ -3,7 +3,7 @@ import { useFonts } from "expo-font";
 import * as SplashScreen from "expo-splash-screen";
 import { useEffect } from "react";
 import { SessionProvider } from "./ctx";
-import { Slot } from "expo-router";
+import { Slot, Stack } from "expo-router";
 import { View } from "react-native";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import React from "react";
@@ -24,10 +24,12 @@ SplashScreen.preventAutoHideAsync();
 export default function RootLayout() {
   const [loaded, error] = useFonts({
     // SpaceMono: require("../assets/fonts/SpaceMono-Regular.ttf"),
-    Poppins: require("../assets/fonts/Poppins-Regular.ttf"),
-    PoppinsBold: require("../assets/fonts/Poppins-SemiBold.ttf"),
-    PoppinsSemiBold: require("../assets/fonts/Poppins-Bold.ttf"),
-    PoppinsRegular: require("../assets/fonts/Poppins-Medium.ttf"),
+    PoppinsRegular: require("../assets/fonts/Poppins-Regular.ttf"),
+    PoppinsBold: require("../assets/fonts/Poppins-Bold.ttf"),
+    PoppinsExtraBold: require("../assets/fonts/Poppins-ExtraBold.ttf"),
+    PoppinsSemiBold: require("../assets/fonts/Poppins-SemiBold.ttf"),
+    PoppinsMedium: require("../assets/fonts/Poppins-Medium.ttf"),
+    PoppinsBlack: require("../assets/fonts/Poppins-Black.ttf"),
     ...FontAwesome.font,
   });
 
@@ -54,7 +56,11 @@ function RootLayoutNav() {
       {/* <TranslationProvider> */}
       <SessionProvider>
         <GestureHandlerRootView>
-          <Slot />
+          <Stack screenOptions={{ headerShown: false }}>
+            <Stack.Screen name="index" />
+            <Stack.Screen name="auth" />
+            <Stack.Screen name="guest" />
+          </Stack>
           <Toast config={toastConfig} />
         </GestureHandlerRootView>
       </SessionProvider>

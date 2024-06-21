@@ -1,12 +1,20 @@
 import useSafeAreaInsets from "@/hooks/useSafeArea";
 import React from "react";
-import { View, Text, StyleSheet, Image, ViewStyle } from "react-native";
+import {
+  View,
+  Text,
+  StyleSheet,
+  Image,
+  ViewStyle,
+  TouchableOpacity,
+} from "react-native";
 import { Calendar, UserPlus } from "react-native-feather";
 import ThemedText from "./ThemedText";
 import { Colors } from "@/constants/Colors";
 import { useThemeColor } from "@/hooks/useThemeColor";
 // import { Image } from "expo-image";
 import { IAuthContext, useSession } from "@/app/ctx";
+import { useNavigation } from "expo-router";
 
 interface HeaderProps {
   image?: boolean;
@@ -26,6 +34,7 @@ const Header: React.FC<HeaderProps> = ({
   const { top } = useSafeAreaInsets();
   const { black } = useThemeColor();
   const { session } = useSession() as IAuthContext;
+  const { navigate } = useNavigation();
 
   return (
     <View
@@ -38,20 +47,23 @@ const Header: React.FC<HeaderProps> = ({
         <View>
           {text1 && text2 ? (
             <>
-              <ThemedText type="h4">{text1}</ThemedText>
-              <ThemedText type="b1" style={{ marginTop: 8 }}>
-                {session?.user.name}
+              <ThemedText type="TitleMedium">{text1}</ThemedText>
+              <ThemedText type="SubtitleLight" style={{ marginTop: 8 }}>
+                {session?.user.firstname} {session?.user.lastname},{" "}
+                {session?.casino.name}
               </ThemedText>
             </>
           ) : title ? (
-            <ThemedText type="h3">{title}</ThemedText>
+            <ThemedText type="TitleMedium">{title}</ThemedText>
           ) : null}
         </View>
         {image && (
-          <Image
-            source={require("@/assets/images/user-header.png")}
-            style={{ uri: session?.user.photo }}
-          />
+          <TouchableOpacity onPress={() => navigate("profile")}>
+            <Image
+              source={require("@/assets/images/user-header.png")}
+              style={{ uri: session?.user.photo }}
+            />
+          </TouchableOpacity>
         )}
       </View>
     </View>

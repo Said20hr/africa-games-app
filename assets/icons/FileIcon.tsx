@@ -7,7 +7,7 @@ function FileIcon(props: SvgProps) {
       width={props.width ?? 17}
       height={props.height ?? 22}
       viewBox="0 0 17 22"
-      fill={"none"}
+      fill={props.fill ?? "none"}
       {...props}
     >
       <Path

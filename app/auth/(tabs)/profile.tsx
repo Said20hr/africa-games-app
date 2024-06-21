@@ -6,21 +6,21 @@ import { useThemeColor } from "@/hooks/useThemeColor";
 import Text from "@/components/ThemedText";
 import { Image } from "expo-image";
 import NavigationButton from "@/components/profile/NavigationButton";
-import { Link } from "expo-router";
+import { Link, useNavigation } from "expo-router";
 import { useSession } from "@/app/ctx";
 import React from "react";
-const data = [
-  { value: 200, label: "Mon" },
-  { value: 700, label: "Tue" },
-  { value: 500, label: "Wed" },
-  { value: 800, label: "Thu" },
-  { value: 1000, label: "Fri" },
-  { value: 1200, label: "Sat" }, // Assuming no customers on Saturday
-];
+import { StackActions } from "@react-navigation/native";
 
 export default function ProfileScreen() {
   const { black, primary, text, background } = useThemeColor();
   const { signOut } = useSession();
+  const { dispatch } = useNavigation();
+
+  function handleSignOut() {
+    dispatch(StackActions.replace("guest"));
+    signOut();
+  }
+
   return (
     <View style={{ flex: 1 }}>
       <Header title="Account" />
@@ -41,7 +41,7 @@ export default function ProfileScreen() {
               source={require("@/assets/images/user-header.png")}
               style={styles.image}
             />
-            <Text type="h5">Chloe Smith</Text>
+            <Text type="HeadingBoldSmall">Chloe Smith</Text>
           </View>
           <Edit2 color={text} strokeWidth={3} />
         </TouchableOpacity>
@@ -63,7 +63,7 @@ export default function ProfileScreen() {
             text="Log out"
             description="Make changes to your account"
             containerStyle={{ borderBottomWidth: 0 }}
-            onPress={signOut}
+            onPress={handleSignOut}
           />
         </View>
       </View>
