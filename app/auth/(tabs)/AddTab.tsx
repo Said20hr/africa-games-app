@@ -27,8 +27,9 @@ import axios from "axios";
 import { queryClient } from "@/api/query-client";
 import LoadingScreen from "@/components/ui/LoadingScreen";
 import { CashIn, CashOut, Money } from "@/assets/icons";
-import { useNavigation, useRouter } from "expo-router";
+import { useRouter } from "expo-router";
 import { fontPixel, heightPixel, widthPixel } from "@/shared/util/normalise";
+import { i18n } from "@/constants/i18n";
 
 const { width, height } = Dimensions.get("window");
 const FORM_WIDTH = width - 32;
@@ -193,10 +194,7 @@ const RouletteForm = ({
           <Text type="HeadingMediumBold">{rouletteData.identifier}</Text>
         </LinearGradient>
         <View style={{ gap: heightPixel(17) }}>
-          <Text type="BodySmall">
-            Please fill out the following fields to log your daily financial
-            transactions
-          </Text>
+          <Text type="BodySmall">{i18n.t("addTab.instructions")}</Text>
           <View style={{ gap: heightPixel(11) }}>
             <View
               style={{
@@ -205,12 +203,12 @@ const RouletteForm = ({
                 alignItems: "center",
               }}
             >
-              <Text type="SubtitleLight">Key in start</Text>
+              <Text type="SubtitleLight">{i18n.t("addTab.keyInStart")}</Text>
               <Text type="SubtitleLight">{rouletteData.key_in} XAF</Text>
             </View>
             <Input
               InitialIcon={<CashIn color={text} />}
-              placeholder="Enter your initial cash"
+              placeholder={i18n.t("addTab.enterInitialCash")}
               keyboardType="decimal-pad"
               onChangeText={keyInChange}
               focusColor={primary}
@@ -223,12 +221,12 @@ const RouletteForm = ({
                 // marginBottom: -10,
               }}
             >
-              <Text type="SubtitleLight">Key out start</Text>
+              <Text type="SubtitleLight">{i18n.t("addTab.keyOutStart")}</Text>
               <Text type="SubtitleLight">{rouletteData.key_out} XAF</Text>
             </View>
             <Input
               InitialIcon={<CashOut color={text} />}
-              placeholder="Enter your final cash"
+              placeholder={i18n.t("addTab.enterFinalCash")}
               keyboardType="decimal-pad"
               onChangeText={keyOutChange}
               focusColor={primary}
@@ -238,13 +236,13 @@ const RouletteForm = ({
       </View>
       {currentIndex === 0 && totalIndexes > 0 ? (
         <Button
-          label="Next"
+          label={i18n.t("addTab.next")}
           style={{ marginVertical: heightPixel(17) }}
           onPress={() => nextHandler(currentIndex)}
           disabled={disableNextButton}
         />
       ) : totalIndexes === 0 ? (
-        <Button label="Submit" />
+        <Button label={i18n.t("addTab.submit")} />
       ) : (
         <View
           style={{
@@ -257,13 +255,16 @@ const RouletteForm = ({
         >
           <View>
             <Button
-              label="Back"
+              label={i18n.t("addTab.back")}
               outlined
               onPress={() => backHandler(currentIndex)}
             />
           </View>
           <View>
-            <Button label="Next" onPress={() => nextHandler(currentIndex)} />
+            <Button
+              label={i18n.t("addTab.next")}
+              onPress={() => nextHandler(currentIndex)}
+            />
           </View>
         </View>
       )}
@@ -322,7 +323,7 @@ export const ReportForm = ({ handleSubmit }: ReportFormProps) => {
     if (!roulettesData[index].keyInEnd || !roulettesData[index].keyOutEnd) {
       return Toast.show({
         type: "error",
-        text1: "Please fill all the fields in this form",
+        text1: i18n.t("addTab.incompleteFormError"),
       });
     } else
       scrollRef.current?.scrollTo({
@@ -354,7 +355,10 @@ export const ReportForm = ({ handleSubmit }: ReportFormProps) => {
         (item) => item.keyInEnd === null || item.keyOutEnd === null
       )
     )
-      Toast.show({ type: "error", text1: "Please fill all the fields" });
+      Toast.show({
+        type: "error",
+        text1: i18n.t("addTab.incompleteFormError"),
+      });
     else {
       const data = {
         cash_final: reportForm.finalCash,
@@ -489,8 +493,7 @@ export const ReportForm = ({ handleSubmit }: ReportFormProps) => {
                     }}
                   >
                     <Text type="BodySmall">
-                      Please fill out the following fields to log your daily
-                      financial transactions
+                      {i18n.t("addTab.instructions")}
                     </Text>
                     <View style={{ gap: heightPixel(11) }}>
                       <View
@@ -500,14 +503,16 @@ export const ReportForm = ({ handleSubmit }: ReportFormProps) => {
                           alignItems: "center",
                         }}
                       >
-                        <Text type="SubtitleLight">Initial Cash</Text>
+                        <Text type="SubtitleLight">
+                          {i18n.t("addTab.initialCash")}
+                        </Text>
                         <Text type="SubtitleLight">
                           {session?.casino.initial_amount} XAF
                         </Text>
                       </View>
                       <Input
                         InitialIcon={<Money color={text} />}
-                        placeholder="Enter your final cash"
+                        placeholder={i18n.t("addTab.enterFinalCash")}
                         keyboardType="decimal-pad"
                         onChangeText={(value: string) =>
                           setReportForm({
@@ -534,7 +539,7 @@ export const ReportForm = ({ handleSubmit }: ReportFormProps) => {
                   </View>
                   {roulettes.length === 0 ? (
                     <Button
-                      label="Submit"
+                      label={i18n.t("addTab.submit")}
                       onPress={handleSubmitForm}
                       loading={isPending}
                       style={{ marginVertical: heightPixel(17) }}
@@ -551,14 +556,14 @@ export const ReportForm = ({ handleSubmit }: ReportFormProps) => {
                     >
                       <View style={{ flex: 1 }}>
                         <Button
-                          label="Back"
+                          label={i18n.t("addTab.back")}
                           outlined
                           onPress={() => backHandler(roulettes.length)}
                         />
                       </View>
                       <View style={{ flex: 1 }}>
                         <Button
-                          label="Submit"
+                          label={i18n.t("addTab.submit")}
                           onPress={handleSubmitForm}
                           loading={isPending}
                         />
@@ -663,7 +668,7 @@ export default function AddReportScreen() {
 
   return (
     <View style={{ flex: 1, backgroundColor: black }}>
-      <Header image title="Daily Report" />
+      <Header image title={i18n.t("addTab.title")} />
       {activeSection === Sections.FORM ? (
         <ReportForm
           handleSubmit={() => {
@@ -677,7 +682,7 @@ export default function AddReportScreen() {
           onBack={() => setActiveSection(Sections.FORM)}
           progress={progress}
           timeRemaining={timeRemaining}
-          description="Please wait until the end of your shift to be able to fill out the form."
+          description={i18n.t("addTab.duringShiftWait")}
         />
       ) : activeSection === Sections.AFTER_SHIFT_TIMER ? (
         <ReportWaitingTimer
@@ -685,7 +690,7 @@ export default function AddReportScreen() {
           onBack={() => setActiveSection(Sections.FORM)}
           progress={progress}
           timeRemaining={timeRemaining}
-          description="Please wait until the end of your next shift to be to fill the form"
+          description={i18n.t("addTab.afterShiftWait")}
         />
       ) : null}
       <ReportConfirmModal

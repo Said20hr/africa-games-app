@@ -23,6 +23,7 @@ import { ILoginPayload } from "@/shared/type/User.type";
 import { storage } from "@/shared/util/mmkv";
 import { REMEMBER_ME, USER_TOKEN } from "@/constants/Keys";
 import { StackActions } from "@react-navigation/native";
+import { i18n } from "@/constants/i18n";
 
 interface IOnSubmitForm extends ILoginPayload {
   checked: boolean;
@@ -101,24 +102,24 @@ export default function Login() {
             type="HeadingLargestBold"
             style={{ textAlign: "center", marginTop: -60 }}
           >
-            Welcome back!
+            {i18n.t("login.welcomeBack")}
           </ThemedText>
           <ThemedText
             type="HeadingBoldSmall"
             style={{ textAlign: "center", marginTop: 8, marginBottom: 24 }}
           >
-            Login to continue using this app
+            {i18n.t("login.loginInstructions")}
           </ThemedText>
           <Input
             autoCapitalize="characters"
             InitialIcon={<Mail color={Colors.dark.text} />}
-            placeholder="Enter your matricule"
+            placeholder={i18n.t("login.enterMatriculePlaceholder")}
             onChangeText={(text) => setValue("matricule", text.toUpperCase())}
             {...register("matricule", {
-              required: "Matricule is required",
+              required: i18n.t("login.matriculeRequired"),
               minLength: {
                 value: 4,
-                message: "Invalid matricule",
+                message: i18n.t("login.invalidMatricule"),
               },
             })}
             error={errors.matricule?.message?.toString()}
@@ -126,21 +127,21 @@ export default function Login() {
           <Input
             autoCapitalize="none"
             InitialIcon={<Lock color={Colors.dark.text} />}
-            placeholder="Enter your password"
+            placeholder={i18n.t("login.enterPasswordPlaceholder")}
             textContentType="password"
             containerProps={{ style: { marginTop: 16 } }}
             onChangeText={(text) => setValue("password", text)}
             {...register("password", {
-              required: "Password is required",
+              required: i18n.t("login.passwordRequired"),
               minLength: {
                 value: 6,
-                message: "Password must have at least 6 characters",
+                message: i18n.t("login.passwordMinLength"),
               },
             })}
             error={errors.password?.message?.toString()}
           />
           <Checkbox
-            text="Remember me"
+            text={i18n.t("login.rememberMe")}
             containerStyle={{ marginTop: 20 }}
             onToggle={(checked) => {
               setValue("checked", checked);
@@ -149,13 +150,13 @@ export default function Login() {
             {...register("checked")}
           />
           <Button
-            label="Login"
+            label={i18n.t("login.loginButton")}
             style={{ marginTop: 30 }}
             onPress={handleSubmit(onSubmit)}
             loading={isPending}
           />
           <TextButton
-            title="Forgot Password ?"
+            title={i18n.t("login.forgotPassword")}
             textStyle={{ textAlign: "center", marginTop: 20 }}
           />
         </View>

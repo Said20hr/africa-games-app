@@ -10,63 +10,64 @@ import { Container } from "@/components/ui";
 import Text from "@/components/ThemedText";
 import { useThemeColor } from "@/hooks/useThemeColor";
 import Table from "@/components/Table";
+import { i18n } from "@/constants/i18n";
 
-const sections = ["Provisions", "Withdrawals"];
+const sections = ["provisions", "withdrawals"];
 const SCREEN_WIDTH = Dimensions.get("screen").width;
 
 type FileEntry = {
   name: string;
   date: string;
   amount: string;
-  status: "Pending" | "Accepted" | "Refused";
+  status: string;
 };
-
-const fileEntriesProvisions: FileEntry[] = [
-  {
-    name: "File 01",
-    date: "2024-06-01",
-    amount: "500 XAF",
-    status: "Pending",
-  },
-  {
-    name: "File 02",
-    date: "2024-06-02",
-    amount: "1000 XAF",
-    status: "Accepted",
-  },
-  {
-    name: "File 03",
-    date: "2024-06-03",
-    amount: "9000 XAF",
-    status: "Refused",
-  },
-];
-
-const fileEntriesWithdrawals: FileEntry[] = [
-  {
-    name: "File 04",
-    date: "2024-07-01",
-    amount: "1500 XAF",
-    status: "Accepted",
-  },
-  {
-    name: "File 05",
-    date: "2024-07-02",
-    amount: "10 XAF",
-    status: "Accepted",
-  },
-  {
-    name: "File 06",
-    date: "2024-07-03",
-    amount: "900 XAF",
-    status: "Refused",
-  },
-];
 
 export default function ProfileScreen() {
   const { primary, background } = useThemeColor();
   const styles = style(primary, background);
   const [activeIndex, setActiveIndex] = useState<number>(0);
+
+  const fileEntriesProvisions: FileEntry[] = [
+    {
+      name: "File 01",
+      date: "2024-06-01",
+      amount: "5399300 XAF",
+      status: i18n.t("movements.pending"),
+    },
+    {
+      name: "File 02",
+      date: "2024-06-02",
+      amount: "13838000 XAF",
+      status: i18n.t("movements.accepted"),
+    },
+    {
+      name: "File 03",
+      date: "2024-06-03",
+      amount: "9000 XAF",
+      status: i18n.t("movements.refused"),
+    },
+  ];
+
+  const fileEntriesWithdrawals: FileEntry[] = [
+    {
+      name: "File 04",
+      date: "2024-07-01",
+      amount: "1500 XAF",
+      status: i18n.t("movements.accepted"),
+    },
+    {
+      name: "File 05",
+      date: "2024-07-02",
+      amount: "10 XAF",
+      status: i18n.t("movements.accepted"),
+    },
+    {
+      name: "File 06",
+      date: "2024-07-03",
+      amount: "900 XAF",
+      status: i18n.t("movements.refused"),
+    },
+  ];
 
   return (
     <Container>
@@ -84,7 +85,7 @@ export default function ProfileScreen() {
               ]}
               onPress={() => setActiveIndex(index)}
             >
-              <Text type="h4">{item}</Text>
+              <Text type="default">{i18n.t(`movements.${item}`)}</Text>
             </TouchableOpacity>
           )}
           horizontal
@@ -98,8 +99,13 @@ export default function ProfileScreen() {
           reports={
             activeIndex === 0 ? fileEntriesProvisions : fileEntriesWithdrawals
           }
-          headers={["Name", "Date", "Amount", "Status"]}
-          rowTextSize={10}
+          headers={[
+            i18n.t("movements.tableHeaders.name"),
+            i18n.t("movements.tableHeaders.date"),
+            i18n.t("movements.tableHeaders.amount"),
+            i18n.t("movements.tableHeaders.status"),
+          ]}
+          rowTextSize={12}
           isFlatList
         />
       </View>
@@ -121,6 +127,7 @@ const style = (primary: string, background: string) =>
       width: SCREEN_WIDTH / 2.6,
       justifyContent: "center",
       alignItems: "center",
+      paddingHorizontal: 12,
       // flex: 1,
     },
   });

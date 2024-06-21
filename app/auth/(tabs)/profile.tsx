@@ -13,8 +13,8 @@ import { StackActions } from "@react-navigation/native";
 
 export default function ProfileScreen() {
   const { black, primary, text, background } = useThemeColor();
-  const { signOut } = useSession();
-  const { dispatch } = useNavigation();
+  const { signOut, session } = useSession();
+  const { dispatch, navigate } = useNavigation();
 
   function handleSignOut() {
     dispatch(StackActions.replace("guest"));
@@ -41,18 +41,23 @@ export default function ProfileScreen() {
               source={require("@/assets/images/user-header.png")}
               style={styles.image}
             />
-            <Text type="HeadingBoldSmall">Chloe Smith</Text>
+            <Text type="HeadingMediumBold">
+              {session?.user.firstname} {session?.user.lastname}
+            </Text>
           </View>
           <Edit2 color={text} strokeWidth={3} />
         </TouchableOpacity>
         <View style={{ backgroundColor: background, borderRadius: 10 }}>
-          <Link href="profile/EditProfile" asChild>
-            <NavigationButton
-              icon={User}
-              text="My Profile"
-              description="Make changes to your account"
-            />
-          </Link>
+          {/* <Link href="profile/EditProfile" asChild> */}
+          <NavigationButton
+            icon={User}
+            text="My Profile"
+            description="Make changes to your account"
+            onPress={() => {
+              navigate("profile/EditProfile");
+            }}
+          />
+          {/* </Link> */}
           <NavigationButton
             icon={User}
             text="My Profile"

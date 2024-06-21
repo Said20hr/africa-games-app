@@ -36,6 +36,7 @@ export type ThemedTextProps = TextProps & {
     | "HeadingLargeBold"
     | "HeadingMediumBold"
     | "TitleSmall"
+    | "SubtitleMedium"
     | "AlertTitleBold";
 };
 
@@ -50,12 +51,12 @@ export default function ThemedText({
 
   return (
     <Text
+      {...rest}
       style={[
         { color: text, fontFamily: "PoppinsMedium" },
         styles[type] || styles.default,
         style,
       ]}
-      {...rest}
     />
   );
 }
@@ -93,6 +94,11 @@ const styles = StyleSheet.create({
   TitleSmall: {
     fontSize: fontPixel(14),
     fontWeight: "600",
+    fontFamily: "PoppinsMedium",
+  },
+  SubtitleMedium: {
+    fontSize: fontPixel(16),
+    fontWeight: "500",
     fontFamily: "PoppinsMedium",
   },
   SubtitleLight: {

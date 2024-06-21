@@ -1,5 +1,5 @@
-import * as fr from "./en.json";
-import * as en from "./fr.json";
+import * as fr from "./fr.json";
+import * as en from "./en.json";
 
 export default {
   fr,

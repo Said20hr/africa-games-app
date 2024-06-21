@@ -31,6 +31,10 @@ import { useSession } from "@/app/ctx";
 import axios from "axios";
 import { fontPixel, heightPixel, widthPixel } from "@/shared/util/normalise";
 import { File } from "@/assets/icons";
+import { changeLanguage, i18n } from "@/constants/i18n";
+import { LanguageOptions } from "@/shared/type/Utils.type";
+import { useTranslation } from "@/hooks/useTranslation";
+// import { useTranslation } from "@/hooks/useTranslation";
 
 type InfoCardProps = {
   title: string;
@@ -197,9 +201,9 @@ function AnimatedRequest(props: AnimatedRequestProps) {
           style={{ marginLeft: widthPixel(12), marginRight: 20 }}
           type="TitleSmall"
         >
-          There are pending withdrawals that need your approval
+          {i18n.t("home.notification")}
           <Text style={{ fontSize: fontPixel(14) }} type="AlertTitleBold">
-            {"  "} View Details
+            {"  "} {i18n.t("home.viewDetails")}
           </Text>
         </Text>
       </TouchableOpacity>
@@ -216,6 +220,8 @@ export default function HomeScreen() {
   const [modalVisible, toggleModal] = useState<boolean>(false);
   const { session } = useSession();
   const [reports, setReports] = useState([]);
+  const { setLocale, locale } = useTranslation();
+  // const { t } = useTranslation();
   const { data, error } = useQuery({
     queryKey: ["reports"],
     queryFn: async () => {
@@ -324,24 +330,35 @@ export default function HomeScreen() {
           />
           <Header
             image
-            text1="Hi, Welcome Back!"
+            text1={`${i18n.t("home.welcomeBack")}`}
             text2={`${session?.user.firstname} ${session?.user.lastname}, ${session?.casino.name}`}
             containerStyle={{ paddingTop: 0 }}
           />
           <View style={styles.contentContainer}>
             <InfoCard
-              title="Total days"
+              title={i18n.t("home.totalDays")}
               value="3"
               icon={<AlertCircle color="#fff" />}
             />
             <InfoCard
-              title="Reports"
+              title={i18n.t("home.reports")}
               icon={<File width={24} height={24} />}
               containerStyle={{ marginBottom: 20 }}
               value=""
               action={
-                <TouchableOpacity style={styles.actionButton}>
-                  <Text type="SubtitleLight">This month</Text>
+                <TouchableOpacity
+                  style={styles.actionButton}
+                  onPress={() => {
+                    if (locale === "en") {
+                      setLocale(LanguageOptions.FRENCH);
+                      changeLanguage(LanguageOptions.FRENCH);
+                    } else {
+                      setLocale(LanguageOptions.ENGLISH);
+                      changeLanguage(LanguageOptions.ENGLISH);
+                    }
+                  }}
+                >
+                  <Text type="SubtitleLight">{i18n.t("home.thisMonth")}</Text>
                   <ChevronDown color={text} style={styles.chevronIcon} />
                 </TouchableOpacity>
               }
@@ -350,7 +367,11 @@ export default function HomeScreen() {
                 {reports.length > 0 ? (
                   <Table
                     reports={reports}
-                    headers={["Date", "Initial Cash", "Final Cash"]}
+                    headers={[
+                      i18n.t("home.tableHeaders.date"),
+                      i18n.t("home.tableHeaders.initialCash"),
+                      i18n.t("home.tableHeaders.finalCash"),
+                    ]}
                     isFlatList={false}
                   />
                 ) : (
