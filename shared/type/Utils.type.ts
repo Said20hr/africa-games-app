@@ -7,10 +7,8 @@ export enum LanguageOptions {
 }
 
 export interface ITranslate {
-  locale: LanguageOptions;
-  setLocale: (locale: LanguageOptions) => void;
-  t: (scope?: i18n.Scope, options?: i18n.TranslateOptions) => string;
-  translate: (scope?: i18n.Scope, options?: i18n.TranslateOptions) => string;
+  locale: string;
+  setLocale: (locale: string) => void;
 }
 
 /*"casino": {

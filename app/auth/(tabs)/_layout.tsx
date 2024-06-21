@@ -7,9 +7,12 @@ import { LinearGradient } from "expo-linear-gradient";
 import { TouchableOpacity } from "react-native-gesture-handler";
 import { fontPixel, heightPixel } from "@/shared/util/normalise";
 import { Platform } from "react-native";
+import { i18n } from "@/constants/i18n";
+import { useTranslation } from "@/hooks/useTranslation";
 
 export default function TabLayout() {
   const { background, primary, text } = useThemeColor();
+  const { locale } = useTranslation();
 
   return (
     <Tabs
@@ -35,7 +38,7 @@ export default function TabLayout() {
       <Tabs.Screen
         name="index"
         options={{
-          title: "Home",
+          title: i18n.t("screens.home"),
           tabBarIcon: ({ color, focused }) => (
             <Home stroke={focused ? primary : text} width={24} height={24} />
           ),
@@ -44,7 +47,7 @@ export default function TabLayout() {
       <Tabs.Screen
         name="Report"
         options={{
-          title: "Reports",
+          title: i18n.t("screens.reports"),
           tabBarIcon: ({ color, focused }) => (
             <File stroke={focused ? primary : text} width={24} height={24} />
           ),
@@ -80,7 +83,7 @@ export default function TabLayout() {
       <Tabs.Screen
         name="movements"
         options={{
-          title: "Movements",
+          title: i18n.t("screens.movements"),
           tabBarIcon: ({ color, focused }) => (
             <DoubleArrow
               fill={focused ? primary : text}
@@ -93,7 +96,7 @@ export default function TabLayout() {
       <Tabs.Screen
         name="profile"
         options={{
-          title: "Account",
+          title: i18n.t("screens.account"),
           tabBarIcon: ({ color, focused }) => (
             <User color={focused ? primary : text} width={24} height={24} />
           ),

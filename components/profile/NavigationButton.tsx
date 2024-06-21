@@ -51,8 +51,8 @@ const NavigationButton: React.FC<NavigationButtonProps> = ({
         />
       </View>
       <View style={styles.textContainer}>
-        <Text type="SubtitleLight">{text}</Text>
-        <Text type="FinePrint" style={{ fontSize: 11 }}>
+        <Text type="SubtitleMedium">{text}</Text>
+        <Text type="InputText" style={{ fontSize: 11 }}>
           {description}
         </Text>
       </View>

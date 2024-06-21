@@ -9,6 +9,7 @@ import { useStatusBar } from "@/hooks/useStatusBar";
 import React from "react";
 import { LinearGradient } from "expo-linear-gradient";
 import { heightPixel } from "@/shared/util/normalise";
+import { i18n } from "@/constants/i18n";
 
 export default function OnBoarding() {
   const { push } = useRouter();
@@ -52,11 +53,11 @@ export default function OnBoarding() {
                 contentFit="contain"
               />
               <ThemedText type="HeadingLargestBold" style={styles.welcomeText}>
-                Welcome
+                {i18n.t("onboarding.welcome")}
               </ThemedText>
             </View>
             <Button
-              label="Login"
+              label={i18n.t("onboarding.login")}
               style={{ marginBottom: heightPixel(30) }}
               onPress={handleOnPress}
             />

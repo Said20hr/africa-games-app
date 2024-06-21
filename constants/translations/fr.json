@@ -1,9 +1,69 @@
 {
   "common": {},
-  "screens": {},
-  "login": {},
+  "screens": {
+    "home": "Accueil",
+    "reports": "Rapports",
+    "movements": "Mouvements",
+    "account": "Compte"
+  },
+  "login": {
+    "loginButton": "Connexion",
+    "welcomeBack": "Bon retour!",
+    "loginInstructions": "Connectez-vous pour continuer à utiliser cette application",
+    "enterMatriculePlaceholder": "Entrez votre matricule",
+    "matriculeRequired": "Le matricule est requis",
+    "invalidMatricule": "Matricule invalide",
+    "enterPasswordPlaceholder": "Entrez votre mot de passe",
+    "passwordRequired": "Le mot de passe est requis",
+    "passwordMinLength": "Le mot de passe doit comporter au moins 6 caractères",
+    "rememberMe": "Se souvenir de moi",
+    "forgotPassword": "Mot de passe oublié ?",
+    "nextButton": "Suivant"
+  },
   "onboarding": {
     "welcome": "Bienvenue",
-    "greeting": "Bonjour de Africa Games, heureux de vous avoir"
+    "login": "Connexion"
+  },
+  "home": {
+    "notification": "Il y a des retraits en attente qui nécessitent votre approbation",
+    "viewDetails": "Voir les détails",
+    "welcomeBack": "Bonjour, bon retour!",
+    "totalDays": "Nombre total de jours",
+    "reports": "Rapports",
+    "thisMonth": "Ce mois-ci",
+    "tableHeaders": {
+      "date": "Date",
+      "initialCash": "Caisse initiale",
+      "finalCash": "Caisse finale"
+    }
+  },
+  "addTab": {
+    "title": "Rapport Quotidien",
+    "instructions": "Veuillez remplir les champs suivants pour enregistrer vos transactions financières quotidiennes",
+    "keyInStart": "Commencer la saisie",
+    "enterInitialCash": "Saisissez votre caisse initiale",
+    "keyOutStart": "Commencer la sortie",
+    "enterFinalCash": "Saisissez votre caisse finale",
+    "next": "Suivant",
+    "back": "Retour",
+    "submit": "Soumettre",
+    "duringShiftWait": "Veuillez attendre la fin de votre service pour pouvoir remplir le formulaire.",
+    "afterShiftWait": "Veuillez attendre la fin de votre prochain service pour pouvoir remplir le formulaire.",
+    "incompleteFormError": "Veuillez remplir tous les champs pour continuer",
+    "initialCash": "Caisse Initiale",
+    "finalCash": "Caisse Finale"
+  },
+  "movements": {
+    "provisions": "Approvisionnements",
+    "withdrawals": "Retraits",
+    "tableHeaders": {
+      "name": "Nom",
+      "date": "Date",
+      "amount": "Montant",
+      "status": "Statut"
+    },
+    "pending": "En attente",
+    "accepted": "Accepté",
+    "refused": "Refusé"
   }
 }

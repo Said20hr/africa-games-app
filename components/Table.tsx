@@ -10,6 +10,7 @@ import Text from "./ThemedText";
 import { Colors } from "@/constants/Colors";
 import { useThemeColor } from "@/hooks/useThemeColor";
 import { fontPixel, heightPixel } from "@/shared/util/normalise";
+import { i18n } from "@/constants/i18n";
 
 interface TableProps
   extends Omit<FlatListProps<unknown>, "data" | "renderItem"> {
@@ -33,13 +34,13 @@ const TableRow = ({ item, rowTextSize, headers }: TableRowProps) => {
         {typeof item === "object" &&
           item &&
           Object.values(item).map((item, index) =>
-            headers[index] !== "Status" ? (
+            headers[index] !== i18n.t("movements.tableHeaders.status") ? (
               <Text
                 style={[
                   styles.cell,
                   {
                     textAlign: index === 0 ? "left" : "left",
-                    fontSize: fontPixel(rowTextSize ?? 14),
+                    fontSize: fontPixel(rowTextSize || 14),
                   },
                 ]}
               >
@@ -66,8 +67,8 @@ const TableRow = ({ item, rowTextSize, headers }: TableRowProps) => {
                 ]}
               >
                 <Text
-                  type="b2"
-                  style={{ fontSize: fontPixel(rowTextSize ?? 14) }}
+                  type="BodySmall"
+                  style={{ fontSize: fontPixel(rowTextSize || 14) }}
                 >
                   {item}
                 </Text>
@@ -93,10 +94,15 @@ const TableHeaderRow = ({
       style={[
         styles.tableHeaderText,
         {
-          textAlign: item === "Status" ? "center" : index > 0 ? "left" : "left",
+          textAlign:
+            item === i18n.t("movements.tableHeaders.status")
+              ? "center"
+              : index > 0
+              ? "left"
+              : "left",
           fontSize: fontPixel(rowTextSize ?? 14),
-          width: item === "Status" ? 85 : "auto",
-          marginLeft: item === "Status" ? 20 : 0,
+          width: item === i18n.t("movements.tableHeaders.status") ? 85 : "auto",
+          marginLeft: item === i18n.t("movements.tableHeaders.status") ? 20 : 0,
         },
       ]}
     >
@@ -115,7 +121,7 @@ const Table = (props: TableProps) => {
         key={index}
       />
     ),
-    []
+    [props.reports]
   );
 
   return (
@@ -180,6 +186,7 @@ const styles = StyleSheet.create({
   tableHeader: {
     flexDirection: "row",
     justifyContent: "space-between",
+    paddingHorizontal: 12,
   },
   tableHeaderText: {
     color: Colors.dark.tabIconDefault,

@@ -61,7 +61,7 @@ const Header: React.FC<HeaderProps> = ({
           <TouchableOpacity onPress={() => navigate("profile")}>
             <Image
               source={require("@/assets/images/user-header.png")}
-              style={{ uri: session?.user.photo }}
+              style={styles.image}
             />
           </TouchableOpacity>
         )}
