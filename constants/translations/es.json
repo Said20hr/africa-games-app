@@ -1,0 +1,119 @@
+{
+  "common": {},
+  "screens": {
+    "home": "Hogar",
+    "reports": "Informes",
+    "movements": "Movimientos",
+    "account": "Cuenta"
+  },
+  "login": {
+    "loginButton": "Acceso",
+    "welcomeBack": "¡Bienvenido de nuevo!",
+    "loginInstructions": "Inicia sesión para continuar usando esta aplicación",
+    "enterMatriculePlaceholder": "Ingresa tu matricula",
+    "matriculeRequired": "Se requiere matrícula",
+    "invalidMatricule": "Matrícula no válida",
+    "enterPasswordPlaceholder": "Ingresa tu contraseña",
+    "passwordRequired": "se requiere contraseña",
+    "passwordMinLength": "La contraseña debe tener al menos 6 caracteres.",
+    "rememberMe": "Acuérdate de mí",
+    "forgotPassword": "Has olvidado tu contraseña ?",
+    "nextButton": "Próximo"
+  },
+  "onboarding": {
+    "welcome": "Bienvenido",
+    "login": "Acceso"
+  },
+  "home": {
+    "notification": "Hay retiros pendientes que necesitan su aprobación",
+    "viewDetails": "Ver detalles",
+    "welcomeBack": "Hola, bienvenido de nuevo!",
+    "totalDays": "Días totales",
+    "reports": "Informes",
+    "thisMonth": "Este mes",
+    "tableHeaders": {
+      "date": "Fecha",
+      "initialCash": "Efectivo inicial",
+      "finalCash": "Efectivo final"
+    }
+  },
+  "addTab": {
+    "title": "Reporte diario",
+    "instructions": "Complete los siguientes campos para registrar sus transacciones financieras diarias",
+    "keyInStart": "Tecla de inicio",
+    "enterInitialCash": "Ingrese su efectivo inicial",
+    "keyOutStart": "Inicio con llave",
+    "enterFinalCash": "Ingrese su efectivo final",
+    "enterKeyInEnd": "Introduce tu llave al final",
+    "enterKeyOutEnd": "Introduce tu llave al salir",
+    "next": "Próximo",
+    "back": "Atrás",
+    "submit": "Entregar",
+    "duringShiftWait": "Espere hasta el final de su turno para poder completar el formulario.",
+    "afterShiftWait": "Espere hasta el final de su próximo turno para completar el formulario.",
+    "incompleteFormError": "Por favor complete todos los campos para continuar",
+    "initialCash": "Efectivo inicial",
+    "finalCash": "Efectivo final"
+  },
+  "movements": {
+    "provisions": "Provisiones",
+    "withdrawals": "Retiros",
+    "tableHeaders": {
+      "name": "Nombre",
+      "date": "Fecha",
+      "amount": "Cantidad",
+      "status": "Estado"
+    },
+    "pending": "Pendiente",
+    "accepted": "Aceptado",
+    "refused": "Rechazado"
+  },
+  "profile": {
+    "title": "Cuenta",
+    "myProfile": "Mi perfil",
+    "makeChangesToMyProfile": "Hacer cambios en mi perfil",
+    "changePassword": "Cambiar la contraseña",
+    "makeChangesToMyPassword": "Realizar cambios en mi contraseña",
+    "mySalaries": "mis salarios",
+    "viewMyLatestSalaries": "Ver mis últimos salarios",
+    "myAbsences": "mis ausencias",
+    "checkMyAbsences": "comprobar mis ausencias",
+    "mySchedule": "Mi horario",
+    "viewMySchedule": "Ver mi agenda",
+    "mySanctions": "Mis sanciones",
+    "makeChangesToYourAccount": "Realizar cambios en su cuenta",
+    "salaryAdvances": "Anticipos de sueldo",
+    "viewMySalaryAdvances": "Ver mis avances de sueldo",
+    "changeLanguage": "Cambiar idioma",
+    "changeLanguageOfTheApp": "Cambiar idioma de la aplicación",
+    "logOut": "Cerrar sesión",
+    "logOutMyAccount": "Cerrar sesión en mi cuenta"
+  },
+  "editProfile": {
+    "name": "Nombre",
+    "email": "Correo electrónico",
+    "dateOfBirth": "Fecha de nacimiento",
+    "phoneNumber": "Número de teléfono",
+    "password": "Contraseña",
+    "socialSecurityNumber": "Número de seguro social",
+    "category": "Categoría",
+    "maritalStatus": "Estado civil",
+    "city": "Ciudad",
+    "status": "Estado",
+    "nationality": "Nacionalidad",
+    "bankName": "Nombre del banco",
+    "bankAccount": "cuenta bancaria",
+    "basicSalary": "Salario base",
+    "service": "Servicio",
+    "post": "Correo",
+    "dateOfHiring": "Fecha de contratación",
+    "workingDays": "Días laborables",
+    "myProfile": "Mi perfil",
+    "changePassword": "Cambiar la contraseña",
+    "confirmPassword": "confirmar Contraseña",
+    "change": "Cambiar",
+    "general": "General",
+    "additional": "Adicional",
+    "bank": "Banco"
+  }
+}

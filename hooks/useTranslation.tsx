@@ -1,19 +1,21 @@
-import React, { useContext, useState } from "react";
+import React, { Dispatch, SetStateAction, useContext, useState } from "react";
 
 import { ITranslate } from "@/shared/type/Utils.type";
 import { getLocales } from "expo-localization";
 
 export const TranslationContext = React.createContext<ITranslate | null>(null);
 
+type TranslationLanguageProviderProps = {
+  children: React.ReactNode;
+  locale: string;
+  setLocale: Dispatch<SetStateAction<string>>;
+};
+
 export const TranslationLanguageProvider = ({
   children,
-}: {
-  children: React.ReactNode;
-}) => {
-  const [locale, setLocale] = useState<string>(
-    getLocales()[0].languageCode ?? "en"
-  );
-
+  locale,
+  setLocale,
+}: TranslationLanguageProviderProps) => {
   const contextValue = {
     locale,
     setLocale,

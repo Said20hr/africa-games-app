@@ -44,10 +44,10 @@ const NavigationButton: React.FC<NavigationButtonProps> = ({
     >
       <View style={styles.iconContainer}>
         <Icon
-          width={24}
-          height={24}
+          width={22}
+          height={22}
           style={[styles.icon, iconStyle]}
-          color={primary}
+          stroke={primary}
         />
       </View>
       <View style={styles.textContainer}>

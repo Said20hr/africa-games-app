@@ -203,12 +203,12 @@ const RouletteForm = ({
                 alignItems: "center",
               }}
             >
-              <Text type="SubtitleLight">{i18n.t("addTab.keyInStart")}</Text>
+              <Text type="HeadingBoldSmall">{i18n.t("addTab.keyInStart")}</Text>
               <Text type="SubtitleLight">{rouletteData.key_in} XAF</Text>
             </View>
             <Input
               InitialIcon={<CashIn color={text} />}
-              placeholder={i18n.t("addTab.enterInitialCash")}
+              placeholder={i18n.t("addTab.enterKeyInEnd")}
               keyboardType="decimal-pad"
               onChangeText={keyInChange}
               focusColor={primary}
@@ -221,12 +221,14 @@ const RouletteForm = ({
                 // marginBottom: -10,
               }}
             >
-              <Text type="SubtitleLight">{i18n.t("addTab.keyOutStart")}</Text>
+              <Text type="HeadingBoldSmall">
+                {i18n.t("addTab.keyOutStart")}
+              </Text>
               <Text type="SubtitleLight">{rouletteData.key_out} XAF</Text>
             </View>
             <Input
               InitialIcon={<CashOut color={text} />}
-              placeholder={i18n.t("addTab.enterFinalCash")}
+              placeholder={i18n.t("addTab.enterKeyOutEnd")}
               keyboardType="decimal-pad"
               onChangeText={keyOutChange}
               focusColor={primary}
@@ -387,7 +389,7 @@ export const ReportForm = ({ handleSubmit }: ReportFormProps) => {
             colors={["rgba(217, 205, 189, 1)", "rgba(233, 146, 19, 1)"]}
             style={[styles.content, { backgroundColor: primary }]}
           >
-            <Text type="DateLargeHeavy" style={{ marginBottom: 12 }}>
+            <Text type="DateLargeHeavy" style={{ marginBottom: 4 }}>
               {CURRENT_TIME.toLocaleDateString("en-GB", {
                 day: "2-digit",
                 month: "short",

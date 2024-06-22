@@ -1,9 +1,9 @@
-import { Locale } from "expo-localization";
-import i18n from "i18n-js";
-
 export enum LanguageOptions {
-  ENGLISH = "en",
-  FRENCH = "fr",
+  English = "en",
+  French = "fr",
+  Espagnol = "es",
+  Portugais = "pt",
+  Allemand = "de",
 }
 
 export interface ITranslate {

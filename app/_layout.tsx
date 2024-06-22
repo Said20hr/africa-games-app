@@ -1,20 +1,18 @@
+import React, { useState } from "react";
 import FontAwesome from "@expo/vector-icons/FontAwesome";
 import { useFonts } from "expo-font";
 import * as SplashScreen from "expo-splash-screen";
 import { useEffect } from "react";
 import { SessionProvider } from "./ctx";
-import { Slot, Stack } from "expo-router";
-import { View } from "react-native";
+import { Stack } from "expo-router";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
-import React from "react";
 import Toast from "react-native-toast-message";
 import { QueryClientProvider } from "@tanstack/react-query";
 import { queryClient } from "@/api/query-client";
 import { toastConfig } from "@/constants/Config";
-import {
-  TranslationLanguageProvider,
-  useTranslation,
-} from "@/hooks/useTranslation";
+import { TranslationLanguageProvider } from "@/hooks/useTranslation";
+import { BottomSheetModalProvider } from "@gorhom/bottom-sheet";
+import { getLocales } from "expo-localization";
 
 export { ErrorBoundary } from "expo-router";
 
@@ -54,18 +52,30 @@ export default function RootLayout() {
 }
 
 function RootLayoutNav() {
+  const [locale, setLocale] = useState<string>(
+    getLocales()[0].languageCode ?? "en"
+  );
+
   return (
     <QueryClientProvider client={queryClient}>
       <SessionProvider>
         <GestureHandlerRootView>
-          <TranslationLanguageProvider>
-            <Stack screenOptions={{ headerShown: false }}>
-              <Stack.Screen name="index" />
-              <Stack.Screen name="auth" />
-              <Stack.Screen name="guest" />
-            </Stack>
-            <Toast config={toastConfig} />
-          </TranslationLanguageProvider>
+          <BottomSheetModalProvider>
+            <TranslationLanguageProvider locale={locale} setLocale={setLocale}>
+              <Stack screenOptions={{ headerShown: false }}>
+                <Stack.Screen name="index" />
+                <Stack.Screen
+                  name="auth"
+                  options={{ animation: "slide_from_right" }}
+                />
+                <Stack.Screen
+                  name="guest"
+                  options={{ animation: "slide_from_right" }}
+                />
+              </Stack>
+              <Toast config={toastConfig} />
+            </TranslationLanguageProvider>
+          </BottomSheetModalProvider>
         </GestureHandlerRootView>
       </SessionProvider>
     </QueryClientProvider>

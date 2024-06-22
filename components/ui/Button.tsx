@@ -26,7 +26,7 @@ const Button = (props: ButtonProps): JSX.Element => {
         {
           backgroundColor:
             props.loading || disabled
-              ? `${Colors.dark.primary}B3`
+              ? `${Colors.dark.primary}99`
               : outlined
               ? "transparent"
               : Colors.dark.primary,
@@ -37,7 +37,7 @@ const Button = (props: ButtonProps): JSX.Element => {
       ]}
     >
       {props.loading ? (
-        <ActivityIndicator />
+        <ActivityIndicator color="#fff" />
       ) : (
         <Text type="HeadingBoldSmall" style={props.textStyle}>
           {props.label}
