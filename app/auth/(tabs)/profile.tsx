@@ -179,7 +179,14 @@ const ChangeLanguageModal = ({ modalRef }: ChangePasswordModalProps) => {
               />
             }
             value={selectedLanguage}
-            RightIcon1={<ChevronDown color={text} width={20} height={20} />}
+            RightIcon1={
+              <ChevronDown
+                color={text}
+                width={20}
+                height={20}
+                onPress={handleShowMenu}
+              />
+            }
             onPress={handleShowMenu}
           />
           {showMore && (
