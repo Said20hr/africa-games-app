@@ -15,6 +15,7 @@ import { useThemeColor } from "@/hooks/useThemeColor";
 // import { Image } from "expo-image";
 import { IAuthContext, useSession } from "@/app/ctx";
 import { useNavigation } from "expo-router";
+import { heightPixel } from "@/shared/util/normalise";
 
 interface HeaderProps {
   image?: boolean;
@@ -48,7 +49,7 @@ const Header: React.FC<HeaderProps> = ({
           {text1 && text2 ? (
             <>
               <ThemedText type="TitleMedium">{text1}</ThemedText>
-              <ThemedText type="SubtitleLight" style={{ marginTop: 8 }}>
+              <ThemedText type="SubtitleLight" style={{ marginTop: 2 }}>
                 {session?.user.firstname} {session?.user.lastname},{" "}
                 {session?.casino.name}
               </ThemedText>
@@ -78,10 +79,10 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
   },
   image: {
-    width: 32,
+    width: heightPixel(40),
+    height: heightPixel(40),
     aspectRatio: 1,
     borderRadius: 100,
-    height: 32,
   },
 });
 

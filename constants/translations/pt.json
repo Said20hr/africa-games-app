@@ -1,0 +1,119 @@
+{
+  "common": {},
+  "screens": {
+    "home": "Início",
+    "reports": "Relatórios",
+    "movements": "Movimentos",
+    "account": "Conta"
+  },
+  "login": {
+    "loginButton": "Entrar",
+    "welcomeBack": "Bem-vindo de volta!",
+    "loginInstructions": "Faça login para continuar usando este aplicativo",
+    "enterMatriculePlaceholder": "Digite seu matrícula",
+    "matriculeRequired": "Matrícula é obrigatória",
+    "invalidMatricule": "Matrícula inválida",
+    "enterPasswordPlaceholder": "Digite sua senha",
+    "passwordRequired": "Senha é obrigatória",
+    "passwordMinLength": "A senha deve ter pelo menos 6 caracteres",
+    "rememberMe": "Lembrar-me",
+    "forgotPassword": "Esqueceu a senha?",
+    "nextButton": "Próximo"
+  },
+  "onboarding": {
+    "welcome": "Bem-vindo",
+    "login": "Entrar"
+  },
+  "home": {
+    "notification": "Há retiradas pendentes que precisam da sua aprovação",
+    "viewDetails": "Ver detalhes",
+    "welcomeBack": "Oi, Bem-vindo de volta!",
+    "totalDays": "Total de dias",
+    "reports": "Relatórios",
+    "thisMonth": "Este mês",
+    "tableHeaders": {
+      "date": "Data",
+      "initialCash": "Caixa inicial",
+      "finalCash": "Caixa final"
+    }
+  },
+  "addTab": {
+    "title": "Relatório Diário",
+    "instructions": "Preencha os campos a seguir para registrar suas transações financeiras diárias",
+    "keyInStart": "Início da entrada",
+    "enterInitialCash": "Digite o caixa inicial",
+    "keyOutStart": "Início da saída",
+    "enterFinalCash": "Digite o caixa final",
+    "next": "Próximo",
+    "back": "Voltar",
+    "submit": "Enviar",
+    "enterKeyInEnd": "Digite sua chave no final",
+    "enterKeyOutEnd": "Digite sua chave ao sair",
+    "duringShiftWait": "Aguarde até o final do seu turno para poder preencher o formulário.",
+    "afterShiftWait": "Aguarde até o final do seu próximo turno para preencher o formulário.",
+    "incompleteFormError": "Preencha todos os campos para continuar",
+    "initialCash": "Caixa inicial",
+    "finalCash": "Caixa final"
+  },
+  "movements": {
+    "provisions": "Provisões",
+    "withdrawals": "Retiradas",
+    "tableHeaders": {
+      "name": "Nome",
+      "date": "Data",
+      "amount": "Montante",
+      "status": "Estado"
+    },
+    "pending": "Pendente",
+    "accepted": "Aceito",
+    "refused": "Recusado"
+  },
+  "profile": {
+    "title": "Conta",
+    "myProfile": "Meu Perfil",
+    "makeChangesToMyProfile": "Fazer alterações no meu perfil",
+    "changePassword": "Mudar senha",
+    "makeChangesToMyPassword": "Fazer alterações na minha senha",
+    "mySalaries": "Meus salários",
+    "viewMyLatestSalaries": "Ver meus últimos salários",
+    "myAbsences": "Minhas ausências",
+    "checkMyAbsences": "Verificar minhas ausências",
+    "mySchedule": "Meu horário",
+    "viewMySchedule": "Ver meu horário",
+    "mySanctions": "Minhas sanções",
+    "makeChangesToYourAccount": "Fazer alterações na sua conta",
+    "salaryAdvances": "Adiantamentos salariais",
+    "viewMySalaryAdvances": "Ver meus adiantamentos salariais",
+    "changeLanguage": "Mudar idioma",
+    "changeLanguageOfTheApp": "Mudar o idioma do aplicativo",
+    "logOut": "Sair",
+    "logOutMyAccount": "Sair da minha conta"
+  },
+  "editProfile": {
+    "name": "Nome",
+    "email": "Email",
+    "dateOfBirth": "Data de nascimento",
+    "phoneNumber": "Número de telefone",
+    "password": "Senha",
+    "socialSecurityNumber": "Número do seguro social",
+    "category": "Categoria",
+    "maritalStatus": "Estado civil",
+    "city": "Cidade",
+    "status": "Estado",
+    "nationality": "Nacionalidade",
+    "bankName": "Nome do banco",
+    "bankAccount": "Conta bancária",
+    "basicSalary": "Salário base",
+    "service": "Serviço",
+    "post": "Cargo",
+    "dateOfHiring": "Data de contratação",
+    "workingDays": "Dias úteis",
+    "myProfile": "Meu Perfil",
+    "changePassword": "Mudar senha",
+    "confirmPassword": "Confirmar senha",
+    "change": "Mudar",
+    "general": "Geral",
+    "additional": "Adicional",
+    "bank": "Banco"
+  }
+}

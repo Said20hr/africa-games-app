@@ -24,13 +24,19 @@ type TableRowProps = {
   item: unknown;
   rowTextSize?: number;
   headers: string[];
+  isLast?: boolean;
 };
 
-const TableRow = ({ item, rowTextSize, headers }: TableRowProps) => {
+const TableRow = ({
+  item,
+  rowTextSize,
+  headers,
+  isLast = false,
+}: TableRowProps) => {
   const { primary, success, danger } = useThemeColor();
   return (
     <>
-      <View style={styles.row}>
+      <View style={[styles.row, { borderBottomWidth: isLast ? 0 : 1 }]}>
         {typeof item === "object" &&
           item &&
           Object.values(item).map((item, index) =>
@@ -52,15 +58,15 @@ const TableRow = ({ item, rowTextSize, headers }: TableRowProps) => {
                   {
                     alignSelf: "flex-start",
                     backgroundColor:
-                      item === "Pending"
+                      item === i18n.t("movements.pending")
                         ? primary
-                        : item === "Refused"
+                        : item === i18n.t("movements.refused")
                         ? danger
                         : success,
                     paddingHorizontal: 4,
                     paddingVertical: 4,
                     alignItems: "center",
-                    borderRadius: 16,
+                    borderRadius: 8,
                     width: 78,
                     marginLeft: 20,
                   },
@@ -105,6 +111,7 @@ const TableHeaderRow = ({
           marginLeft: item === i18n.t("movements.tableHeaders.status") ? 20 : 0,
         },
       ]}
+      type="SubtitleMedium"
     >
       {item}
     </Text>
@@ -119,6 +126,7 @@ const Table = (props: TableProps) => {
         item={item}
         rowTextSize={props.rowTextSize}
         key={index}
+        isLast={index === props.reports.length - 1}
       />
     ),
     [props.reports]
@@ -154,6 +162,7 @@ const Table = (props: TableProps) => {
                 item={item}
                 rowTextSize={props.rowTextSize}
                 key={index}
+                isLast={index === props.reports.length - 1}
               />
             ))}
           </View>
@@ -187,6 +196,9 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "space-between",
     paddingHorizontal: 12,
+    borderBottomWidth: 1,
+    borderBottomColor: "#444444",
+    paddingBottom: 8,
   },
   tableHeaderText: {
     color: Colors.dark.tabIconDefault,

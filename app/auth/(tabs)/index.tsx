@@ -31,7 +31,7 @@ import { useSession } from "@/app/ctx";
 import axios from "axios";
 import { fontPixel, heightPixel, widthPixel } from "@/shared/util/normalise";
 import { File } from "@/assets/icons";
-import { changeLanguage, i18n } from "@/constants/i18n";
+import { i18n } from "@/constants/i18n";
 import { LanguageOptions } from "@/shared/type/Utils.type";
 import { useTranslation } from "@/hooks/useTranslation";
 // import { useTranslation } from "@/hooks/useTranslation";
@@ -220,7 +220,6 @@ export default function HomeScreen() {
   const [modalVisible, toggleModal] = useState<boolean>(false);
   const { session } = useSession();
   const [reports, setReports] = useState([]);
-  const { setLocale, locale } = useTranslation();
   // const { t } = useTranslation();
   const { data, error } = useQuery({
     queryKey: ["reports"],
@@ -346,18 +345,7 @@ export default function HomeScreen() {
               containerStyle={{ marginBottom: 20 }}
               value=""
               action={
-                <TouchableOpacity
-                  style={styles.actionButton}
-                  onPress={() => {
-                    if (locale === "en") {
-                      setLocale(LanguageOptions.FRENCH);
-                      changeLanguage(LanguageOptions.FRENCH);
-                    } else {
-                      setLocale(LanguageOptions.ENGLISH);
-                      changeLanguage(LanguageOptions.ENGLISH);
-                    }
-                  }}
-                >
+                <TouchableOpacity style={styles.actionButton}>
                   <Text type="SubtitleLight">{i18n.t("home.thisMonth")}</Text>
                   <ChevronDown color={text} style={styles.chevronIcon} />
                 </TouchableOpacity>

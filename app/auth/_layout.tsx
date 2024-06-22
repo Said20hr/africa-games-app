@@ -5,6 +5,7 @@ import { Platform, TouchableOpacity } from "react-native";
 import { ArrowLeft } from "react-native-feather";
 import { fontPixel } from "@/shared/util/normalise";
 import { useThemeColor } from "@/hooks/useThemeColor";
+import { i18n } from "@/constants/i18n";
 
 enum AppState {
   LOADING = "loading",
@@ -26,25 +27,26 @@ export default function AppLayout() {
         options={{
           headerLeft: () => (
             <>
-              {Platform.OS === "ios" && (
+              {
                 <TouchableOpacity onPress={goBack}>
                   <ArrowLeft color={text} />
                 </TouchableOpacity>
-              )}
+              }
             </>
           ),
-          headerTitle: "My Profile",
+          headerTitle: i18n.t("editProfile.myProfile"),
           headerShadowVisible: false,
           headerTitleStyle: {
             color: text,
             fontFamily: "PoppinsMedium",
             fontSize: fontPixel(20),
           },
-          headerTitleAlign: "center",
+          headerTitleAlign: "left",
           headerShown: true,
           headerStyle: {
             backgroundColor: black,
           },
+          animation: "slide_from_right",
         }}
       />
     </Stack>

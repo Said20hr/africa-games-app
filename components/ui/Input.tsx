@@ -12,7 +12,8 @@ import { Colors } from "@/constants/Colors";
 import { TouchableOpacity } from "react-native-gesture-handler";
 import { useThemeColor } from "@/hooks/useThemeColor";
 import React from "react";
-import { fontPixel } from "@/shared/util/normalise";
+import { fontPixel, heightPixel } from "@/shared/util/normalise";
+import { BottomSheetTextInput } from "@gorhom/bottom-sheet";
 
 interface MyTextInputProps extends TextInputProps {
   containerProps?: ViewProps;
@@ -26,6 +27,7 @@ interface MyTextInputProps extends TextInputProps {
   label?: string;
   focusColor?: string;
   blurColor?: string;
+  bottomSheetInput?: boolean;
 }
 
 const TextInput = (props: MyTextInputProps) => {
@@ -41,6 +43,7 @@ const TextInput = (props: MyTextInputProps) => {
     label,
     focusColor,
     blurColor,
+    bottomSheetInput = false,
   } = props;
 
   const [passwordVisible, setPasswordVisible] = useState(false);
@@ -74,6 +77,19 @@ const TextInput = (props: MyTextInputProps) => {
     );
   };
 
+  const inputProps = {
+    secureTextEntry: !showPassword,
+    onFocus,
+    onBlur,
+    placeholderTextColor: "#9E9D9D",
+    ...props,
+    style: [
+      styles.input,
+      style,
+      { marginLeft: InitialIcon ? 8 : 0, color: text },
+    ],
+  };
+
   return (
     <View style={{ flexDirection: "column" }}>
       {label && (
@@ -94,19 +110,14 @@ const TextInput = (props: MyTextInputProps) => {
           },
         ]}
       >
-        {InitialIcon}
-        <NativeTextInput
-          secureTextEntry={!showPassword}
-          onFocus={onFocus}
-          onBlur={onBlur}
-          placeholderTextColor="#9E9D9D"
-          {...props}
-          style={[
-            styles.input,
-            style,
-            { marginLeft: InitialIcon ? 8 : 0, color: text },
-          ]}
-        />
+        {InitialIcon && (
+          <View style={{ marginTop: heightPixel(2) }}>{InitialIcon}</View>
+        )}
+        {!bottomSheetInput ? (
+          <NativeTextInput {...inputProps} />
+        ) : (
+          <BottomSheetTextInput {...inputProps} />
+        )}
         {isPasswordField && !(RightIcon1 || RightIcon2) ? (
           <View>
             <EyeIcon />
@@ -143,7 +154,7 @@ const styles = StyleSheet.create({
 
   input: {
     flex: 1,
-    fontSize: fontPixel(13),
+    fontSize: fontPixel(15),
     paddingBottom: 0,
     fontWeight: "400",
     fontFamily: "PoppinsRegular",

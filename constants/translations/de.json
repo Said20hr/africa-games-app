@@ -1,0 +1,119 @@
+{
+  "common": {},
+  "screens": {
+    "home": "Startseite",
+    "reports": "Berichte",
+    "movements": "Bewegungen",
+    "account": "Konto"
+  },
+  "login": {
+    "loginButton": "Anmelden",
+    "welcomeBack": "Willkommen zurück!",
+    "loginInstructions": "Melden Sie sich an, um diese App weiter zu verwenden",
+    "enterMatriculePlaceholder": "Geben Sie Ihre Matrikelnummer ein",
+    "matriculeRequired": "Matrikelnummer ist erforderlich",
+    "invalidMatricule": "Ungültige Matrikelnummer",
+    "enterPasswordPlaceholder": "Geben Sie Ihr Passwort ein",
+    "passwordRequired": "Passwort ist erforderlich",
+    "passwordMinLength": "Das Passwort muss mindestens 6 Zeichen lang sein",
+    "rememberMe": "Erinnere dich an mich",
+    "forgotPassword": "Passwort vergessen?",
+    "nextButton": "Weiter"
+  },
+  "onboarding": {
+    "welcome": "Willkommen",
+    "login": "Anmelden"
+  },
+  "home": {
+    "notification": "Es gibt ausstehende Abhebungen, die Ihre Genehmigung benötigen",
+    "viewDetails": "Details anzeigen",
+    "welcomeBack": "Hi, Willkommen zurück!",
+    "totalDays": "Gesamttage",
+    "reports": "Berichte",
+    "thisMonth": "Diesen Monat",
+    "tableHeaders": {
+      "date": "Datum",
+      "initialCash": "Anfangskasse",
+      "finalCash": "Endkasse"
+    }
+  },
+  "addTab": {
+    "title": "Tagesbericht",
+    "instructions": "Bitte füllen Sie die folgenden Felder aus, um Ihre täglichen Finanztransaktionen zu protokollieren",
+    "keyInStart": "Eingabestart",
+    "enterInitialCash": "Geben Sie Ihre Anfangskasse ein",
+    "keyOutStart": "Ausgabestart",
+    "enterKeyInEnd": "Geben Sie Ihren Schlüssel am Ende ein",
+    "enterKeyOutEnd": "Geben Sie Ihren Schlüssel beim Verlassen ein",
+    "enterFinalCash": "Geben Sie Ihre Endkasse ein",
+    "next": "Weiter",
+    "back": "Zurück",
+    "submit": "Einreichen",
+    "duringShiftWait": "Bitte warten Sie bis zum Ende Ihrer Schicht, um das Formular ausfüllen zu können.",
+    "afterShiftWait": "Bitte warten Sie bis zum Ende Ihrer nächsten Schicht, um das Formular ausfüllen zu können.",
+    "incompleteFormError": "Bitte füllen Sie alle Felder aus, um fortzufahren",
+    "initialCash": "Anfangskasse",
+    "finalCash": "Endkasse"
+  },
+  "movements": {
+    "provisions": "Vorräte",
+    "withdrawals": "Abhebungen",
+    "tableHeaders": {
+      "name": "Name",
+      "date": "Datum",
+      "amount": "Betrag",
+      "status": "Status"
+    },
+    "pending": "Ausstehend",
+    "accepted": "Akzeptiert",
+    "refused": "Abgelehnt"
+  },
+  "profile": {
+    "title": "Konto",
+    "myProfile": "Mein Profil",
+    "makeChangesToMyProfile": "Änderungen an meinem Profil vornehmen",
+    "changePassword": "Passwort ändern",
+    "makeChangesToMyPassword": "Änderungen an meinem Passwort vornehmen",
+    "mySalaries": "Meine Gehälter",
+    "viewMyLatestSalaries": "Meine neuesten Gehälter anzeigen",
+    "myAbsences": "Meine Abwesenheiten",
+    "checkMyAbsences": "Meine Abwesenheiten prüfen",
+    "mySchedule": "Mein Zeitplan",
+    "viewMySchedule": "Meinen Zeitplan anzeigen",
+    "mySanctions": "Meine Sanktionen",
+    "makeChangesToYourAccount": "Änderungen an Ihrem Konto vornehmen",
+    "salaryAdvances": "Gehaltsvorschüsse",
+    "viewMySalaryAdvances": "Meine Gehaltsvorschüsse anzeigen",
+    "changeLanguage": "Sprache ändern",
+    "changeLanguageOfTheApp": "Die Sprache der App ändern",
+    "logOut": "Abmelden",
+    "logOutMyAccount": "Mein Konto abmelden"
+  },
+  "editProfile": {
+    "name": "Name",
+    "email": "E-Mail",
+    "dateOfBirth": "Geburtsdatum",
+    "phoneNumber": "Telefonnummer",
+    "password": "Passwort",
+    "socialSecurityNumber": "Sozialversicherungsnummer",
+    "category": "Kategorie",
+    "maritalStatus": "Familienstand",
+    "city": "Stadt",
+    "status": "Status",
+    "nationality": "Nationalität",
+    "bankName": "Bankname",
+    "bankAccount": "Bankkonto",
+    "basicSalary": "Grundgehalt",
+    "service": "Dienst",
+    "post": "Posten",
+    "dateOfHiring": "Einstellungsdatum",
+    "workingDays": "Arbeitstage",
+    "myProfile": "Mein Profil",
+    "changePassword": "Passwort ändern",
+    "confirmPassword": "Passwort bestätigen",
+    "change": "Ändern",
+    "general": "Allgemein",
+    "additional": "Zusätzlich",
+    "bank": "Bank"
+  }
+}
