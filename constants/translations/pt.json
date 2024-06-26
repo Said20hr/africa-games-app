@@ -35,7 +35,10 @@
       "date": "Data",
       "initialCash": "Caixa inicial",
       "finalCash": "Caixa final"
-    }
+    },
+    "workingDays": "Dias úteis",
+    "absences": "Ausências",
+    "lateDays": "Dias de atraso"
   },
   "addTab": {
     "title": "Relatório Diário",
@@ -66,7 +69,13 @@
     },
     "pending": "Pendente",
     "accepted": "Aceito",
-    "refused": "Recusado"
+    "refused": "Recusado",
+    "addProvision": {
+      "buttonText": "Adicionar",
+      "label": "Preço",
+      "title": "Adicionar provisão",
+      "placeholder": "Digite o preço"
+    }
   },
   "profile": {
     "title": "Conta",

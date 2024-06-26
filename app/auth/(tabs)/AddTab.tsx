@@ -276,7 +276,7 @@ const RouletteForm = ({
 
 export const ReportForm = ({ handleSubmit }: ReportFormProps) => {
   const { black, accent, primary, text, background } = useThemeColor();
-  const { session } = useSession();
+  const { session, updateLastOperation } = useSession();
   const scrollRef = useRef<ScrollView>(null);
   const { mutate, isPending } = useMutation({
     mutationFn: async (data) => {
@@ -292,6 +292,9 @@ export const ReportForm = ({ handleSubmit }: ReportFormProps) => {
         );
 
         Toast.show({ type: "success", text1: response.data.message });
+        console.log(response.data);
+        updateLastOperation(response.data.report.created_at);
+        handleSubmit();
         return response.data;
       } catch (error) {
         if (
@@ -382,6 +385,7 @@ export const ReportForm = ({ handleSubmit }: ReportFormProps) => {
           // flex: 1,
           backgroundColor: black,
         }}
+        showsVerticalScrollIndicator={false}
         // bounces={false}
       >
         <View>
@@ -611,9 +615,7 @@ export default function AddReportScreen() {
       endMinute
     );
 
-    const lastPaymentTime = session.casino.last_operation
-      ? new Date(session.casino.last_operation)
-      : null;
+    const lastPaymentTime = session.casino.last_operation;
 
     return [startTime, endTime, lastPaymentTime];
   }, []);

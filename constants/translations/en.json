@@ -35,7 +35,10 @@
       "date": "Date",
       "initialCash": "Initial Cash",
       "finalCash": "Final Cash"
-    }
+    },
+    "workingDays": "Working days",
+    "absences": "Absences",
+    "lateDays": "Late Days"
   },
   "addTab": {
     "title": "Daily Report",
@@ -66,7 +69,13 @@
     },
     "pending": "Pending",
     "accepted": "Accepted",
-    "refused": "Refused"
+    "refused": "Refused",
+    "addProvision": {
+      "buttonText": "Add",
+      "label": "Price",
+      "title": "Add Provision",
+      "placeholder": "Enter the price"
+    }
   },
   "profile": {
     "title": "Account",
