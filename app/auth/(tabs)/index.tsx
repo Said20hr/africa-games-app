@@ -30,7 +30,7 @@ import { useQuery } from "@tanstack/react-query";
 import { useSession } from "@/app/ctx";
 import axios from "axios";
 import { fontPixel, heightPixel, widthPixel } from "@/shared/util/normalise";
-import { File } from "@/assets/icons";
+import { File, Suitcase, TwoUsers } from "@/assets/icons";
 import { i18n } from "@/constants/i18n";
 import { LanguageOptions } from "@/shared/type/Utils.type";
 import { useTranslation } from "@/hooks/useTranslation";
@@ -146,15 +146,32 @@ const InfoCard = ({
       ]}
     >
       <View style={styles.header}>
-        <View style={styles.headerInfoContainer}>
+        <View
+          style={[
+            styles.headerInfoContainer,
+            {
+              marginBottom:
+                title.length > 9 ? heightPixel(10) : heightPixel(20),
+            },
+          ]}
+        >
           <View style={[styles.iconContainer, { backgroundColor: primary }]}>
             {icon || <Users color={text} />}
           </View>
-          <Text type="TitleMedium">{title}</Text>
+          <View style={{ flexShrink: 1 }}>
+            <Text type="TitleSmall">{title}</Text>
+          </View>
         </View>
         {action && <View style={styles.actionContainer}>{action}</View>}
       </View>
-      {value && value !== "" && <Text type="HeadingLargeBold">{value}</Text>}
+      {value && value !== "" && (
+        <Text
+          style={{ fontSize: fontPixel(24) }} // Use `flex: 1` to allow text to fill the container
+          type="TitleMedium"
+        >
+          {value}
+        </Text>
+      )}
       {children}
     </View>
   );
@@ -198,7 +215,11 @@ function AnimatedRequest(props: AnimatedRequestProps) {
       >
         <AlertCircle color={text} />
         <Text
-          style={{ marginLeft: widthPixel(12), marginRight: 20 }}
+          style={{
+            marginLeft: widthPixel(6),
+            marginRight: 12,
+            textAlign: "left",
+          }}
           type="TitleSmall"
         >
           {i18n.t("home.notification")}
@@ -335,10 +356,30 @@ export default function HomeScreen() {
           />
           <View style={styles.contentContainer}>
             <InfoCard
-              title={i18n.t("home.totalDays")}
+              title={i18n.t("home.workingDays")}
               value="3"
-              icon={<AlertCircle color="#fff" />}
+              icon={<Suitcase stroke="#fff" />}
             />
+            <View
+              style={{
+                flexDirection: "row",
+                justifyContent: "space-between",
+                gap: 20,
+              }}
+            >
+              <InfoCard
+                title={i18n.t("home.lateDays")}
+                value="3"
+                icon={<TwoUsers stroke="#fff" />}
+                containerStyle={{ flex: 1 }}
+              />
+              <InfoCard
+                title={i18n.t("home.absences")}
+                value="3"
+                icon={<AlertCircle color="#fff" />}
+                containerStyle={{ flex: 1 }}
+              />
+            </View>
             <InfoCard
               title={i18n.t("home.reports")}
               icon={<File width={24} height={24} />}
@@ -346,8 +387,12 @@ export default function HomeScreen() {
               value=""
               action={
                 <TouchableOpacity style={styles.actionButton}>
-                  <Text type="SubtitleLight">{i18n.t("home.thisMonth")}</Text>
-                  <ChevronDown color={text} style={styles.chevronIcon} />
+                  <Text type="InputText">{i18n.t("home.thisMonth")}</Text>
+                  <ChevronDown
+                    color={text}
+                    style={styles.chevronIcon}
+                    width={18}
+                  />
                 </TouchableOpacity>
               }
             >
@@ -418,14 +463,17 @@ const styles = StyleSheet.create({
   cardContainer: {
     borderRadius: 16,
     padding: 20,
-    gap: heightPixel(20),
+    // gap: heightPixel(20),
   },
   header: {
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
   },
-  headerInfoContainer: { flexDirection: "row", alignItems: "center" },
+  headerInfoContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+  },
   iconContainer: {
     borderRadius: 100,
     padding: 6,

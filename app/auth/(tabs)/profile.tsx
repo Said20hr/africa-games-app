@@ -118,6 +118,11 @@ const ChangeLanguageModal = ({ modalRef }: ChangePasswordModalProps) => {
     setShowMore(true);
   }
 
+  function closeModal() {
+    // @ts-ignore
+    modalRef?.current?.close();
+  }
+
   function handleLanguageSelection(value: LanguageOptions) {
     setFlagCountry(getFlagCountry(value));
     setLocale(value);
@@ -126,8 +131,8 @@ const ChangeLanguageModal = ({ modalRef }: ChangePasswordModalProps) => {
       (key) => LanguageOptions[key] === value
     );
     setSelectedLanguage(checkSelectedLanguage || "English");
-    // @ts-ignore
-    modalRef?.current?.close();
+    closeModal();
+    setShowMore(false);
     changeLanguage(value);
   }
 
@@ -165,30 +170,35 @@ const ChangeLanguageModal = ({ modalRef }: ChangePasswordModalProps) => {
           <Text style={{ textAlign: "center", flex: 1 }}>
             {i18n.t("profile.changeLanguage")}
           </Text>
-          <TouchableOpacity style={{ position: "absolute", right: 0 }}>
+          <TouchableOpacity
+            style={{ position: "absolute", right: 0 }}
+            onPress={closeModal}
+          >
             <X color={text} />
           </TouchableOpacity>
         </View>
         <View>
-          <Input
-            editable={false}
-            InitialIcon={
-              <Image
-                source={Flags[flagCountry]}
-                style={{ width: 18, aspectRatio: 1 }}
-              />
-            }
-            value={selectedLanguage}
-            RightIcon1={
-              <ChevronDown
-                color={text}
-                width={20}
-                height={20}
-                onPress={handleShowMenu}
-              />
-            }
-            onPress={handleShowMenu}
-          />
+          <TouchableOpacity onPress={handleShowMenu}>
+            <Input
+              editable={false}
+              InitialIcon={
+                <Image
+                  source={Flags[flagCountry]}
+                  style={{ width: 18, aspectRatio: 1 }}
+                />
+              }
+              value={selectedLanguage}
+              RightIcon1={
+                <ChevronDown
+                  color={text}
+                  width={20}
+                  height={20}
+                  onPress={handleShowMenu}
+                />
+              }
+              onPress={handleShowMenu}
+            />
+          </TouchableOpacity>
           {showMore && (
             <Animated.View
               style={{
@@ -328,7 +338,10 @@ export default function ProfileScreen() {
   }
 
   return (
-    <ScrollView style={{ flex: 1, backgroundColor: black }}>
+    <ScrollView
+      style={{ flex: 1, backgroundColor: black }}
+      showsVerticalScrollIndicator={false}
+    >
       <Header title={i18n.t("profile.title")} />
       <View
         style={{

@@ -46,9 +46,9 @@ const TableRow = ({
                   styles.cell,
                   {
                     textAlign: index === 0 ? "left" : "left",
-                    fontSize: fontPixel(rowTextSize || 14),
                   },
                 ]}
+                type="InputText"
               >
                 {item ?? ""}
               </Text>
@@ -72,12 +72,7 @@ const TableRow = ({
                   },
                 ]}
               >
-                <Text
-                  type="BodySmall"
-                  style={{ fontSize: fontPixel(rowTextSize || 14) }}
-                >
-                  {item}
-                </Text>
+                <Text type="InputText">{item}</Text>
               </TouchableOpacity>
             )
           )}
@@ -100,18 +95,12 @@ const TableHeaderRow = ({
       style={[
         styles.tableHeaderText,
         {
-          textAlign:
-            item === i18n.t("movements.tableHeaders.status")
-              ? "center"
-              : index > 0
-              ? "left"
-              : "left",
-          fontSize: fontPixel(rowTextSize ?? 14),
+          textAlign: "left",
           width: item === i18n.t("movements.tableHeaders.status") ? 85 : "auto",
           marginLeft: item === i18n.t("movements.tableHeaders.status") ? 20 : 0,
         },
       ]}
-      type="SubtitleMedium"
+      type="BodySmall"
     >
       {item}
     </Text>
@@ -136,16 +125,7 @@ const Table = (props: TableProps) => {
     <>
       {!props.isFlatList ? (
         <>
-          <View
-            style={{
-              flexDirection: "row",
-              backgroundColor: "#444444",
-              paddingVertical: 8,
-              paddingHorizontal: 12,
-              borderTopLeftRadius: 8,
-              borderTopRightRadius: 8,
-            }}
-          >
+          <View style={[styles.tableHeader, { borderBottomColor: "#9E9D9D" }]}>
             {props.headers.map((item, index) => (
               <TableHeaderRow
                 item={item}
@@ -216,7 +196,6 @@ const styles = StyleSheet.create({
     paddingBottom: 10,
   },
   cell: {
-    fontWeight: "700",
     flex: 1,
   },
 });

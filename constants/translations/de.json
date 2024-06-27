@@ -35,7 +35,10 @@
       "date": "Datum",
       "initialCash": "Anfangskasse",
       "finalCash": "Endkasse"
-    }
+    },
+    "workingDays": "Arbeitstage",
+    "absences": "Abwesenheiten",
+    "lateDays": "Verspätungstage"
   },
   "addTab": {
     "title": "Tagesbericht",
@@ -66,7 +69,13 @@
     },
     "pending": "Ausstehend",
     "accepted": "Akzeptiert",
-    "refused": "Abgelehnt"
+    "refused": "Abgelehnt",
+    "addProvision": {
+      "buttonText": "Hinzufügen",
+      "label": "Preis",
+      "title": "Vorrat hinzufügen",
+      "placeholder": "Geben Sie den Preis ein"
+    }
   },
   "profile": {
     "title": "Konto",
