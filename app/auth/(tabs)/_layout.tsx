@@ -2,16 +2,17 @@ import { Tabs } from "expo-router";
 import React from "react";
 import { useThemeColor } from "@/hooks/useThemeColor";
 import { BottomTabAdd, DoubleArrow, File, Home } from "@/assets/icons";
-import { User } from "react-native-feather";
+import { Plus, User } from "react-native-feather";
 import { LinearGradient } from "expo-linear-gradient";
 import { TouchableOpacity } from "react-native-gesture-handler";
 import { fontPixel, heightPixel } from "@/shared/util/normalise";
 import { Platform } from "react-native";
 import { i18n } from "@/constants/i18n";
 import { useTranslation } from "@/hooks/useTranslation";
+import { Text } from "@/components/ui";
 
 export default function TabLayout() {
-  const { background, primary, text } = useThemeColor();
+  const { background, primary, text, black } = useThemeColor();
   const { locale } = useTranslation();
 
   return (
@@ -91,6 +92,18 @@ export default function TabLayout() {
               height={24}
             />
           ),
+          headerShown: true,
+          headerLeft: () => (
+            <Text
+              type="HeadingMediumBold"
+              style={{ marginLeft: 20, fontSize: fontPixel(20) }}
+            >
+              {i18n.t("screens.movements")}
+            </Text>
+          ),
+          headerTitle: "",
+          headerStyle: { backgroundColor: black },
+          headerShadowVisible: false,
         }}
       />
       <Tabs.Screen

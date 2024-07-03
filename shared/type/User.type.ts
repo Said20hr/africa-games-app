@@ -1,35 +1,17 @@
 export interface ILoginResponse {
-  casino: Casino;
   user: User;
+  casino: Casino;
+  check_in: string;
+  check_out: string;
+  submitted_yesterday: boolean;
+  keys: KeysCheck[];
 }
 
-export interface Casino {
-  id: number;
-  name: string;
-  shift: string;
-  initial_amount: string;
-  roulettes: Roulette[];
-  hasRoulette: boolean;
-  last_operation: Date | null;
-}
-
-export interface Roulette {
-  id: number;
+export interface KeysCheck {
   identifier: string;
-  type: string;
-  casino_id: number;
-  key_in: string;
-  key_out: string;
-  money_in: string;
-  total_key_in: string;
-  total_key_out: string;
-  total_money_in: string;
-  created_at: string;
-  updated_at: string;
-  diff_key: number;
-  diff_total_key: number;
-  status: boolean;
-  inactive_days: number;
+  terminal_id: number;
+  key_in_end: string;
+  key_out_end: string;
 }
 
 export interface User {
@@ -58,8 +40,37 @@ export interface User {
   nationality: string;
   created_at: string;
   role: string;
-  permissions: any[];
   token: string;
+}
+
+export interface Casino {
+  id: number;
+  name: string;
+  shift: string;
+  initial_amount: string;
+  longitude: string;
+  latitude: string;
+  hasRoulette: boolean;
+  roulettes: Roulette[];
+}
+
+export interface Roulette {
+  id: number;
+  identifier: string;
+  type: string;
+  casino_id: number;
+  key_in: string;
+  key_out: string;
+  money_in: string;
+  total_key_in: string;
+  total_key_out: string;
+  total_money_in: string;
+  created_at: string;
+  updated_at: string;
+  diff_key: number;
+  diff_total_key: number;
+  status: boolean;
+  inactive_days: number;
 }
 
 export interface ILoginPayload {

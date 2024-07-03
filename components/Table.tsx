@@ -39,48 +39,19 @@ const TableRow = ({
       <View style={[styles.row, { borderBottomWidth: isLast ? 0 : 1 }]}>
         {typeof item === "object" &&
           item &&
-          Object.values(item).map((item, index) =>
-            headers[index] !== i18n.t("movements.tableHeaders.status") ? (
-              <Text
-                style={[
-                  styles.cell,
-                  {
-                    textAlign: index === 0 ? "left" : "left",
-                    fontSize: fontPixel(rowTextSize || 14),
-                  },
-                ]}
-              >
-                {item ?? ""}
-              </Text>
-            ) : (
-              <TouchableOpacity
-                style={[
-                  {
-                    alignSelf: "flex-start",
-                    backgroundColor:
-                      item === i18n.t("movements.pending")
-                        ? primary
-                        : item === i18n.t("movements.refused")
-                        ? danger
-                        : success,
-                    paddingHorizontal: 4,
-                    paddingVertical: 4,
-                    alignItems: "center",
-                    borderRadius: 8,
-                    width: 78,
-                    marginLeft: 20,
-                  },
-                ]}
-              >
-                <Text
-                  type="BodySmall"
-                  style={{ fontSize: fontPixel(rowTextSize || 14) }}
-                >
-                  {item}
-                </Text>
-              </TouchableOpacity>
-            )
-          )}
+          Object.values(item).map((item, index) => (
+            <Text
+              style={[
+                styles.cell,
+                {
+                  textAlign: "left",
+                },
+              ]}
+              type="InputText"
+            >
+              {item ?? ""}
+            </Text>
+          ))}
       </View>
     </>
   );
@@ -100,18 +71,13 @@ const TableHeaderRow = ({
       style={[
         styles.tableHeaderText,
         {
-          textAlign:
-            item === i18n.t("movements.tableHeaders.status")
-              ? "center"
-              : index > 0
-              ? "left"
-              : "left",
-          fontSize: fontPixel(rowTextSize ?? 14),
+          textAlign: "left",
           width: item === i18n.t("movements.tableHeaders.status") ? 85 : "auto",
           marginLeft: item === i18n.t("movements.tableHeaders.status") ? 20 : 0,
+          fontSize: fontPixel(12),
         },
       ]}
-      type="SubtitleMedium"
+      type="SubtitleLight"
     >
       {item}
     </Text>
@@ -136,16 +102,7 @@ const Table = (props: TableProps) => {
     <>
       {!props.isFlatList ? (
         <>
-          <View
-            style={{
-              flexDirection: "row",
-              backgroundColor: "#444444",
-              paddingVertical: 8,
-              paddingHorizontal: 12,
-              borderTopLeftRadius: 8,
-              borderTopRightRadius: 8,
-            }}
-          >
+          <View style={[styles.tableHeader, { borderBottomColor: "#9E9D9D" }]}>
             {props.headers.map((item, index) => (
               <TableHeaderRow
                 item={item}
@@ -216,7 +173,6 @@ const styles = StyleSheet.create({
     paddingBottom: 10,
   },
   cell: {
-    fontWeight: "700",
     flex: 1,
   },
 });

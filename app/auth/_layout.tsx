@@ -28,12 +28,13 @@ export default function AppLayout() {
           headerLeft: () => (
             <>
               {
-                <TouchableOpacity onPress={goBack}>
+                <TouchableOpacity onPress={goBack} style={{ marginRight: 20 }}>
                   <ArrowLeft color={text} />
                 </TouchableOpacity>
               }
             </>
           ),
+          title: i18n.t("editProfile.myProfile"),
           headerTitle: i18n.t("editProfile.myProfile"),
           headerShadowVisible: false,
           headerTitleStyle: {

@@ -35,7 +35,10 @@
       "date": "Date",
       "initialCash": "Caisse initiale",
       "finalCash": "Caisse finale"
-    }
+    },
+    "workingDays": "Jours ouvrables",
+    "absences": "Absences",
+    "lateDays": "Jours de retard"
   },
   "addTab": {
     "title": "Rapport Quotidien",
@@ -66,7 +69,13 @@
     },
     "pending": "En attente",
     "accepted": "Accepté",
-    "refused": "Refusé"
+    "refused": "Refusé",
+    "addProvision": {
+      "buttonText": "Ajouter",
+      "label": "Prix",
+      "title": "Ajouter provision",
+      "placeholder": "Entrez le prix"
+    }
   },
   "profile": {
     "title": "Compte",

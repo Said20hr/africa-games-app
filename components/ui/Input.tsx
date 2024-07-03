@@ -5,6 +5,7 @@ import {
   View,
   StyleSheet,
   ViewProps,
+  Platform,
 } from "react-native";
 import { Eye, EyeOff } from "react-native-feather";
 import Text from "../ThemedText";
@@ -15,7 +16,7 @@ import React from "react";
 import { fontPixel, heightPixel } from "@/shared/util/normalise";
 import { BottomSheetTextInput } from "@gorhom/bottom-sheet";
 
-interface MyTextInputProps extends TextInputProps {
+export interface MyTextInputProps extends TextInputProps {
   containerProps?: ViewProps;
   error?: string | null;
   showError?: boolean;
@@ -110,9 +111,7 @@ const TextInput = (props: MyTextInputProps) => {
           },
         ]}
       >
-        {InitialIcon && (
-          <View style={{ marginTop: heightPixel(2) }}>{InitialIcon}</View>
-        )}
+        {InitialIcon && <View>{InitialIcon}</View>}
         {!bottomSheetInput ? (
           <NativeTextInput {...inputProps} />
         ) : (
@@ -163,6 +162,8 @@ const styles = StyleSheet.create({
   iconsContainer: {
     gap: 6,
     flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
   },
 });
 

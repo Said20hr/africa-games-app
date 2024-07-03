@@ -18,6 +18,7 @@ import { Alert } from "react-native";
 export type IAuthContext = {
   signIn: (data: ILoginResponse) => void;
   signOut: () => void;
+  updateLastOperation: (newDate: string) => void;
   session?: ILoginResponse | null;
   isLoading: boolean;
 };
@@ -25,6 +26,7 @@ export type IAuthContext = {
 const AuthContext = createContext<IAuthContext>({
   signIn: () => null,
   signOut: () => null,
+  updateLastOperation: (newDate: string) => null,
   session: null,
   isLoading: true,
 });
@@ -66,6 +68,7 @@ export function SessionProvider(props: { children: ReactNode }) {
             },
           }
         );
+        // console.log(response.data.data.keys);
         return response.data;
       } catch (error) {}
     },
@@ -95,8 +98,22 @@ export function SessionProvider(props: { children: ReactNode }) {
     // navigation.dispatch(StackActions.replace("(auth)/guest"));
   };
 
+  const updateLastOperation = (newDate: string) => {
+    if (!session) return;
+    const newSessionData: ILoginResponse = {
+      user: session.user,
+      casino: {
+        ...session.casino,
+        last_operation: newDate.toString(),
+      },
+    };
+    setSession(newSessionData);
+  };
+
   return (
-    <AuthContext.Provider value={{ signIn, signOut, session, isLoading }}>
+    <AuthContext.Provider
+      value={{ signIn, signOut, session, isLoading, updateLastOperation }}
+    >
       {props.children}
     </AuthContext.Provider>
   );

@@ -30,12 +30,17 @@
     "welcomeBack": "Hi, Welcome Back!",
     "totalDays": "Total days",
     "reports": "Reports",
-    "thisMonth": "This month",
+    "thisMonth": "This week",
     "tableHeaders": {
       "date": "Date",
       "initialCash": "Initial Cash",
       "finalCash": "Final Cash"
-    }
+    },
+    "workingDays": "Working days",
+    "absences": "Absences",
+    "lateDays": "Late Days",
+    "cancel": "Cancel",
+    "approve": "Approve"
   },
   "addTab": {
     "title": "Daily Report",
@@ -49,11 +54,17 @@
     "next": "Next",
     "back": "Back",
     "submit": "Submit",
+    "start": "Start",
     "duringShiftWait": "Please wait until the end of your shift to be able to fill out the form.",
     "afterShiftWait": "Please wait until the end of your next shift to be to fill the form.",
     "incompleteFormError": "Please fill out all the fields to continue",
     "initialCash": "Initial Cash",
-    "finalCash": "Final Cash"
+    "finalCash": "Final Cash",
+    "startShiftDescription": "Press start to begin your today's shift",
+    "endShiftDescription": "The shift is finished, please fill the form for the updated keys",
+    "lastKeys": "Last Keys",
+    "formSuccess": "You've successfully filled out the form!",
+    "emptyReasonError": "Please fill out the reason to justify unchecked value"
   },
   "movements": {
     "provisions": "Provisions",
@@ -62,11 +73,22 @@
       "name": "Name",
       "date": "Date",
       "amount": "Amount",
-      "status": "Status"
+      "status": "Status",
+      "from": "From",
+      "to": "To"
     },
     "pending": "Pending",
-    "accepted": "Accepted",
-    "refused": "Refused"
+    "paid": "Accepted",
+    "refused": "Refused",
+    "addProvision": {
+      "buttonText": "Add",
+      "label": "Price",
+      "title": "Add Provision",
+      "placeholder": "Enter the price"
+    },
+    "emptyProvisions": "No provisions to show",
+    "emptyWithdrawals": "No withdrawals to show",
+    "provisionRequestToast": "Request for provision created successfully"
   },
   "profile": {
     "title": "Account",
