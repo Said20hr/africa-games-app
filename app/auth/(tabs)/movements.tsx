@@ -35,6 +35,11 @@ import {
 } from "@gorhom/bottom-sheet";
 import { Money } from "@/assets/icons";
 import { useTranslation } from "@/hooks/useTranslation";
+import { useMutation, useQuery } from "@tanstack/react-query";
+import { useSession } from "@/app/ctx";
+import axios from "axios";
+import Toast from "react-native-toast-message";
+import { queryClient } from "@/api/query-client";
 
 const sections = ["provisions", "withdrawals"];
 const SCREEN_WIDTH = Dimensions.get("screen").width;
@@ -46,78 +51,87 @@ type FileEntry = {
   status: string;
 };
 
-const fileEntriesWithdrawals: FileEntry[] = [
-  {
-    name: "File 04",
-    date: "2024-07-01",
-    amount: "1500 XAF",
-    status: i18n.t("movements.accepted"),
-  },
-  {
-    name: "File 05",
-    date: "2024-07-02",
-    amount: "10 XAF",
-    status: i18n.t("movements.accepted"),
-  },
-  {
-    name: "File 06",
-    date: "2024-07-03",
-    amount: "900 XAF",
-    status: i18n.t("movements.refused"),
-  },
-];
-
 type MovementTableProps = {
-  data: FileEntry[];
+  data: FileEntry[] | undefined;
+  emptyText: string;
+  isProvisions: boolean;
 };
 
-const MovementTable = ({ data }: MovementTableProps) => {
+const MovementTable = ({
+  data,
+  emptyText,
+  isProvisions = true,
+}: MovementTableProps) => {
   const { accent, text, background } = useThemeColor();
-
   const renderItem = useCallback(
     ({ item, index }: { item: FileEntry; index: number }) => {
       return (
         <View
           style={[
             styles.tableRow,
-            data.length === index + 1 ? null : styles.tableRowBorder,
+            !data || data.length === index + 1 ? null : styles.tableRowBorder,
           ]}
         >
           <Text
             type="InputText"
-            style={[styles.tableCell, { color: text, textAlign: "left" }]}
+            style={[styles.tableCell, { color: text, marginLeft: 8 }]}
           >
-            {item.name} {"\n"}
-            {item.date}
+            {isProvisions ? item.from : item.to}
           </Text>
           <Text type="InputText" style={[styles.tableCell, { color: text }]}>
             {item.amount}
           </Text>
           <View
-            style={{
-              backgroundColor:
-                item.status === i18n.t("movements.accepted")
-                  ? "#00560E"
-                  : item.status === i18n.t("movements.pending")
-                  ? "#FFB800"
-                  : "#FF0000",
-              borderRadius: 6,
-              width: "30%",
-              height: heightPixel(24),
-            }}
+            style={[
+              styles.tableCell,
+              { justifyContent: "center", alignItems: "center" },
+            ]}
           >
-            <Text
-              type="InputText"
-              style={[styles.tableCell, { color: text, textAlign: "center" }]}
+            <View
+              style={{
+                backgroundColor:
+                  i18n
+                    .t(`movements.${item.status.toLowerCase()}`)
+                    .toLowerCase() === i18n.t("movements.pending").toLowerCase()
+                    ? "#CA9203"
+                    : i18n
+                        .t(`movements.${item.status.toLowerCase()}`)
+                        .toLowerCase() ===
+                      i18n.t("movements.refused").toLowerCase()
+                    ? "#FF0000"
+                    : "#00560E",
+                borderRadius: 6,
+                width: "90%",
+                height: heightPixel(24),
+                justifyContent: "center",
+                alignItems: "center",
+              }}
             >
-              {item.status}
-            </Text>
+              <Text
+                type="SubtitleLight"
+                style={{
+                  color: text,
+                  textAlign: "center",
+                  fontSize: fontPixel(12),
+                }}
+              >
+                {i18n.t(`movements.${item.status.toLowerCase()}`)}
+              </Text>
+            </View>
           </View>
         </View>
       );
     },
-    []
+    [data]
   );
+
+  if (!data || data.length === 0)
+    return (
+      <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
+        <Text>{emptyText}</Text>
+      </View>
+    );
+
   return (
     <View style={[styles.tableContainer, { backgroundColor: background }]}>
       <View style={[styles.tableRow, styles.tableHeaderBorder]}>
@@ -125,88 +139,162 @@ const MovementTable = ({ data }: MovementTableProps) => {
           type="BodySmall"
           style={[
             styles.tableCell,
-            { textAlign: "center", color: accent, fontSize: fontPixel(12) },
+            {
+              textAlign: "left",
+              color: accent,
+              fontSize: fontPixel(12),
+              marginLeft: 8,
+            },
           ]}
         >
-          {i18n.t("movements.tableHeaders.name")}
+          {isProvisions
+            ? i18n.t("movements.tableHeaders.from")
+            : i18n.t("movements.tableHeaders.to")}
         </Text>
         <Text
           type="BodySmall"
           style={[
             styles.tableCell,
-            { textAlign: "center", color: accent, fontSize: fontPixel(12) },
+            { textAlign: "left", color: accent, fontSize: fontPixel(12) },
           ]}
         >
           {i18n.t("movements.tableHeaders.amount")}
         </Text>
-        <Text
-          type="BodySmall"
+        <View
           style={[
             styles.tableCell,
-            { textAlign: "center", color: accent, fontSize: fontPixel(12) },
+            { justifyContent: "center", alignItems: "center" },
           ]}
         >
-          {i18n.t("movements.tableHeaders.status")}
-        </Text>
+          <View
+            style={{
+              width: "90%",
+              alignSelf: "flex-end",
+            }}
+          >
+            <Text
+              type="BodySmall"
+              style={{
+                textAlign: "left",
+                color: accent,
+                fontSize: fontPixel(12),
+              }}
+            >
+              {i18n.t("movements.tableHeaders.status")}
+            </Text>
+          </View>
+        </View>
       </View>
       <FlatList data={data} renderItem={renderItem} extraData={true} />
     </View>
   );
 };
 
-export default function ProfileScreen() {
+export default function MovementScreen() {
   const { setOptions } = useNavigation();
   const { primary, text } = useThemeColor();
   const modalRef = useRef<BottomSheetModal>(null);
   const { locale } = useTranslation();
-  let fileEntriesProvisions: FileEntry[] = [
-    {
-      name: "File 01",
-      date: "2024-06-01",
-      amount: "5399300 XAF",
-      status: i18n.t("movements.pending"),
+  const { session } = useSession();
+  const [provisions, setProvisions] = useState([]);
+  const [withdrawals, setWithdrawals] = useState([]);
+  const { data: provisionsData, error: provisionsError } = useQuery({
+    queryKey: ["provisions"],
+    queryFn: async () => {
+      try {
+        const token = session?.user.token;
+        if (!token || token === "") return null;
+
+        const response = await axios.get(
+          `${process.env.EXPO_PUBLIC_API_URL}/provisions`,
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+        setProvisions(response.data.provisions);
+        console.log(response.data.provisions);
+        return response.data.provisions;
+      } catch (error) {}
     },
-    {
-      name: "File 02",
-      date: "2024-06-02",
-      amount: "13838000 XAF",
-      status: i18n.t("movements.accepted"),
+  });
+  const { data: withdrawalsData, error: withdrawalsError } = useQuery({
+    queryKey: ["withdrawals"],
+    queryFn: async () => {
+      try {
+        const token = session?.user.token;
+        if (!token || token === "") return null;
+
+        const response = await axios.get(
+          `${process.env.EXPO_PUBLIC_API_URL}/withdrawals`,
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+        setWithdrawals(response.data.withdrawals);
+        console.log(response.data.withdrawals);
+        return response.data.withdrawals;
+      } catch (error) {}
     },
-    {
-      name: "File 03",
-      date: "2024-06-03",
-      amount: "9000 XAF",
-      status: i18n.t("movements.refused"),
+  });
+
+  useEffect(() => {
+    setProvisions([...provisions]);
+    setWithdrawals([...withdrawals]);
+  }, [locale]);
+
+  const { mutate, isPending } = useMutation({
+    mutationFn: async (amount: number) => {
+      try {
+        await axios.post(
+          `${process.env.EXPO_PUBLIC_API_URL}/provisions`,
+          {
+            amount,
+          },
+          {
+            headers: {
+              Authorization: `Bearer ${session?.user.token}`,
+            },
+          }
+        );
+
+        Toast.show({
+          type: "success",
+          text1: i18n.t("movements.provisionRequestToast"),
+        });
+      } catch (error) {
+        if (
+          error &&
+          typeof error === "object" &&
+          "message" in error &&
+          typeof error.message === "string"
+        )
+          Toast.show({ type: "error", text1: error.message });
+      }
     },
-  ];
-  const [provisionsData, setProvisionsData] = useState<FileEntry[]>(
-    fileEntriesProvisions
-  );
+    onSuccess() {
+      queryClient.invalidateQueries({ queryKey: ["provisions"] });
+    },
+  });
 
   function openAddProvisionModal() {
     modalRef?.current?.present();
   }
 
-  useEffect(() => {
-    console.log(provisionsData);
-  }, [provisionsData]);
+  // useEffect(() => {
+  //   console.log(provisionsData);
+  // }, [provisionsData]);
 
-  useEffect(() => {
-    console.log("FILE ENTRIES");
-    setProvisionsData([...fileEntriesProvisions]);
-  }, [locale]);
+  // useEffect(() => {
+  //   console.log("FILE ENTRIES");
+  //   setProvisionsData([...fileEntriesProvisions]);
+  // }, [locale]);
 
   function handleProvisionSubmission(value: string) {
-    fileEntriesProvisions = [
-      ...fileEntriesProvisions,
-      {
-        amount: `${value} XAF`,
-        status: i18n.t("movements.pending"),
-        name: "File 04",
-        date: new Date().toISOString().split("T")[0],
-      },
-    ];
-    setProvisionsData(fileEntriesProvisions);
+    mutate(parseFloat(value));
   }
 
   useLayoutEffect(() => {
@@ -250,7 +338,11 @@ export default function ProfileScreen() {
             width: SCREEN_WIDTH,
           }}
         >
-          <MovementTable data={provisionsData} />
+          <MovementTable
+            data={provisions}
+            emptyText={i18n.t("movements.emptyProvisions")}
+            isProvisions
+          />
         </View>
         <View
           style={{
@@ -258,7 +350,11 @@ export default function ProfileScreen() {
             width: SCREEN_WIDTH,
           }}
         >
-          <MovementTable data={fileEntriesWithdrawals} />
+          <MovementTable
+            data={withdrawals}
+            emptyText={i18n.t("movements.emptyWithdrawals")}
+            isProvisions={false}
+          />
         </View>
       </TabbedScrollView>
       <View style={{ alignItems: "center", marginVertical: 20 }}>
@@ -292,6 +388,7 @@ export default function ProfileScreen() {
         }}
         modalRef={modalRef}
         handleSubmission={handleProvisionSubmission}
+        buttonLoading={isPending}
       />
     </Container>
   );
@@ -300,9 +397,9 @@ export default function ProfileScreen() {
 const styles = StyleSheet.create({
   tableContainer: {
     paddingHorizontal: 20,
-    paddingTop: 30,
+    paddingTop: heightPixel(10),
     borderRadius: 12,
-    paddingBottom: 10,
+    paddingBottom: 12,
   },
   tableRow: {
     flexDirection: "row",
@@ -317,7 +414,7 @@ const styles = StyleSheet.create({
   tableHeaderBorder: {
     borderBottomColor: "#9E9D9D",
     borderBottomWidth: 1,
-    paddingBottom: 16,
+    paddingBottom: 8,
   },
   tableRowBorder: {
     borderBottomColor: "#272727",

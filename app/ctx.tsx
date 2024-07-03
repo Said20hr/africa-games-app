@@ -68,6 +68,7 @@ export function SessionProvider(props: { children: ReactNode }) {
             },
           }
         );
+        // console.log(response.data.data.keys);
         return response.data;
       } catch (error) {}
     },
@@ -103,7 +104,7 @@ export function SessionProvider(props: { children: ReactNode }) {
       user: session.user,
       casino: {
         ...session.casino,
-        last_operation: new Date(newDate),
+        last_operation: newDate.toString(),
       },
     };
     setSession(newSessionData);

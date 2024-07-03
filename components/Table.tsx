@@ -39,43 +39,19 @@ const TableRow = ({
       <View style={[styles.row, { borderBottomWidth: isLast ? 0 : 1 }]}>
         {typeof item === "object" &&
           item &&
-          Object.values(item).map((item, index) =>
-            headers[index] !== i18n.t("movements.tableHeaders.status") ? (
-              <Text
-                style={[
-                  styles.cell,
-                  {
-                    textAlign: index === 0 ? "left" : "left",
-                  },
-                ]}
-                type="InputText"
-              >
-                {item ?? ""}
-              </Text>
-            ) : (
-              <TouchableOpacity
-                style={[
-                  {
-                    alignSelf: "flex-start",
-                    backgroundColor:
-                      item === i18n.t("movements.pending")
-                        ? primary
-                        : item === i18n.t("movements.refused")
-                        ? danger
-                        : success,
-                    paddingHorizontal: 4,
-                    paddingVertical: 4,
-                    alignItems: "center",
-                    borderRadius: 8,
-                    width: 78,
-                    marginLeft: 20,
-                  },
-                ]}
-              >
-                <Text type="InputText">{item}</Text>
-              </TouchableOpacity>
-            )
-          )}
+          Object.values(item).map((item, index) => (
+            <Text
+              style={[
+                styles.cell,
+                {
+                  textAlign: "left",
+                },
+              ]}
+              type="InputText"
+            >
+              {item ?? ""}
+            </Text>
+          ))}
       </View>
     </>
   );
@@ -98,9 +74,10 @@ const TableHeaderRow = ({
           textAlign: "left",
           width: item === i18n.t("movements.tableHeaders.status") ? 85 : "auto",
           marginLeft: item === i18n.t("movements.tableHeaders.status") ? 20 : 0,
+          fontSize: fontPixel(12),
         },
       ]}
-      type="BodySmall"
+      type="SubtitleLight"
     >
       {item}
     </Text>

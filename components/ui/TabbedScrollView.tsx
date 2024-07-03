@@ -77,7 +77,7 @@ const TabbedScrollView = ({ tabs, children }: TabbedScrollViewProps) => {
                 onPress={() => onPressSection(index)}
               >
                 <Text
-                  type="TitleSmallest"
+                  type="TitleSmall"
                   style={{ color: activeIndex === index ? text : accent }}
                 >
                   {i18n.t(tab.title)}

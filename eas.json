@@ -1,13 +1,14 @@
 {
   "cli": {
-    "version": ">= 3.14.0"
+    "version": ">= 9.2.0"
   },
   "build": {
     "development": {
       "developmentClient": true,
       "distribution": "internal",
       "env": {
-        "EXPO_PUBLIC_API_URL": "https://africa-games-app.online/api"
+        "EXPO_PUBLIC_API_URL": "https://africa-games-app.online/api",
+        "EXPO_PUBLIC_API_KEY": "AIzaSyA-P2u5mf3p5swRWdi9QPYqyroRec5D9so"
       }
     },
     "preview": {
@@ -16,12 +17,14 @@
         "buildType": "apk"
       },
       "env": {
-        "EXPO_PUBLIC_API_URL": "https://africa-games-app.online/api"
+        "EXPO_PUBLIC_API_URL": "https://africa-games-app.online/api",
+        "EXPO_PUBLIC_API_KEY": "AIzaSyA-P2u5mf3p5swRWdi9QPYqyroRec5D9so"
       }
     },
     "production": {
       "env": {
-        "EXPO_PUBLIC_API_URL": "https://africa-games-app.online/api"
+        "EXPO_PUBLIC_API_URL": "https://africa-games-app.online/api",
+        "EXPO_PUBLIC_API_KEY": "AIzaSyA-P2u5mf3p5swRWdi9QPYqyroRec5D9so"
       }
     },
     "development-simulator": {
@@ -31,7 +34,8 @@
         "simulator": true
       },
       "env": {
-        "EXPO_PUBLIC_API_URL": "https://africa-games-app.online/api"
+        "EXPO_PUBLIC_API_URL": "https://africa-games-app.online/api",
+        "EXPO_PUBLIC_API_KEY": "AIzaSyA-P2u5mf3p5swRWdi9QPYqyroRec5D9so"
       }
     }
   },

@@ -1,11 +1,12 @@
-import React, { ForwardedRef, useState } from "react";
+import React, { ForwardedRef, useEffect, useState } from "react";
+=======
 import { heightPixel } from "@/shared/util/normalise";
 import {
   BottomSheetBackdrop,
   BottomSheetModal,
   BottomSheetView,
 } from "@gorhom/bottom-sheet";
-import { TouchableOpacity, View } from "react-native";
+import { Keyboard, Platform, TouchableOpacity, View } from "react-native";
 import Text from "./Text";
 import { i18n } from "@/constants/i18n";
 import Input, { MyTextInputProps } from "./Input";
@@ -21,6 +22,7 @@ interface AddProvisionModalProps {
   handleSubmission: (text: string) => void;
   inputProps?: MyTextInputProps;
   buttonText: string;
+  buttonLoading?: boolean;
 }
 
 const BottomSheetModalInput = ({
@@ -30,9 +32,48 @@ const BottomSheetModalInput = ({
   title,
   inputProps,
   buttonText,
+  buttonLoading,
 }: AddProvisionModalProps) => {
   const { background, text } = useThemeColor();
   const [value, setValue] = useState("");
+  const [keyboardOpen, setKeyboardOpen] = useState(false);
+  const [enableDismissOnClose, setEnableDismissOnClose] = useState(true);
+
+  useEffect(() => {
+    if (Platform.OS !== "android") return;
+
+    const keyboardDidShowListener = Keyboard.addListener(
+      "keyboardDidShow",
+      () => setKeyboardOpen(true)
+    );
+
+    const keyboardDidHideListener = Keyboard.addListener(
+      "keyboardDidHide",
+      () => setKeyboardOpen(false)
+    );
+
+    return () => {
+      keyboardDidShowListener.remove();
+      keyboardDidHideListener.remove();
+    };
+  }, []);
+
+  useEffect(() => {
+    if (Platform.OS !== "android") return;
+
+    if (keyboardOpen) {
+      setEnableDismissOnClose(false);
+    }
+  }, [keyboardOpen]);
+
+  useEffect(() => {
+    if (Platform.OS !== "android") return;
+    if (!enableDismissOnClose && keyboardOpen) {
+      setTimeout(() => {
+        setEnableDismissOnClose(true);
+      }, 1);
+    }
+  }, [enableDismissOnClose, keyboardOpen]);
 
   function closeModal() {
     // @ts-ignore
@@ -50,8 +91,9 @@ const BottomSheetModalInput = ({
       ref={modalRef}
       enableDynamicSizing
       handleIndicatorStyle={{ width: "0%", height: 0 }}
-      keyboardBehavior="interactive"
+      android_keyboardInputMode="adjustResize"
       keyboardBlurBehavior="restore"
+      enableDismissOnClose={enableDismissOnClose}
       backdropComponent={(props) => (
         <BottomSheetBackdrop
           {...props}
@@ -69,7 +111,7 @@ const BottomSheetModalInput = ({
           paddingHorizontal: 20,
         }}
       >
-        <View
+        <BottomSheetView
           style={{
             position: "relative",
             flexDirection: "row",
@@ -85,7 +127,7 @@ const BottomSheetModalInput = ({
           >
             <X color={text} />
           </TouchableOpacity>
-        </View>
+        </BottomSheetView>
         <Input
           label={label}
           bottomSheetInput
@@ -98,6 +140,7 @@ const BottomSheetModalInput = ({
           style={{ paddingVertical: 12, marginBottom: 40 }}
           disabled={value === "" || value.length < 1}
           onPress={handleAddProvision}
+          loading={buttonLoading}
         />
       </BottomSheetView>
     </BottomSheetModal>

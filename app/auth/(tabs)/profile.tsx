@@ -348,7 +348,7 @@ export default function ProfileScreen() {
           flex: 1,
           paddingHorizontal: 16,
           paddingTop: 12,
-          gap: 24,
+          gap: heightPixel(12),
         }}
       >
         <TouchableOpacity
@@ -387,11 +387,6 @@ export default function ProfileScreen() {
             onPress={() => {
               navigate("profile/EditProfile");
             }}
-          />
-          <NavigationButton
-            icon={Lock}
-            text={i18n.t("profile.changePassword")}
-            description={i18n.t("profile.makeChangesToMyPassword")}
           />
           <NavigationButton
             icon={Money}

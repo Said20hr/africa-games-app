@@ -1,25 +1,22 @@
-import { Button, Container, Input } from "@/components/ui";
+import { Button, Input } from "@/components/ui";
 import { useThemeColor } from "@/hooks/useThemeColor";
-import { Stack, useNavigation } from "expo-router";
-import React, { ForwardedRef, useMemo, useRef, useState } from "react";
+import { useNavigation } from "expo-router";
+import React, { ForwardedRef, useRef, useState } from "react";
 import {
   Animated,
   Dimensions,
   NativeScrollEvent,
   NativeSyntheticEvent,
-  Platform,
   ScrollView,
   StyleSheet,
-  Touchable,
   TouchableOpacity,
   View,
 } from "react-native";
 import Text from "@/components/ThemedText";
-import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 import { Image } from "expo-image";
 import { useSession } from "@/app/ctx";
-import { fontPixel, heightPixel } from "@/shared/util/normalise";
-import { Svg, SvgProps } from "react-native-svg";
+import { heightPixel } from "@/shared/util/normalise";
+import { SvgProps } from "react-native-svg";
 import {
   Calendar,
   Envelope,
@@ -41,7 +38,6 @@ import {
   BottomSheetBackdrop,
   BottomSheetModal,
   BottomSheetView,
-  useBottomSheetDynamicSnapPoints,
 } from "@gorhom/bottom-sheet";
 import { X } from "react-native-feather";
 import { i18n } from "@/constants/i18n";
@@ -250,11 +246,15 @@ const ChangePasswordModal = ({ modalRef }: ChangePasswordModalProps) => {
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
 
+  function closeModal() {
+    //@ts-ignore
+    modalRef?.current?.close();
+  }
+
   function handleChangePassword() {
     setPassword("");
     setConfirmPassword("");
-    //@ts-ignore
-    modalRef?.current?.close();
+    closeModal();
     Toast.show({ type: "success", text1: "Password updated successfully" });
   }
 
@@ -292,7 +292,10 @@ const ChangePasswordModal = ({ modalRef }: ChangePasswordModalProps) => {
           <Text style={{ textAlign: "center", flex: 1 }}>
             {i18n.t("editProfile.changePassword")}
           </Text>
-          <TouchableOpacity style={{ position: "absolute", right: 0 }}>
+          <TouchableOpacity
+            style={{ position: "absolute", right: 0 }}
+            onPress={closeModal}
+          >
             <X color={text} />
           </TouchableOpacity>
         </View>
@@ -428,77 +431,6 @@ const EditProfile: React.FC = () => {
         <ProfileAdditionalInfo />
         <ProfileBankInfo />
       </ScrollView>
-      {/* <View style={{ flex: 1, gap: 16 }}>
-          <View style={styles.imageContainer}>
-            <TouchableOpacity>
-              <Image
-                source={require("@/assets/images/user-header.png")}
-                style={styles.image}
-              />
-              <View
-                style={[styles.iconContainer, { backgroundColor: primary }]}
-              >
-                <Edit color={text} strokeWidth={3} />
-              </View>
-            </TouchableOpacity>
-            <Text type="TitleMedium">
-              {session?.user.firstname.toUpperCase()}{" "}
-              {session?.user.lastname.toUpperCase()}
-            </Text>
-            <Text type="BodySmall" style={{ color: accent }}>
-              {session?.user.role.charAt(0).toUpperCase()}
-              {session?.user.role.slice(1)}
-            </Text>
-          </View>
-          <View style={styles.spacedRow}>
-            <View style={{ flex: 1 }}>
-              <Input
-                label="Name"
-                InitialIcon={<User color={text} />}
-                placeholder="xxxxxx"
-                value={`${session?.user.firstname} ${session?.user.lastname}`}
-                // containerProps={{ style: { width: "70%" } }}
-              />
-            </View>
-            <View style={{ flex: 1 }}>
-              <Input
-                label="Matricule"
-                InitialIcon={<User color={text} />}
-                placeholder="xxxxxx"
-                // containerProps={{ style: { width: "70%" } }}
-                value={session?.user.matricule}
-              />
-            </View>
-          </View>
-          <View>
-            <Input
-              label="Email"
-              InitialIcon={<Mail color={text} />}
-              placeholder="+92363663632"
-              keyboardType="email-address"
-              autoCapitalize="none"
-              value={session?.user.email}
-            />
-          </View>
-          <View>
-            <Input
-              label="Password"
-              InitialIcon={<Lock color={text} />}
-              placeholder="xxxxxxxxxx"
-              textContentType="password"
-              // value={session?.user.}
-            />
-          </View>
-          <View>
-            <Input
-              label="Working store"
-              InitialIcon={<MapPin color={text} />}
-              placeholder="Store number 206"
-              value={session?.casino.name}
-            />
-          </View>
-        </View> */}
-      {/* <Button label="Update" style={{ marginTop: heightPixel(30) }} /> */}
     </View>
   );
 };
