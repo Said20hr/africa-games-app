@@ -1,4 +1,5 @@
 import React, { ForwardedRef, useEffect, useState } from "react";
+=======
 import { heightPixel } from "@/shared/util/normalise";
 import {
   BottomSheetBackdrop,
@@ -93,7 +94,6 @@ const BottomSheetModalInput = ({
       android_keyboardInputMode="adjustResize"
       keyboardBlurBehavior="restore"
       enableDismissOnClose={enableDismissOnClose}
-      // keyboardBlurBehavior="restore"
       backdropComponent={(props) => (
         <BottomSheetBackdrop
           {...props}

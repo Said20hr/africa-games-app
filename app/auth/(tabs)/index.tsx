@@ -535,16 +535,6 @@ export default function HomeScreen() {
               icon={<File width={24} height={24} />}
               containerStyle={{ marginBottom: 20 }}
               value=""
-              // action={
-              //   <TouchableOpacity style={styles.actionButton}>
-              //     <Text type="InputText">{i18n.t("home.thisMonth")}</Text>
-              //     <ChevronDown
-              //       color={text}
-              //       style={styles.chevronIcon}
-              //       width={18}
-              //     />
-              //   </TouchableOpacity>
-              // }
             >
               <View>
                 {reports.length > 0 ? (
