@@ -113,7 +113,7 @@ type ReportModalProps = {
 interface ConfirmKeysModalProps extends ModalProps {
   title: string;
   closeModal: () => void;
-  onApproveKeys: (data: IKeyConfirmation[]) => void;
+  onApproveKeys: (data: IKeyConfirmation[], lastKeyChecked: boolean) => void;
 }
 
 type AnimatedGetCurrentLocationProps = {
@@ -394,7 +394,7 @@ const ConfirmKeysModal = (props: ConfirmKeysModalProps) => {
         key_out: item.key_out_end,
       });
     });
-    onApproveKeys(keysConfirmed);
+    onApproveKeys(keysConfirmed, keysChecked[keysChecked.length - 1].keyOut);
   }
 
   function handleInputAnimation(index: number, action: "show" | "hide") {
@@ -677,13 +677,12 @@ const StartShift = ({ onSubmit }: { onSubmit: () => void }) => {
   const [hasApprovedKeys, setHasApprovedKeys] = useState(false);
   const modalRef = useRef<BottomSheetModal>(null);
   const keysData = useRef<IKeyConfirmation[]>([]);
+  const lastKeyChecked = useRef<boolean>(true);
   const { session, updateCheckIn } = useSession();
   const { locale } = useTranslation();
   const { mutate, isPending } = useMutation({
     mutationFn: async (data: IShiftAttendance) => {
       try {
-        console.log("data");
-        console.log(data);
         const response = await axios.post(
           `${process.env.EXPO_PUBLIC_API_URL}/start`,
           data,
@@ -693,7 +692,6 @@ const StartShift = ({ onSubmit }: { onSubmit: () => void }) => {
             },
           }
         );
-        console.log(response.data);
         updateCheckIn(response.data.attendance.check_in);
         Toast.show({ type: "success", text1: response.data.message });
         closeCurrentLocation();
@@ -730,8 +728,12 @@ const StartShift = ({ onSubmit }: { onSubmit: () => void }) => {
     toggleModal(false);
   }
 
-  function onApproveKeys(keysConfirmed: IKeyConfirmation[]) {
+  function onApproveKeys(
+    keysConfirmed: IKeyConfirmation[],
+    isLastKeyChecked: boolean
+  ) {
     keysData.current = keysConfirmed;
+    lastKeyChecked.current = isLastKeyChecked;
     toggleModal(false);
     setHasApprovedKeys(true);
   }
@@ -744,7 +746,7 @@ const StartShift = ({ onSubmit }: { onSubmit: () => void }) => {
   function handleLocationSubmit(location: Location.LocationObject) {
     if (session?.casino.initial_amount)
       mutate({
-        cash_initial: session?.casino.initial_amount,
+        cash_initial: lastKeyChecked.current,
         check_in: CURRENT_TIME.toLocaleTimeString("en", {
           hour: "2-digit",
           minute: "2-digit",
