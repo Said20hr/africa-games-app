@@ -1,4 +1,5 @@
 // context/AuthContext.tsx
+import { queryClient } from "@/api/query-client";
 import { REMEMBER_ME, USER_TOKEN } from "@/constants/Keys";
 import { ILoginResponse } from "@/shared/type/User.type";
 import { storage } from "@/shared/util/mmkv";
@@ -18,7 +19,8 @@ import { Alert } from "react-native";
 export type IAuthContext = {
   signIn: (data: ILoginResponse) => void;
   signOut: () => void;
-  updateLastOperation: (newDate: string) => void;
+  updateCheckIn: (newTime: string) => void;
+  updateCheckOut: (newTime: string) => void;
   session?: ILoginResponse | null;
   isLoading: boolean;
 };
@@ -26,7 +28,8 @@ export type IAuthContext = {
 const AuthContext = createContext<IAuthContext>({
   signIn: () => null,
   signOut: () => null,
-  updateLastOperation: (newDate: string) => null,
+  updateCheckIn: (newTime: string) => null,
+  updateCheckOut: (newTime: string) => null,
   session: null,
   isLoading: true,
 });
@@ -68,7 +71,7 @@ export function SessionProvider(props: { children: ReactNode }) {
             },
           }
         );
-        // console.log(response.data.data.keys);
+        console.log(response.data.data);
         return response.data;
       } catch (error) {}
     },
@@ -95,24 +98,38 @@ export function SessionProvider(props: { children: ReactNode }) {
   const signOut = () => {
     setSession(null);
     storage.setItem(USER_TOKEN, "");
+    queryClient.clear();
     // navigation.dispatch(StackActions.replace("(auth)/guest"));
   };
 
-  const updateLastOperation = (newDate: string) => {
+  const updateCheckIn = (newTime: string) => {
     if (!session) return;
     const newSessionData: ILoginResponse = {
-      user: session.user,
-      casino: {
-        ...session.casino,
-        last_operation: newDate.toString(),
-      },
+      ...session,
+      check_in: newTime,
+    };
+    setSession(newSessionData);
+  };
+
+  const updateCheckOut = (newTime: string) => {
+    if (!session) return;
+    const newSessionData: ILoginResponse = {
+      ...session,
+      check_out: newTime,
     };
     setSession(newSessionData);
   };
 
   return (
     <AuthContext.Provider
-      value={{ signIn, signOut, session, isLoading, updateLastOperation }}
+      value={{
+        signIn,
+        signOut,
+        session,
+        isLoading,
+        updateCheckIn,
+        updateCheckOut,
+      }}
     >
       {props.children}
     </AuthContext.Provider>

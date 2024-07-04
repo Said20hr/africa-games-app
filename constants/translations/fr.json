@@ -38,7 +38,9 @@
     },
     "workingDays": "Jours ouvrables",
     "absences": "Absences",
-    "lateDays": "Jours de retard"
+    "lateDays": "Jours de retard",
+    "cancel": "Annuler",
+    "approve": "Approuver"
   },
   "addTab": {
     "title": "Rapport Quotidien",
@@ -56,7 +58,14 @@
     "afterShiftWait": "Veuillez attendre la fin de votre prochain service pour pouvoir remplir le formulaire.",
     "incompleteFormError": "Veuillez remplir tous les champs pour continuer",
     "initialCash": "Caisse Initiale",
-    "finalCash": "Caisse Finale"
+    "finalCash": "Caisse Finale",
+    "start": "Commencer",
+    "startShiftDescription": "Appuyez sur Démarrer pour commencer votre journée d'aujourd'hui.",
+    "endShiftDescription": "Le quart de travail est terminé, veuillez remplir le formulaire pour les clés mises à jour",
+    "lastKeys": "Dernières clés",
+    "formSuccess": "Vous avez rempli le formulaire avec succès !",
+    "emptyReasonError": "Veuillez remplir le motif pour justifier la valeur non cochée",
+    "startShiftButton": "Envoyer et commencer le quart de travail"
   },
   "movements": {
     "provisions": "Approvisionnements",
@@ -65,17 +74,23 @@
       "name": "Nom",
       "date": "Date",
       "amount": "Montant",
-      "status": "Statut"
+      "status": "Statut",
+      "from": "Depuis",
+      "to": "À"
     },
     "pending": "En attente",
-    "accepted": "Accepté",
     "refused": "Refusé",
     "addProvision": {
       "buttonText": "Ajouter",
       "label": "Prix",
       "title": "Ajouter provision",
       "placeholder": "Entrez le prix"
-    }
+    },
+    "accepted": "Accepté",
+    "emptyProvisions": "Aucune disposition à afficher",
+    "emptyWithdrawals": "Aucun retrait à afficher",
+    "provisionRequestToast": "Demande de mise à disposition créée avec succès",
+    "paid": "Accepté"
   },
   "profile": {
     "title": "Compte",

@@ -10,6 +10,7 @@ import {
 import { Check } from "react-native-feather";
 import { Colors } from "@/constants/Colors";
 import Text from "../ThemedText";
+import { SvgProps } from "react-native-svg";
 
 type CheckboxProps = {
   text?: string;
@@ -18,6 +19,7 @@ type CheckboxProps = {
   checkboxStyle?: ViewStyle;
   textStyle?: TextStyle;
   checked: boolean;
+  checkIconProps?: SvgProps;
 };
 
 const Checkbox: React.FC<CheckboxProps> = ({
@@ -27,6 +29,7 @@ const Checkbox: React.FC<CheckboxProps> = ({
   checkboxStyle,
   textStyle,
   checked,
+  checkIconProps,
 }) => {
   const opacityValue = useRef(new Animated.Value(checked ? 1 : 0)).current;
   const backgroundColorValue = useRef(
@@ -66,19 +69,20 @@ const Checkbox: React.FC<CheckboxProps> = ({
       onPress={toggleCheckbox}
     >
       <Animated.View
-        style={[styles.checkbox, checkboxStyle, { backgroundColor }]}
+        style={[styles.checkbox, { backgroundColor, ...checkboxStyle }]}
       >
-        <Animated.View style={[styles.checkIcon, { opacity: opacityValue }]}>
+        <Animated.View style={{ opacity: opacityValue }}>
           <Check
             stroke={Colors.dark.text}
-            width={18}
-            height={18}
+            width={14}
+            height={14}
             strokeWidth={4}
+            {...checkIconProps}
           />
         </Animated.View>
       </Animated.View>
       {text && (
-        <Text type="BodySmall" style={[styles.text, textStyle]}>
+        <Text type="SubtitleLight" style={[styles.text, textStyle]}>
           {text}
         </Text>
       )}
@@ -92,8 +96,8 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   checkbox: {
-    width: 24,
-    height: 24,
+    width: 18,
+    height: 18,
     borderWidth: 2,
     borderColor: Colors.dark.primary,
     justifyContent: "center",
@@ -101,10 +105,6 @@ const styles = StyleSheet.create({
     marginRight: 8,
     borderRadius: 4,
     backgroundColor: Colors.dark.background,
-  },
-  checkIcon: {
-    width: 18,
-    height: 18,
   },
   text: {},
 });

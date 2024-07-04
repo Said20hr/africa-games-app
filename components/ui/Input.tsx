@@ -6,6 +6,7 @@ import {
   StyleSheet,
   ViewProps,
   Platform,
+  TextStyle,
 } from "react-native";
 import { Eye, EyeOff } from "react-native-feather";
 import Text from "../ThemedText";
@@ -29,6 +30,7 @@ export interface MyTextInputProps extends TextInputProps {
   focusColor?: string;
   blurColor?: string;
   bottomSheetInput?: boolean;
+  labelStyle?: TextStyle;
 }
 
 const TextInput = (props: MyTextInputProps) => {
@@ -45,6 +47,7 @@ const TextInput = (props: MyTextInputProps) => {
     focusColor,
     blurColor,
     bottomSheetInput = false,
+    labelStyle,
   } = props;
 
   const [passwordVisible, setPasswordVisible] = useState(false);
@@ -94,7 +97,10 @@ const TextInput = (props: MyTextInputProps) => {
   return (
     <View style={{ flexDirection: "column" }}>
       {label && (
-        <Text type="InputText" style={{ marginBottom: 6 }}>
+        <Text
+          type="BodySmall"
+          style={[{ marginBottom: 6, fontSize: fontPixel(15) }, labelStyle]}
+        >
           {label}
         </Text>
       )}

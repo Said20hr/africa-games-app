@@ -1,7 +1,7 @@
 import { Button, Input } from "@/components/ui";
 import { useThemeColor } from "@/hooks/useThemeColor";
 import { useNavigation } from "expo-router";
-import React, { ForwardedRef, useRef, useState } from "react";
+import React, { RefObject, forwardRef, useRef, useState } from "react";
 import {
   Animated,
   Dimensions,
@@ -42,6 +42,7 @@ import {
 import { X } from "react-native-feather";
 import { i18n } from "@/constants/i18n";
 import Toast from "react-native-toast-message";
+import { useBottomSheetBackHandler } from "@/hooks/useBottomSheetBackHandler";
 
 const SCREEN_WIDTH = Dimensions.get("screen").width;
 const IMAGE_WIDTH = SCREEN_WIDTH * 0.35;
@@ -87,15 +88,8 @@ const ProfileGeneralInfo = () => {
   const modalRef = useRef<BottomSheetModal>(null);
   return (
     <ScrollView
-      contentContainerStyle={{
-        gap: heightPixel(20),
-        paddingBottom: "8%",
-        paddingHorizontal: 8,
-      }}
-      style={{
-        width: SCREEN_WIDTH,
-        height: "100%",
-      }}
+      contentContainerStyle={styles.scrollContentContainer}
+      style={styles.scroll}
     >
       <EditProfileItem
         label={i18n.t("editProfile.name")}
@@ -128,7 +122,7 @@ const ProfileGeneralInfo = () => {
           modalRef.current?.present();
         }}
       />
-      <ChangePasswordModal modalRef={modalRef} />
+      <ChangePasswordModal ref={modalRef} />
     </ScrollView>
   );
 };
@@ -140,15 +134,8 @@ const ProfileAdditionalInfo = () => {
 
   return (
     <ScrollView
-      contentContainerStyle={{
-        gap: heightPixel(20),
-        paddingBottom: "8%",
-        paddingHorizontal: 8,
-      }}
-      style={{
-        width: SCREEN_WIDTH,
-        height: "100%",
-      }}
+      contentContainerStyle={styles.scrollContentContainer}
+      style={styles.scroll}
     >
       <EditProfileItem
         label={i18n.t("editProfile.socialSecurityNumber")}
@@ -188,15 +175,8 @@ const ProfileBankInfo = () => {
   const { session } = useSession();
   return (
     <ScrollView
-      contentContainerStyle={{
-        gap: heightPixel(20),
-        paddingBottom: "8%",
-        paddingHorizontal: 8,
-      }}
-      style={{
-        width: SCREEN_WIDTH,
-        height: "100%",
-      }}
+      contentContainerStyle={styles.scrollContentContainer}
+      style={styles.scroll}
     >
       <EditProfileItem
         label={i18n.t("editProfile.bankName")}
@@ -237,14 +217,13 @@ const ProfileBankInfo = () => {
   );
 };
 
-interface ChangePasswordModalProps {
-  modalRef: ForwardedRef<BottomSheetModal>;
-}
-
-const ChangePasswordModal = ({ modalRef }: ChangePasswordModalProps) => {
+const ChangePasswordModal = forwardRef<BottomSheetModal>((_, modalRef) => {
   const { background, text } = useThemeColor();
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
+  const { handleSheetPositionChange } = useBottomSheetBackHandler(
+    modalRef as RefObject<BottomSheetModal>
+  );
 
   function closeModal() {
     //@ts-ignore
@@ -261,6 +240,7 @@ const ChangePasswordModal = ({ modalRef }: ChangePasswordModalProps) => {
   return (
     <BottomSheetModal
       ref={modalRef}
+      onChange={handleSheetPositionChange}
       enableDynamicSizing
       handleIndicatorStyle={{ width: "0%", height: 0 }}
       keyboardBehavior="interactive"
@@ -289,7 +269,7 @@ const ChangePasswordModal = ({ modalRef }: ChangePasswordModalProps) => {
             alignItems: "center",
           }}
         >
-          <Text style={{ textAlign: "center", flex: 1 }}>
+          <Text style={{ textAlign: "center", flex: 1 }} type="TitleMedium">
             {i18n.t("editProfile.changePassword")}
           </Text>
           <TouchableOpacity
@@ -330,7 +310,7 @@ const ChangePasswordModal = ({ modalRef }: ChangePasswordModalProps) => {
       </BottomSheetView>
     </BottomSheetModal>
   );
-};
+});
 
 const EditProfile: React.FC = () => {
   const { black, text, primary, accent } = useThemeColor();
@@ -360,7 +340,7 @@ const EditProfile: React.FC = () => {
       <View style={styles.imageContainer}>
         <TouchableOpacity>
           <Image
-            source={require("@/assets/images/user-header.png")}
+            source={require("@/assets/images/user-header.jpeg")}
             style={styles.image}
           />
           <View style={[styles.iconContainer, { backgroundColor: primary }]}>
@@ -474,6 +454,16 @@ const styles = StyleSheet.create({
     gap: 20,
     justifyContent: "space-between",
     alignItems: "center",
+  },
+
+  scrollContentContainer: {
+    gap: heightPixel(12),
+    paddingBottom: "8%",
+    paddingHorizontal: 8,
+  },
+  scroll: {
+    width: SCREEN_WIDTH,
+    height: "100%",
   },
 });
 

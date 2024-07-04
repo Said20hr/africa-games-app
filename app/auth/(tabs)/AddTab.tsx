@@ -14,22 +14,13 @@ import Text from "@/components/ThemedText";
 import { useThemeColor } from "@/hooks/useThemeColor";
 import { LinearGradient } from "expo-linear-gradient";
 import { Button, Checkbox, Input } from "@/components/ui";
-import {
-  AlertCircle,
-  Check,
-  CheckCircle,
-  DollarSign,
-  MapPin,
-  X,
-} from "react-native-feather";
+import { AlertCircle, MapPin, X } from "react-native-feather";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 import React, {
-  Dispatch,
-  ForwardedRef,
-  SetStateAction,
+  RefObject,
+  forwardRef,
   useCallback,
   useEffect,
-  useLayoutEffect,
   useMemo,
   useRef,
   useState,
@@ -58,23 +49,22 @@ import Svg, {
   RadialGradient,
   Stop,
   Path,
-  Circle,
   LinearGradient as SvgLinearGradient,
 } from "react-native-svg";
-import BottomSheet, {
-  BottomSheetModal,
-  BottomSheetView,
-} from "@gorhom/bottom-sheet";
+import { BottomSheetModal, BottomSheetView } from "@gorhom/bottom-sheet";
 import MapView, { Marker } from "react-native-maps";
 import * as Location from "expo-location";
 import LottieView from "lottie-react-native";
 import { IKeyConfirmation, IShiftAttendance } from "@/shared/type/Report.type";
+import { useTranslation } from "@/hooks/useTranslation";
+import { useBottomSheetBackHandler } from "@/hooks/useBottomSheetBackHandler";
 
 const { width, height } = Dimensions.get("window");
 const FORM_WIDTH = width - 32;
 const SVG_HEIGHT = height / 1.2;
 
 let CURRENT_TIME = new Date();
+// CURRENT_TIME.setHours(CURRENT_TIME.getHours() + 20);
 
 const originalWidth = 393;
 const originalHeight = 604;
@@ -123,7 +113,7 @@ type ReportModalProps = {
 interface ConfirmKeysModalProps extends ModalProps {
   title: string;
   closeModal: () => void;
-  onApproveKeys: (data: IKeyConfirmation[]) => void;
+  onApproveKeys: (data: IKeyConfirmation[], lastKeyChecked: boolean) => void;
 }
 
 type AnimatedGetCurrentLocationProps = {
@@ -133,10 +123,19 @@ type AnimatedGetCurrentLocationProps = {
 
 type GetCurrentLocationProps = {
   onSubmit: (location: Location.LocationObject, address: string) => void;
-  modalRef: ForwardedRef<BottomSheetModal>;
   currentLocationVisible: boolean;
   closeCurrentLocation: () => void;
   buttonLoading?: boolean;
+};
+
+type RouletteFormProps = {
+  rouletteData: RouletteFilledData;
+  currentIndex: number;
+  totalIndexes: number;
+  nextHandler: (index: number) => void;
+  backHandler: (index: number) => void;
+  keyInChange: (value: string) => void;
+  keyOutChange: (value: string) => void;
 };
 
 const AnimatedGetCurrentLocation = ({
@@ -145,10 +144,6 @@ const AnimatedGetCurrentLocation = ({
 }: AnimatedGetCurrentLocationProps) => {
   const translateY = useRef(new Animated.Value(height * 1.2)).current;
   const { background, text } = useThemeColor();
-  const markedLocation = useRef({
-    latitude: location?.coords.latitude ?? 37.78825,
-    longitude: location?.coords.longitude ?? -122.4324,
-  }).current;
 
   useEffect(() => {
     if (visible) {
@@ -178,8 +173,9 @@ const AnimatedGetCurrentLocation = ({
       }}
     >
       <MapView
-        initialRegion={{
-          ...markedLocation,
+        region={{
+          longitude: location?.coords.longitude ?? -122.4324,
+          latitude: location?.coords.latitude ?? 37.78825,
           latitudeDelta: 0.00922,
           longitudeDelta: 0.00421,
         }}
@@ -197,7 +193,10 @@ const AnimatedGetCurrentLocation = ({
         zoomEnabled={false}
       >
         <Marker
-          coordinate={markedLocation}
+          coordinate={{
+            longitude: location?.coords.longitude ?? -122.4324,
+            latitude: location?.coords.latitude ?? 37.78825,
+          }}
           // image={require("@/assets/images/marker-icon.png")}
           // style={{ width: 24, height: 24, maxWidth: 24, maxHeight: 24 }}
         >
@@ -208,182 +207,202 @@ const AnimatedGetCurrentLocation = ({
   );
 };
 
-const GetCurrentLocation = ({
-  closeCurrentLocation,
-  currentLocationVisible,
-  modalRef,
-  onSubmit,
-  buttonLoading,
-}: GetCurrentLocationProps) => {
-  const { background, text } = useThemeColor();
-  const [location, setLocation] = useState<Location.LocationObject | null>(
-    null
-  );
-  const [address, setAddress] = useState<string>("");
+const GetCurrentLocation = forwardRef<
+  BottomSheetModal,
+  GetCurrentLocationProps
+>(
+  (
+    { closeCurrentLocation, currentLocationVisible, onSubmit, buttonLoading },
+    modalRef
+  ) => {
+    const { background, text } = useThemeColor();
+    const [location, setLocation] = useState<Location.LocationObject | null>(
+      null
+    );
+    const [address, setAddress] = useState<string>("");
+    const { handleSheetPositionChange } = useBottomSheetBackHandler(
+      modalRef as RefObject<BottomSheetModal>,
+      closeCurrentLocation
+    );
 
-  useEffect(() => {
-    (async () => {
-      let { status } = await Location.requestForegroundPermissionsAsync();
-      if (status !== "granted") {
-        Alert.alert("Error", "Request to access location was denied");
-        return;
-      }
-
-      let location = await Location.getCurrentPositionAsync({});
-      setLocation(location);
-      getCurrentPosition(location.coords);
-    })();
-  }, []);
-
-  const getCurrentPosition = useCallback(
-    async (coords: { latitude: number; longitude: number }) => {
-      try {
-        const url = `https://maps.googleapis.com/maps/api/geocode/json?latlng=${coords.latitude},${coords.longitude}&key=${process.env.EXPO_PUBLIC_API_KEY}`;
-        const { data } = await axios.get(url);
-        if (data.results.length > 0) {
-          const address = data?.results[0]?.formatted_address;
-          if (address) {
-            setAddress(address);
-          }
+    useEffect(() => {
+      (async () => {
+        let { status } = await Location.requestForegroundPermissionsAsync();
+        if (status !== "granted") {
+          Alert.alert("Error", "Request to access location was denied");
+          return;
         }
-      } catch (error) {
-        console.error("Error getting location address:", error);
-      }
-    },
-    []
-  );
 
-  function handleSubmit() {
-    if (location) onSubmit(location, address);
-    else Alert.alert("Error", "Please allow access to location from settings");
-  }
+        let location = await Location.getCurrentPositionAsync({});
+        setLocation(location);
+        getCurrentPosition(location.coords);
+      })();
+    }, []);
 
-  return (
-    <>
-      <AnimatedGetCurrentLocation
-        visible={currentLocationVisible}
-        location={location}
-      />
-      <BottomSheetModal
-        ref={modalRef}
-        enableDynamicSizing
-        style={{ zIndex: 1001 }}
-        handleIndicatorStyle={{ width: "0%", height: 0 }}
-        keyboardBehavior="interactive"
-        keyboardBlurBehavior="restore"
-        backgroundStyle={{ backgroundColor: background }}
-      >
-        <BottomSheetView
-          style={{
-            backgroundColor: background,
-            paddingBottom: 40,
-            paddingTop: 30,
-            zIndex: 1002,
-            paddingHorizontal: 20,
-          }}
+    const getCurrentPosition = useCallback(
+      async (coords: { latitude: number; longitude: number }) => {
+        try {
+          const url = `https://maps.googleapis.com/maps/api/geocode/json?latlng=${coords.latitude},${coords.longitude}&key=${process.env.EXPO_PUBLIC_API_KEY}`;
+          const { data } = await axios.get(url);
+          if (data.results.length > 0) {
+            const address = data?.results[0]?.formatted_address;
+            if (address) {
+              setAddress(address);
+            }
+          }
+        } catch (error) {
+          console.error("Error getting location address:", error);
+        }
+      },
+      []
+    );
+
+    function handleSubmit() {
+      if (location) onSubmit(location, address);
+      else
+        Alert.alert("Error", "Please allow access to location from settings");
+    }
+
+    return (
+      <>
+        <AnimatedGetCurrentLocation
+          visible={currentLocationVisible}
+          location={location}
+        />
+        <BottomSheetModal
+          ref={modalRef}
+          enableDynamicSizing
+          onChange={handleSheetPositionChange}
+          style={{ zIndex: 1001 }}
+          handleIndicatorStyle={{ width: "0%", height: 0 }}
+          keyboardBehavior="interactive"
+          keyboardBlurBehavior="restore"
+          backgroundStyle={{ backgroundColor: background }}
         >
-          <View
+          <BottomSheetView
             style={{
-              position: "relative",
-              flexDirection: "row",
-              alignItems: "center",
-              gap: 20,
+              backgroundColor: background,
+              paddingBottom: 40,
+              paddingTop: 30,
+              zIndex: 1002,
+              paddingHorizontal: 20,
             }}
           >
-            <Text
-              style={{ textAlign: "center", flex: 1, color: text }}
-              type="TitleMedium"
+            <View
+              style={{
+                position: "relative",
+                flexDirection: "row",
+                alignItems: "center",
+                gap: 20,
+              }}
             >
-              Get the location
-            </Text>
-            <TouchableOpacity
-              style={{ position: "absolute", right: 0 }}
-              onPress={closeCurrentLocation}
+              <Text
+                style={{ textAlign: "center", flex: 1, color: text }}
+                type="TitleMedium"
+              >
+                Get the location
+              </Text>
+              <TouchableOpacity
+                style={{ position: "absolute", right: 0 }}
+                onPress={closeCurrentLocation}
+              >
+                <X color={text} />
+              </TouchableOpacity>
+            </View>
+            <View
+              style={{
+                flexDirection: "row",
+                justifyContent: "space-between",
+                alignItems: "center",
+                marginVertical: 22,
+              }}
             >
-              <X color={text} />
-            </TouchableOpacity>
-          </View>
-          <View
-            style={{
-              flexDirection: "row",
-              justifyContent: "space-between",
-              alignItems: "center",
-              marginVertical: 22,
-            }}
-          >
-            <Text style={{ flex: 1 }}>
-              {address === "" ? "No access" : address}
-            </Text>
-            <Text style={{ marginRight: 20 }}>
-              {" "}
-              {CURRENT_TIME.toLocaleTimeString("en-US", {
-                hour: "2-digit",
-                minute: "2-digit",
-                hour12: true,
-              })}
-            </Text>
-          </View>
-          <Button label="Get" onPress={handleSubmit} loading={buttonLoading} />
-        </BottomSheetView>
-      </BottomSheetModal>
-    </>
-  );
-};
+              <Text style={{ flex: 1 }}>
+                {address === "" ? "No access" : address}
+              </Text>
+              <Text style={{ marginRight: 20 }}>
+                {" "}
+                {CURRENT_TIME.toLocaleTimeString("en-US", {
+                  hour: "2-digit",
+                  minute: "2-digit",
+                  hour12: true,
+                })}
+              </Text>
+            </View>
+            <Button
+              label="Get"
+              onPress={handleSubmit}
+              loading={buttonLoading}
+            />
+          </BottomSheetView>
+        </BottomSheetModal>
+      </>
+    );
+  }
+);
 
 const ConfirmKeysModal = (props: ConfirmKeysModalProps) => {
   const { text, primary, success, background, accent } = useThemeColor();
   const { title, closeModal, onApproveKeys } = props;
   const { session } = useSession() as IAuthContext;
-  const [reason, setReason] = useState<string>("");
 
-  let keysCheckedTemp: { keyIn: boolean; keyOut: boolean }[] = [];
+  let keysCheckedTemp: {
+    keyIn: boolean;
+    keyOut: boolean;
+    reason: string;
+  }[] = [];
   session?.keys.map((item) => {
-    keysCheckedTemp.push({ keyIn: true, keyOut: true });
+    keysCheckedTemp.push({ keyIn: true, keyOut: true, reason: "" });
   });
-  keysCheckedTemp.push({ keyIn: true, keyOut: true }); // final cash and we only need keyOut here
+
+  keysCheckedTemp.push({ keyIn: true, keyOut: true, reason: "" }); // final cash and we only need keyOut here
   const [keysChecked, setKeysChecked] = useState(keysCheckedTemp);
-  const isInputDisabled = keysChecked.some(
-    // final cash key in never changed
-    (item) => !item.keyIn || !item.keyOut
-  );
+
+  const opacityAnim = useRef(
+    keysCheckedTemp.map(() => new Animated.Value(0))
+  ).current;
 
   function toggleCheckbox(index: number, keyIn: boolean, check: boolean) {
     const keysCheckedLocal = [...keysChecked];
     if (keyIn) keysCheckedLocal[index].keyIn = check;
     else keysCheckedLocal[index].keyOut = check;
 
+    if (keysCheckedLocal[index].keyIn && keysCheckedLocal[index].keyOut) {
+      keysCheckedLocal[index].reason = "";
+      handleInputAnimation(index, "hide");
+    } else handleInputAnimation(index, "show");
     setKeysChecked(keysCheckedLocal);
   }
 
   function handleApprove() {
-    if (!isInputDisabled) {
-      // All keys are checked
-      const keysConfirmed: IKeyConfirmation[] = [];
-      session?.keys.map((item) => {
-        keysConfirmed.push({
-          checked: true,
-          issue: "",
-          identifier: item.identifier,
-          key_in: item.key_in_end,
-          key_out: item.key_out_end,
-        });
-      });
-      onApproveKeys(keysConfirmed);
-    } else {
-      if (!reason || reason === "")
-        return Alert.alert("Error", i18n.t("addTab.emptyReasonError"));
-      const keysConfirmed: IKeyConfirmation[] = [];
-      session?.keys.map((item, index) => {
-        keysConfirmed.push({
-          checked: keysChecked[index].keyIn && keysChecked[index].keyOut,
-          issue: reason,
-          identifier: item.identifier,
-          key_in: item.key_in_end,
-          key_out: item.key_out_end,
-        });
-      });
-      onApproveKeys(keysConfirmed);
+    if (
+      keysChecked.some(
+        (item) =>
+          (!item.keyIn && item.reason === "") ||
+          (!item.keyOut && item.reason === "")
+      )
+    ) {
+      return Alert.alert("Error", i18n.t("addTab.emptyReasonError"));
     }
+    const keysConfirmed: IKeyConfirmation[] = [];
+    session?.keys.map((item, index) => {
+      keysConfirmed.push({
+        checked: keysChecked[index].keyIn && keysChecked[index].keyOut,
+        issue: keysChecked[index].reason,
+        identifier: item.identifier,
+        key_in: item.key_in_end,
+        key_out: item.key_out_end,
+      });
+    });
+    onApproveKeys(keysConfirmed, keysChecked[keysChecked.length - 1].keyOut);
+  }
+
+  function handleInputAnimation(index: number, action: "show" | "hide") {
+    Animated.timing(opacityAnim[index], {
+      toValue: action === "show" ? 1 : 0,
+      useNativeDriver: true,
+      duration: 500,
+    }).start();
   }
 
   return (
@@ -406,24 +425,30 @@ const ConfirmKeysModal = (props: ConfirmKeysModalProps) => {
             maxHeight: height * 0.8,
           }}
         >
-          <ScrollView contentContainerStyle={{ gap: 20, paddingBottom: 10 }}>
-            <View
-              style={{
-                position: "relative",
-                flexDirection: "row",
-                alignItems: "center",
-              }}
+          <View
+            style={{
+              position: "relative",
+              flexDirection: "row",
+              alignItems: "center",
+              marginBottom: 20,
+            }}
+          >
+            <Text style={{ textAlign: "center", flex: 1 }} type="TitleMedium">
+              {title}
+            </Text>
+            <TouchableOpacity
+              style={{ position: "absolute", right: 0 }}
+              onPress={closeModal}
             >
-              <Text style={{ textAlign: "center", flex: 1 }} type="TitleMedium">
-                {title}
-              </Text>
-              <TouchableOpacity
-                style={{ position: "absolute", right: 0 }}
-                onPress={closeModal}
-              >
-                <X color={text} />
-              </TouchableOpacity>
-            </View>
+              <X color={text} />
+            </TouchableOpacity>
+          </View>
+          <KeyboardAwareScrollView
+            contentContainerStyle={{ gap: 20, paddingBottom: 10 }}
+            showsVerticalScrollIndicator={false}
+            contentOffset={{ y: heightPixel(150), x: 0 }}
+            extraHeight={heightPixel(250)}
+          >
             {session!.keys.length > 0 &&
               session!.keys.map((item, index) => (
                 <View key={index}>
@@ -457,7 +482,6 @@ const ConfirmKeysModal = (props: ConfirmKeysModalProps) => {
                       <View
                         style={{
                           flexDirection: "row",
-                          gap: 10,
                           alignItems: "center",
                           marginTop: 10,
                         }}
@@ -467,8 +491,9 @@ const ConfirmKeysModal = (props: ConfirmKeysModalProps) => {
                           onToggle={(check) =>
                             toggleCheckbox(index, true, check)
                           }
+                          text={item.key_in_end}
                         />
-                        <Text type="SubtitleLight">{item.key_in}</Text>
+                        {/* <Text type="SubtitleLight">{item.key_in_end}</Text> */}
                       </View>
                     </View>
                     <View>
@@ -481,7 +506,6 @@ const ConfirmKeysModal = (props: ConfirmKeysModalProps) => {
                       <View
                         style={{
                           flexDirection: "row",
-                          gap: 10,
                           alignItems: "center",
                           marginTop: 10,
                         }}
@@ -491,36 +515,78 @@ const ConfirmKeysModal = (props: ConfirmKeysModalProps) => {
                           onToggle={(check) =>
                             toggleCheckbox(index, false, check)
                           }
+                          text={item.key_out_end}
                         />
-                        <Text type="SubtitleLight">{item.key_out}</Text>
+                        {/* <Text type="SubtitleLight">{item.key_out_end}</Text> */}
                       </View>
                     </View>
                   </View>
+                  <Animated.View
+                    style={{
+                      opacity: opacityAnim[index],
+                      height:
+                        keysChecked[index].keyIn && keysChecked[index].keyOut
+                          ? 0
+                          : "auto",
+                      marginTop:
+                        keysChecked[index].keyIn && keysChecked[index].keyOut
+                          ? 0
+                          : heightPixel(17),
+                    }}
+                  >
+                    <Input
+                      multiline
+                      InitialIcon={<AlertCircle color={text} />}
+                      value={keysChecked[index].reason}
+                      containerProps={{
+                        style: {
+                          height:
+                            keysChecked[index].keyIn &&
+                            keysChecked[index].keyOut
+                              ? 0
+                              : heightPixel(150),
+                          alignItems: "flex-start",
+                          backgroundColor: "#272727",
+                        },
+                      }}
+                      labelStyle={{
+                        fontFamily: "Poppins-SemiBold",
+                        fontWeight: "600",
+                        fontSize: fontPixel(16),
+                      }}
+                      placeholder="Reason for unchecked value"
+                      label="Reason"
+                      onChangeText={(text) => {
+                        const keysCheckedLocal = [...keysChecked];
+                        keysCheckedLocal[index].reason = text;
+                        setKeysChecked(keysCheckedLocal);
+                      }}
+                      blurColor={background}
+                    />
+                  </Animated.View>
                 </View>
               ))}
-            <Input
-              multiline
-              InitialIcon={<AlertCircle color={text} />}
-              containerProps={{
-                style: {
-                  height: heightPixel(150),
-                  alignItems: "flex-start",
-                },
-              }}
-              placeholder="Lorem ipsium..."
-              label="Reason"
-              editable={isInputDisabled}
-              onChangeText={setReason}
-              value={reason}
-            />
+
             <View style={{ justifyContent: "center", alignItems: "center" }}>
-              <Text type="TitleSmall" style={{ fontSize: fontPixel(15) }}>
-                Final Cash
+              {keysChecked.length > 1 && (
+                <View
+                  style={{
+                    width: "100%",
+                    height: 2,
+                    backgroundColor: "#272727",
+                    marginVertical: 8,
+                  }}
+                />
+              )}
+              <Text
+                type="TitleSmall"
+                style={{ fontSize: fontPixel(16), marginTop: 12 }}
+              >
+                {i18n.t("addTab.finalCash")}
               </Text>
               <View
                 style={{
                   flexDirection: "row",
-                  gap: 10,
                   alignItems: "center",
                   marginTop: 10,
                 }}
@@ -530,29 +596,75 @@ const ConfirmKeysModal = (props: ConfirmKeysModalProps) => {
                   onToggle={(check) =>
                     toggleCheckbox(session!.keys.length, false, check)
                   }
+                  text={session?.casino.initial_amount}
                 />
-                <Text type="SubtitleLight">
+                {/* <Text type="SubtitleLight">
                   {session?.casino.initial_amount}
-                </Text>
+                </Text> */}
               </View>
+              <Animated.View
+                style={{
+                  opacity: opacityAnim[keysChecked.length - 1],
+                  height:
+                    keysChecked[keysChecked.length - 1].keyIn &&
+                    keysChecked[keysChecked.length - 1].keyOut
+                      ? 0
+                      : "auto",
+                  width: "100%",
+                  marginTop:
+                    keysChecked[keysChecked.length - 1].keyIn &&
+                    keysChecked[keysChecked.length - 1].keyOut
+                      ? 0
+                      : 12,
+                }}
+              >
+                <Input
+                  multiline
+                  InitialIcon={<AlertCircle color={text} />}
+                  containerProps={{
+                    style: {
+                      height:
+                        keysChecked[keysChecked.length - 1].keyIn &&
+                        keysChecked[keysChecked.length - 1].keyOut
+                          ? 0
+                          : heightPixel(150),
+                      alignItems: "flex-start",
+                      backgroundColor: "#272727",
+                    },
+                  }}
+                  labelStyle={{
+                    fontFamily: "Poppins-SemiBold",
+                    fontWeight: "600",
+                    fontSize: fontPixel(16),
+                  }}
+                  placeholder="Reason for unchecked value"
+                  label="Reason"
+                  value={keysChecked[keysChecked.length - 1].reason}
+                  blurColor={background}
+                  onChangeText={(text) => {
+                    const keysCheckedLocal = [...keysChecked];
+                    keysCheckedLocal[keysChecked.length - 1].reason = text;
+                    setKeysChecked(keysCheckedLocal);
+                  }}
+                />
+              </Animated.View>
+              <TouchableOpacity
+                style={{
+                  width: "100%",
+                  borderRadius: 8,
+                  paddingVertical: 7,
+                  backgroundColor: "#0C9700",
+                  alignItems: "center",
+                  marginTop: 20,
+                }}
+                onPress={handleApprove}
+              >
+                <Text type="HeadingBoldSmall">
+                  {i18n.t("addTab.startShiftButton")}
+                </Text>
+              </TouchableOpacity>
             </View>
-            <TouchableOpacity
-              style={{
-                width: "100%",
-                borderRadius: 8,
-                paddingVertical: 7,
-                backgroundColor: "#0C9700",
-                flexDirection: "row",
-                justifyContent: "center",
-                alignItems: "center",
-                gap: 10,
-                marginTop: 8,
-              }}
-              onPress={handleApprove}
-            >
-              <Text type="HeadingBoldSmall">Send and start the shift</Text>
-            </TouchableOpacity>
-          </ScrollView>
+          </KeyboardAwareScrollView>
         </View>
       </View>
     </Modal>
@@ -565,15 +677,22 @@ const StartShift = ({ onSubmit }: { onSubmit: () => void }) => {
   const [hasApprovedKeys, setHasApprovedKeys] = useState(false);
   const modalRef = useRef<BottomSheetModal>(null);
   const keysData = useRef<IKeyConfirmation[]>([]);
-  const { session } = useSession();
+  const lastKeyChecked = useRef<boolean>(true);
+  const { session, updateCheckIn } = useSession();
+  const { locale } = useTranslation();
   const { mutate, isPending } = useMutation({
     mutationFn: async (data: IShiftAttendance) => {
       try {
         const response = await axios.post(
           `${process.env.EXPO_PUBLIC_API_URL}/start`,
-          data
+          data,
+          {
+            headers: {
+              Authorization: `Bearer ${session?.user.token}`,
+            },
+          }
         );
-        console.log(response.data);
+        updateCheckIn(response.data.attendance.check_in);
         Toast.show({ type: "success", text1: response.data.message });
         closeCurrentLocation();
         onSubmit();
@@ -587,6 +706,9 @@ const StartShift = ({ onSubmit }: { onSubmit: () => void }) => {
           Toast.show({ type: "error", text1: error.message });
         console.error(error);
       }
+    },
+    onSuccess() {
+      queryClient.invalidateQueries({ queryKey: ["refetchData"] });
     },
   });
 
@@ -606,8 +728,12 @@ const StartShift = ({ onSubmit }: { onSubmit: () => void }) => {
     toggleModal(false);
   }
 
-  function onApproveKeys(keysConfirmed: IKeyConfirmation[]) {
+  function onApproveKeys(
+    keysConfirmed: IKeyConfirmation[],
+    isLastKeyChecked: boolean
+  ) {
     keysData.current = keysConfirmed;
+    lastKeyChecked.current = isLastKeyChecked;
     toggleModal(false);
     setHasApprovedKeys(true);
   }
@@ -620,14 +746,15 @@ const StartShift = ({ onSubmit }: { onSubmit: () => void }) => {
   function handleLocationSubmit(location: Location.LocationObject) {
     if (session?.casino.initial_amount)
       mutate({
-        cash_initial: session?.casino.initial_amount,
+        cash_initial: lastKeyChecked.current,
         check_in: CURRENT_TIME.toLocaleTimeString("en", {
           hour: "2-digit",
           minute: "2-digit",
           hour12: false,
         }),
         geolocation_start: {
-          ...location.coords,
+          latitude: location.coords.latitude,
+          longitude: location.coords.longitude,
         },
         keys_confirmation: keysData.current,
       });
@@ -688,7 +815,13 @@ const StartShift = ({ onSubmit }: { onSubmit: () => void }) => {
         </Svg>
         <Text
           type="DateLargeHeavy"
-          style={{ position: "absolute", alignSelf: "center", top: "34%" }}
+          style={{
+            position: "absolute",
+            alignSelf: "center",
+            top: "34%",
+            marginHorizontal: 6,
+            fontSize: locale === "fr" ? fontPixel(26) : fontPixel(30),
+          }}
         >
           {i18n.t("addTab.start")}
         </Text>
@@ -707,7 +840,7 @@ const StartShift = ({ onSubmit }: { onSubmit: () => void }) => {
         onSubmit={handleLocationSubmit}
         closeCurrentLocation={closeCurrentLocation}
         currentLocationVisible={currentLocationVisible}
-        modalRef={modalRef}
+        ref={modalRef}
         buttonLoading={isPending}
       />
     </View>
@@ -725,25 +858,29 @@ export const ReportConfirmModal = ({
         style={{
           justifyContent: "space-between",
           height: "100%",
-          paddingVertical: "50%",
+          paddingBottom: "15%",
+          paddingTop: "40%",
           backgroundColor: black,
           paddingHorizontal: 16,
           alignItems: "center",
         }}
       >
-        {/* <CheckCircle color="#219653" width={100} height={100} /> */}
-        <LottieView
-          autoPlay
-          source={require("@/assets/AnimatedCheck.json")}
-          style={{
-            width: width * 0.6,
-            height: width * 0.6,
-            backgroundColor: black,
-          }}
-        />
-        <Text type="TitleMedium" style={{ textAlign: "center" }}>
-          {i18n.t("addTab.formSuccess")}
-        </Text>
+        <View style={{ alignItems: "center" }}>
+          {/* <CheckCircle color="#219653" width={100} height={100} /> */}
+          <LottieView
+            autoPlay
+            source={require("@/assets/AnimatedCheck.json")}
+            style={{
+              width: width * 0.6,
+              height: width * 0.6,
+              backgroundColor: black,
+              marginBottom: 30,
+            }}
+          />
+          <Text type="TitleMedium" style={{ textAlign: "center" }}>
+            {i18n.t("addTab.formSuccess")}
+          </Text>
+        </View>
         <Button label="Continue" onPress={continuePress} />
       </View>
     </Modal>
@@ -790,16 +927,6 @@ const ReportWaitingTimer = ({
       {/* <Button label="Back" onPress={() => navigate("(tabs)")} /> */}
     </View>
   );
-};
-
-type RouletteFormProps = {
-  rouletteData: RouletteFilledData;
-  currentIndex: number;
-  totalIndexes: number;
-  nextHandler: (index: number) => void;
-  backHandler: (index: number) => void;
-  keyInChange: (value: string) => void;
-  keyOutChange: (value: string) => void;
 };
 
 const RouletteForm = ({
@@ -1012,7 +1139,7 @@ const EndShift = ({
         {i18n.t("addTab.endShiftDescription")}
       </Text>
       <GetCurrentLocation
-        modalRef={modalRef}
+        ref={modalRef}
         currentLocationVisible={currentLocationVisible}
         closeCurrentLocation={closeCurrentLocation}
         onSubmit={handleOnSubmit}
@@ -1021,7 +1148,11 @@ const EndShift = ({
   );
 };
 
-const EndShiftWorkflow = () => {
+const EndShiftWorkflow = ({
+  onReportSubmit,
+}: {
+  onReportSubmit: () => void;
+}) => {
   const endShiftRef = useRef<ScrollView>(null);
   const [location, setLocation] = useState<Location.LocationObject>();
   const [address, setAddress] = useState<string>("");
@@ -1058,7 +1189,7 @@ const EndShiftWorkflow = () => {
       <View style={{ width }}>
         <Header image title={i18n.t("addTab.title")} />
         <ReportForm
-          handleSubmit={() => {}}
+          handleSubmit={onReportSubmit}
           // @ts-ignore because navigateFromEndToForm is not called without location
           location={location}
           address={address}
@@ -1074,15 +1205,13 @@ export const ReportForm = ({
   address,
 }: ReportFormProps) => {
   const { black, accent, primary, text, background } = useThemeColor();
-  const { session, updateLastOperation } = useSession();
+  const { session, updateCheckOut } = useSession();
   const scrollRef = useRef<ScrollView>(null);
-  console.log(location);
-  console.log(address);
   const { mutate, isPending } = useMutation({
     mutationFn: async (data) => {
       const apiBody = {
         ...data,
-        checkout: CURRENT_TIME.toLocaleTimeString("en", {
+        check_out: CURRENT_TIME.toLocaleTimeString("en", {
           hour: "2-digit",
           minute: "2-digit",
           hour12: false,
@@ -1102,9 +1231,14 @@ export const ReportForm = ({
             },
           }
         );
-
-        Toast.show({ type: "success", text1: response.data.message });
-        updateLastOperation(response.data.report.created_at);
+        updateCheckOut(
+          new Date(response.data.report.created_at).toLocaleTimeString("en", {
+            hour: "2-digit",
+            minute: "2-digit",
+            hour12: false,
+          })
+        );
+        // updateLastOperation(response.data.report.created_at);
         handleSubmit();
         return response.data;
       } catch (error) {
@@ -1190,17 +1324,12 @@ export const ReportForm = ({
   }
 
   return (
-    <View style={{ flex: 1 }}>
+    <View style={{ flex: 1, backgroundColor: "#272727" }}>
       <KeyboardAwareScrollView
-        // style={{ paddingBottom: 60 }}
-        contentContainerStyle={{
-          // flex: 1,
-          backgroundColor: black,
-        }}
         showsVerticalScrollIndicator={false}
         // bounces={false}
       >
-        <View>
+        <View style={{ backgroundColor: black }}>
           <LinearGradient
             colors={["rgba(217, 205, 189, 1)", "rgba(233, 146, 19, 1)"]}
             style={[styles.content, { backgroundColor: primary }]}
@@ -1348,7 +1477,7 @@ export const ReportForm = ({
                             alignItems: "flex-start",
                           },
                         }}
-                        placeholder="Lorem ipsium..."
+                        placeholder="Add additional information"
                         onChangeText={(value: string) =>
                           setReportForm({ ...reportForm, information: value })
                         }
@@ -1442,14 +1571,19 @@ export default function AddReportScreen() {
       if (!session || !startTime || !endTime) return signOut();
 
       const { check_in, check_out } = session;
+      // console.log("CURRENT TIME: ", CURRENT_TIME);
+      // console.log("START TIME: ", startTime);
+      // console.log("END TIME: ", endTime);
+      // console.log(check_in, check_out);
 
       if (!check_in) {
-        if (CURRENT_TIME > startTime) {
+        if (CURRENT_TIME > endTime || CURRENT_TIME < startTime) {
+          localActiveSection = Sections.AFTER_SHIFT_TIMER;
+          setActiveSection(localActiveSection);
+        } else if (CURRENT_TIME > startTime) {
           localActiveSection = Sections.START_SHIFT;
           setActiveSection(localActiveSection);
           return;
-        } else {
-          localActiveSection = Sections.AFTER_SHIFT_TIMER;
         }
       } else if (!check_out) {
         if (CURRENT_TIME > endTime) {
@@ -1459,10 +1593,15 @@ export default function AddReportScreen() {
         } else {
           localActiveSection = Sections.DURING_SHIFT_TIMER;
         }
+      } else {
+        localActiveSection = Sections.AFTER_SHIFT_TIMER;
       }
 
-      if (showModal) return;
+      // console.log(localActiveSection);
 
+      // console.log(localActiveSection);
+
+      if (showModal) return;
       if (
         localActiveSection === Sections.AFTER_SHIFT_TIMER ||
         localActiveSection === Sections.END_SHIFT
@@ -1480,11 +1619,14 @@ export default function AddReportScreen() {
       } else if (localActiveSection === Sections.DURING_SHIFT_TIMER) {
         setTimeRemaining(getTimeRemaining(CURRENT_TIME, endTime));
         setProgress(getProgressPercentage(startTime, CURRENT_TIME, endTime));
-      } else setActiveSection(localActiveSection);
+      }
+      setActiveSection(localActiveSection);
     }, 1000);
 
     return () => clearInterval(interval);
   }, [startTime, endTime, activeSection, showModal]);
+
+  // console.log(activeSection);
 
   if (activeSection === null) return <LoadingScreen />;
 
@@ -1499,7 +1641,12 @@ export default function AddReportScreen() {
           onSubmit={() => setActiveSection(Sections.DURING_SHIFT_TIMER)}
         />
       ) : activeSection === Sections.END_SHIFT ? (
-        <EndShiftWorkflow />
+        <EndShiftWorkflow
+          onReportSubmit={() => {
+            setActiveSection(Sections.MODAL);
+            toggleModal(true);
+          }}
+        />
       ) : activeSection === Sections.DURING_SHIFT_TIMER ? (
         <ReportWaitingTimer
           color={success}

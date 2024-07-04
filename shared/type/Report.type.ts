@@ -22,5 +22,5 @@ export interface IShiftAttendance {
   check_in: string;
   geolocation_start: GeoLocation;
   keys_confirmation: IKeyConfirmation[];
-  cash_initial: string;
+  cash_initial: boolean;
 }

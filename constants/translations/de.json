@@ -38,7 +38,9 @@
     },
     "workingDays": "Arbeitstage",
     "absences": "Abwesenheiten",
-    "lateDays": "Verspätungstage"
+    "lateDays": "Verspätungstage",
+    "cancel": "Abbrechen",
+    "approve": "Genehmigen"
   },
   "addTab": {
     "title": "Tagesbericht",
@@ -56,7 +58,14 @@
     "afterShiftWait": "Bitte warten Sie bis zum Ende Ihrer nächsten Schicht, um das Formular ausfüllen zu können.",
     "incompleteFormError": "Bitte füllen Sie alle Felder aus, um fortzufahren",
     "initialCash": "Anfangskasse",
-    "finalCash": "Endkasse"
+    "finalCash": "Endkasse",
+    "start": "Starten",
+    "startShiftDescription": "Drücken Sie Start, um Ihre heutige Schicht zu beginnen",
+    "endShiftDescription": "Die Schicht ist beendet, bitte füllen Sie das Formular für die aktualisierten Schlüssel aus",
+    "lastKeys": "Letzte Schlüssel",
+    "formSuccess": "Sie haben das Formular erfolgreich ausgefüllt!",
+    "emptyReasonError": "Bitte geben Sie den Grund für den nicht angekreuzten Wert an",
+    "startShiftButton": "Senden und Schicht beginnen"
   },
   "movements": {
     "provisions": "Vorräte",
@@ -65,17 +74,23 @@
       "name": "Name",
       "date": "Datum",
       "amount": "Betrag",
-      "status": "Status"
+      "status": "Status",
+      "from": "Von",
+      "to": "Bis"
     },
     "pending": "Ausstehend",
-    "accepted": "Akzeptiert",
     "refused": "Abgelehnt",
     "addProvision": {
       "buttonText": "Hinzufügen",
       "label": "Preis",
       "title": "Vorrat hinzufügen",
       "placeholder": "Geben Sie den Preis ein"
-    }
+    },
+    "accepted": "Akzeptiert",
+    "emptyProvisions": "Keine Rückstellungen anzuzeigen",
+    "emptyWithdrawals": "Keine Abhebungen anzuzeigen",
+    "provisionRequestToast": "Anfrage für Rückstellung erfolgreich erstellt",
+    "paid": "Akzeptiert"
   },
   "profile": {
     "title": "Konto",

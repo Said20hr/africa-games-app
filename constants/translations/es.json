@@ -38,7 +38,9 @@
     },
     "workingDays": "Días laborables",
     "absences": "Ausencias",
-    "lateDays": "Días de tardanza"
+    "lateDays": "Días de tardanza",
+    "cancel": "Cancelar",
+    "approve": "Aprobar"
   },
   "addTab": {
     "title": "Reporte diario",
@@ -56,7 +58,14 @@
     "afterShiftWait": "Espere hasta el final de su próximo turno para completar el formulario.",
     "incompleteFormError": "Por favor complete todos los campos para continuar",
     "initialCash": "Efectivo inicial",
-    "finalCash": "Efectivo final"
+    "finalCash": "Efectivo final",
+    "start": "Comenzar",
+    "startShiftDescription": "Presione iniciar para comenzar su turno de hoy",
+    "endShiftDescription": "El turno ha finalizado, complete el formulario para obtener las claves actualizadas.",
+    "lastKeys": "Últimas llaves",
+    "formSuccess": "¡Has completado exitosamente el formulario!",
+    "emptyReasonError": "Complete el motivo para justificar el valor no verificado.",
+    "startShiftButton": "Enviar e iniciar el turno"
   },
   "movements": {
     "provisions": "Provisiones",
@@ -65,17 +74,23 @@
       "name": "Nombre",
       "date": "Fecha",
       "amount": "Cantidad",
-      "status": "Estado"
+      "status": "Estado",
+      "from": "De",
+      "to": "A"
     },
     "pending": "Pendiente",
-    "accepted": "Aceptado",
     "refused": "Rechazado",
     "addProvision": {
       "buttonText": "Añadir",
       "label": "Precio",
       "title": "Añadir provisión",
       "placeholder": "Ingrese el precio"
-    }
+    },
+    "accepted": "Aceptado",
+    "emptyProvisions": "No hay provisiones para mostrar",
+    "emptyWithdrawals": "No hay retiros para mostrar",
+    "provisionRequestToast": "Solicitud de provisión creada exitosamente",
+    "paid": "Aceptado"
   },
   "profile": {
     "title": "Cuenta",

@@ -11,6 +11,7 @@ import {
   ViewStyle,
   ScrollView,
   ActivityIndicator,
+  RefreshControl,
 } from "react-native";
 import Text from "@/components/ThemedText";
 import Header from "@/components/Header";
@@ -56,6 +57,11 @@ interface WithdrawalRequestModalProps extends ModalProps {
   date: string;
   id: string;
   amount: string;
+}
+
+interface AnimatedRequestProps extends ViewProps {
+  withdrawals: [];
+  onAlertDismiss: () => void;
 }
 
 const WithdrawalRequestModal = (props: WithdrawalRequestModalProps) => {
@@ -251,7 +257,13 @@ export const InfoCard = ({
             <View style={[styles.iconContainer, { backgroundColor: primary }]}>
               {icon || <Users color={text} />}
             </View>
-            <View style={{ flexShrink: 1 }}>
+            <View
+              style={{
+                flexShrink: 1,
+                justifyContent: "center",
+                // alignItems: "center",
+              }}
+            >
               <Text type="TitleSmall" style={{ fontSize: fontPixel(16) }}>
                 {title}
               </Text>
@@ -272,11 +284,6 @@ export const InfoCard = ({
     </View>
   );
 };
-
-interface AnimatedRequestProps extends ViewProps {
-  withdrawals: [];
-  onAlertDismiss: () => void;
-}
 
 function AnimatedRequest(props: AnimatedRequestProps) {
   const { text } = useThemeColor();
@@ -376,12 +383,18 @@ export default function HomeScreen() {
   const { session } = useSession();
   const [reports, setReports] = useState([]);
   const [pendingRequests, setPendingRequests] = useState([]);
-  const { data, error } = useQuery({
+  const [refreshing, setRefreshing] = useState(false);
+
+  const {
+    data,
+    error,
+    refetch: refetchReports,
+  } = useQuery({
     queryKey: ["reports"],
     queryFn: async () => {
       try {
         const token = session?.user.token;
-        if (!token || token === "") return null;
+        if (!token || token === "") return [];
 
         const response = await axios.get(
           `${process.env.EXPO_PUBLIC_API_URL}/reports`,
@@ -391,11 +404,20 @@ export default function HomeScreen() {
             },
           }
         );
+        console.log("REPORTS");
+        console.log("REPORTS", response.data);
         return response.data;
-      } catch (error) {}
+      } catch (error) {
+        console.error(error);
+        return [];
+      }
     },
   });
-  const { data: withdrawalsData, error: withdrawalsError } = useQuery({
+  const {
+    data: withdrawalsData,
+    error: withdrawalsError,
+    refetch: refetchWithdrawals,
+  } = useQuery({
     queryKey: ["withdrawals"],
     queryFn: async () => {
       try {
@@ -410,23 +432,15 @@ export default function HomeScreen() {
             },
           }
         );
-        if (response.data.withdrawals && response.data.withdrawals.length > 0) {
-          let pendingRequests = [];
-          response.data.withdrawals.map((item) => {
-            if (item.status.toLowerCase() === "pending")
-              pendingRequests.push(item);
-          });
-          setPendingRequests(pendingRequests);
-        }
-
         return response.data.withdrawals;
       } catch (error) {}
     },
+    refetchOnWindowFocus: true,
   });
 
   useEffect(() => {
     // const token = storage
-    if (!data) return;
+    if (!data || error) return;
     let reports = [];
     data.map((item, index) => {
       if (index < 3)
@@ -437,7 +451,18 @@ export default function HomeScreen() {
         });
     });
     setReports(reports);
-  }, [data]);
+  }, [data, error]);
+
+  useEffect(() => {
+    if (!withdrawalsData || withdrawalsError) return;
+    if (withdrawalsData && withdrawalsData.length > 0) {
+      let pendingRequests = [];
+      withdrawalsData.map((item) => {
+        if (item.status.toLowerCase() === "pending") pendingRequests.push(item);
+      });
+      setPendingRequests(pendingRequests);
+    }
+  }, [withdrawalsData, withdrawalsError]);
 
   useEffect(() => {
     if (pendingRequests.length > 0) {
@@ -475,6 +500,18 @@ export default function HomeScreen() {
     }).start();
   }
 
+  async function onRefresh() {
+    setRefreshing(true);
+    try {
+      await refetchReports();
+      await refetchWithdrawals();
+      setRefreshing(false);
+    } catch (error) {
+    } finally {
+      setRefreshing(false);
+    }
+  }
+
   return (
     <View style={{ flex: 1 }}>
       <ScrollView
@@ -487,6 +524,9 @@ export default function HomeScreen() {
         ]}
         style={{ backgroundColor: black, paddingBottom: 20 }}
         showsVerticalScrollIndicator={false}
+        refreshControl={
+          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+        }
       >
         <Animated.View
           style={{

@@ -64,7 +64,8 @@
     "endShiftDescription": "The shift is finished, please fill the form for the updated keys",
     "lastKeys": "Last Keys",
     "formSuccess": "You've successfully filled out the form!",
-    "emptyReasonError": "Please fill out the reason to justify unchecked value"
+    "emptyReasonError": "Please fill out the reason to justify unchecked value",
+    "startShiftButton": "Send and start the shift"
   },
   "movements": {
     "provisions": "Provisions",
@@ -78,8 +79,9 @@
       "to": "To"
     },
     "pending": "Pending",
-    "paid": "Accepted",
+    "accepted": "Accepted",
     "refused": "Refused",
+    "paid": "Accepted",
     "addProvision": {
       "buttonText": "Add",
       "label": "Price",

@@ -1,5 +1,4 @@
 import React, {
-  ForwardedRef,
   useCallback,
   useEffect,
   useLayoutEffect,
@@ -10,6 +9,8 @@ import React, {
 import {
   Dimensions,
   FlatList,
+  RefreshControl,
+  ScrollView,
   StyleSheet,
   TouchableOpacity,
   View,
@@ -55,14 +56,24 @@ type MovementTableProps = {
   data: FileEntry[] | undefined;
   emptyText: string;
   isProvisions: boolean;
+  refetch: () => Promise<void>;
 };
 
 const MovementTable = ({
   data,
   emptyText,
   isProvisions = true,
+  refetch,
 }: MovementTableProps) => {
-  const { accent, text, background } = useThemeColor();
+  const { accent, text, background, black } = useThemeColor();
+  const [refreshing, setRefreshing] = useState(false);
+
+  async function onRefresh() {
+    setRefreshing(true);
+    await refetch();
+    setRefreshing(false);
+  }
+
   const renderItem = useCallback(
     ({ item, index }: { item: FileEntry; index: number }) => {
       return (
@@ -71,6 +82,7 @@ const MovementTable = ({
             styles.tableRow,
             !data || data.length === index + 1 ? null : styles.tableRowBorder,
           ]}
+          key={`${item.amount} ${item.name} ${index}`}
         >
           <Text
             type="InputText"
@@ -79,7 +91,7 @@ const MovementTable = ({
             {isProvisions ? item.from : item.to}
           </Text>
           <Text type="InputText" style={[styles.tableCell, { color: text }]}>
-            {item.amount}
+            {item.amount} XAF
           </Text>
           <View
             style={[
@@ -125,68 +137,86 @@ const MovementTable = ({
     [data]
   );
 
-  if (!data || data.length === 0)
-    return (
-      <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
-        <Text>{emptyText}</Text>
-      </View>
-    );
-
   return (
-    <View style={[styles.tableContainer, { backgroundColor: background }]}>
-      <View style={[styles.tableRow, styles.tableHeaderBorder]}>
-        <Text
-          type="BodySmall"
-          style={[
-            styles.tableCell,
-            {
-              textAlign: "left",
-              color: accent,
-              fontSize: fontPixel(12),
-              marginLeft: 8,
-            },
-          ]}
-        >
-          {isProvisions
-            ? i18n.t("movements.tableHeaders.from")
-            : i18n.t("movements.tableHeaders.to")}
-        </Text>
-        <Text
-          type="BodySmall"
-          style={[
-            styles.tableCell,
-            { textAlign: "left", color: accent, fontSize: fontPixel(12) },
-          ]}
-        >
-          {i18n.t("movements.tableHeaders.amount")}
-        </Text>
+    <ScrollView
+      contentContainerStyle={[
+        styles.tableContainer,
+        { backgroundColor: !data || data.length === 0 ? black : background },
+      ]}
+      style={{ backgroundColor: black, borderRadius: 12 }}
+      showsVerticalScrollIndicator={false}
+      refreshControl={
+        <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+      }
+    >
+      {!data || data.length === 0 ? (
         <View
-          style={[
-            styles.tableCell,
-            { justifyContent: "center", alignItems: "center" },
-          ]}
+          style={{
+            height: "100%",
+            justifyContent: "center",
+            alignItems: "center",
+          }}
         >
-          <View
-            style={{
-              width: "90%",
-              alignSelf: "flex-end",
-            }}
-          >
+          <Text>{emptyText}</Text>
+        </View>
+      ) : (
+        <>
+          <View style={[styles.tableRow, styles.tableHeaderBorder]}>
             <Text
               type="BodySmall"
-              style={{
-                textAlign: "left",
-                color: accent,
-                fontSize: fontPixel(12),
-              }}
+              style={[
+                styles.tableCell,
+                {
+                  textAlign: "left",
+                  color: accent,
+                  fontSize: fontPixel(12),
+                  marginLeft: 8,
+                },
+              ]}
             >
-              {i18n.t("movements.tableHeaders.status")}
+              {isProvisions
+                ? i18n.t("movements.tableHeaders.from")
+                : i18n.t("movements.tableHeaders.to")}
             </Text>
+            <Text
+              type="BodySmall"
+              style={[
+                styles.tableCell,
+                { textAlign: "left", color: accent, fontSize: fontPixel(12) },
+              ]}
+            >
+              {i18n.t("movements.tableHeaders.amount")}
+            </Text>
+            <View
+              style={[
+                styles.tableCell,
+                { justifyContent: "center", alignItems: "center" },
+              ]}
+            >
+              <View
+                style={{
+                  width: "90%",
+                  alignSelf: "flex-end",
+                }}
+              >
+                <Text
+                  type="BodySmall"
+                  style={{
+                    textAlign: "left",
+                    color: accent,
+                    fontSize: fontPixel(12),
+                  }}
+                >
+                  {i18n.t("movements.tableHeaders.status")}
+                </Text>
+              </View>
+            </View>
           </View>
-        </View>
-      </View>
-      <FlatList data={data} renderItem={renderItem} extraData={true} />
-    </View>
+          {/* <FlatList data={data} renderItem={renderItem} extraData={true} /> */}
+          {data.map((item, index) => renderItem({ item, index }))}
+        </>
+      )}
+    </ScrollView>
   );
 };
 
@@ -198,7 +228,11 @@ export default function MovementScreen() {
   const { session } = useSession();
   const [provisions, setProvisions] = useState([]);
   const [withdrawals, setWithdrawals] = useState([]);
-  const { data: provisionsData, error: provisionsError } = useQuery({
+  const {
+    data: provisionsData,
+    error: provisionsError,
+    refetch: provisionsRefetch,
+  } = useQuery({
     queryKey: ["provisions"],
     queryFn: async () => {
       try {
@@ -214,12 +248,15 @@ export default function MovementScreen() {
           }
         );
         setProvisions(response.data.provisions);
-        console.log(response.data.provisions);
         return response.data.provisions;
       } catch (error) {}
     },
   });
-  const { data: withdrawalsData, error: withdrawalsError } = useQuery({
+  const {
+    data: withdrawalsData,
+    error: withdrawalsError,
+    refetch: withdrawalsRefetch,
+  } = useQuery({
     queryKey: ["withdrawals"],
     queryFn: async () => {
       try {
@@ -234,17 +271,21 @@ export default function MovementScreen() {
             },
           }
         );
-        setWithdrawals(response.data.withdrawals);
-        console.log(response.data.withdrawals);
         return response.data.withdrawals;
       } catch (error) {}
     },
+    refetchOnWindowFocus: true,
   });
 
   useEffect(() => {
     setProvisions([...provisions]);
     setWithdrawals([...withdrawals]);
   }, [locale]);
+
+  useEffect(() => {
+    if (!withdrawalsData || withdrawalsError) return;
+    setWithdrawals(withdrawalsData);
+  }, [withdrawalsData, withdrawalsError]);
 
   const { mutate, isPending } = useMutation({
     mutationFn: async (amount: number) => {
@@ -342,6 +383,9 @@ export default function MovementScreen() {
             data={provisions}
             emptyText={i18n.t("movements.emptyProvisions")}
             isProvisions
+            refetch={async () => {
+              await provisionsRefetch();
+            }}
           />
         </View>
         <View
@@ -354,6 +398,9 @@ export default function MovementScreen() {
             data={withdrawals}
             emptyText={i18n.t("movements.emptyWithdrawals")}
             isProvisions={false}
+            refetch={async () => {
+              await withdrawalsRefetch();
+            }}
           />
         </View>
       </TabbedScrollView>
@@ -379,14 +426,15 @@ export default function MovementScreen() {
         /> */}
       </View>
       <BottomSheetModalInput
+        ref={modalRef}
         buttonText={i18n.t("movements.addProvision.buttonText")}
         label={i18n.t("movements.addProvision.label")}
         title={i18n.t("movements.addProvision.title")}
         inputProps={{
           placeholder: i18n.t("movements.addProvision.placeholder"),
           InitialIcon: <Money stroke={text} />,
+          keyboardType: "number-pad",
         }}
-        modalRef={modalRef}
         handleSubmission={handleProvisionSubmission}
         buttonLoading={isPending}
       />
