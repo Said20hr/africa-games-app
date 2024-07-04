@@ -18,7 +18,7 @@ const heightPixel = (size: number) => {
   return normalize(size, "height");
 };
 const fontPixel = (size: number) => {
-  return widthPixel(size);
+  return Math.floor(widthBaseScale * heightBaseScale * size);
 };
 
 export { widthPixel, heightPixel, fontPixel };

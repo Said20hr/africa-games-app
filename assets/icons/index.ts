@@ -21,3 +21,4 @@ export { default as ThreeUsers } from "./ThreeUsersIcon";
 export { default as TwoUsers } from "./TwoUsersIcon";
 export { default as User } from "./UserIcon";
 export { default as UserCircle } from "./UserCircleIcon";
+export { default as Marker } from "./MarkerIcon";
