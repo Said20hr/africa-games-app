@@ -1,6 +1,6 @@
 import React from "react";
 import { useForm, Controller } from "react-hook-form";
-import { Platform, StyleSheet, View } from "react-native";
+import { Alert, Platform, StyleSheet, View } from "react-native";
 import Toast from "react-native-toast-message";
 import { useMutation } from "@tanstack/react-query"; // Import useMutation from react-query
 import axios from "axios";
@@ -63,9 +63,11 @@ export default function Login() {
     onSuccess: (data) => {
       if (data) {
         if ("data" in data && typeof data.data === "object") {
-          storage.setItem(USER_TOKEN, data.data.user.token);
-          signIn(data.data);
-          dispatch(StackActions.replace("auth"));
+          if (data.data.user.role === "cashier") {
+            storage.setItem(USER_TOKEN, data.data.user.token);
+            signIn(data.data);
+            dispatch(StackActions.replace("auth"));
+          } else Alert.alert("Error", "Not authorised to log in");
         }
       } else {
         Toast.show({ type: "error", text1: "Invalid credentials" });
@@ -170,14 +172,21 @@ export default function Login() {
             }}
           />
 
-          <Checkbox
-            text={i18n.t("login.rememberMe")}
-            containerStyle={{ marginTop: 20 }}
-            onToggle={(checked) => {
-              setValue("checked", checked);
-            }}
-            checked={getValues("checked")}
-            {...register("checked")}
+          <Controller
+            control={control}
+            name="checked"
+            render={({ field: { onChange, value } }) => (
+              <Checkbox
+                text={i18n.t("login.rememberMe")}
+                containerStyle={{ marginTop: 20 }}
+                onToggle={(checked) => {
+                  setValue("checked", checked);
+                }}
+                checked={getValues("checked")}
+                // checkboxStyle={{ width: 24, height: 24 }}
+                // checkIconProps={{ width: 18, height: 18 }}
+              />
+            )}
           />
           <Button
             label={i18n.t("login.loginButton")}

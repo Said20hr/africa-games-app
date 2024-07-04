@@ -23,6 +23,7 @@ interface NavigationButtonProps {
   textStyle?: TextStyle;
   descriptionStyle?: TextStyle;
   iconStyle?: ImageStyle;
+  showChevron?: boolean;
 }
 
 const NavigationButton: React.FC<NavigationButtonProps> = ({
@@ -35,6 +36,7 @@ const NavigationButton: React.FC<NavigationButtonProps> = ({
   textStyle,
   descriptionStyle,
   iconStyle,
+  showChevron = true,
 }) => {
   const { accent, primary } = useThemeColor();
   return (
@@ -56,15 +58,11 @@ const NavigationButton: React.FC<NavigationButtonProps> = ({
           {description}
         </Text>
       </View>
-      <View style={styles.rightContainer}>
-        {/* {showAlert && (
-          <Image
-            source={require("./path/to/alert-icon.png")} // replace with your alert icon
-            style={styles.alertIcon}
-          />
-        )} */}
-        <ChevronRight color={accent} />
-      </View>
+      {showChevron && (
+        <View style={styles.rightContainer}>
+          <ChevronRight color={accent} />
+        </View>
+      )}
     </TouchableOpacity>
   );
 };

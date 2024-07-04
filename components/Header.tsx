@@ -61,7 +61,7 @@ const Header: React.FC<HeaderProps> = ({
         {image && (
           <TouchableOpacity onPress={() => navigate("profile")}>
             <Image
-              source={require("@/assets/images/user-header.png")}
+              source={require("@/assets/images/user-header.jpeg")}
               style={styles.image}
             />
           </TouchableOpacity>

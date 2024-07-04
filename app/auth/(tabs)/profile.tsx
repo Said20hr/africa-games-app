@@ -21,7 +21,13 @@ import { Image } from "expo-image";
 import NavigationButton from "@/components/profile/NavigationButton";
 import { useNavigation } from "expo-router";
 import { useSession } from "@/app/ctx";
-import React, { ForwardedRef, useEffect, useRef, useState } from "react";
+import React, {
+  RefObject,
+  forwardRef,
+  useEffect,
+  useRef,
+  useState,
+} from "react";
 import { StackActions } from "@react-navigation/native";
 import { changeLanguage, i18n } from "@/constants/i18n";
 import {
@@ -43,10 +49,7 @@ import { heightPixel } from "@/shared/util/normalise";
 import { Button, Input } from "@/components/ui";
 import { useTranslation } from "@/hooks/useTranslation";
 import { LanguageOptions } from "@/shared/type/Utils.type";
-
-interface ChangePasswordModalProps {
-  modalRef: ForwardedRef<BottomSheetModal>;
-}
+import { useBottomSheetBackHandler } from "@/hooks/useBottomSheetBackHandler";
 
 const Flags = {
   England: require(`@/assets/images/flags/flagEngland.png`),
@@ -61,7 +64,10 @@ let checkSelectedLanguage = Object.keys(LanguageOptions).find(
   (key) => LanguageOptions[key] === i18n.locale
 );
 
-const ChangeLanguageModal = ({ modalRef }: ChangePasswordModalProps) => {
+const ChangeLanguageModal = forwardRef<BottomSheetModal>((_, modalRef) => {
+  const { handleSheetPositionChange } = useBottomSheetBackHandler(
+    modalRef as RefObject<BottomSheetModal>
+  );
   const { background, text, black } = useThemeColor();
   const [showMore, setShowMore] = useState(false);
   const { locale, setLocale } = useTranslation();
@@ -140,6 +146,7 @@ const ChangeLanguageModal = ({ modalRef }: ChangePasswordModalProps) => {
     <BottomSheetModal
       ref={modalRef}
       enableDynamicSizing
+      onChange={handleSheetPositionChange}
       handleIndicatorStyle={{ width: "0%", height: 0 }}
       keyboardBehavior="interactive"
       keyboardBlurBehavior="restore"
@@ -167,7 +174,7 @@ const ChangeLanguageModal = ({ modalRef }: ChangePasswordModalProps) => {
             alignItems: "center",
           }}
         >
-          <Text style={{ textAlign: "center", flex: 1 }}>
+          <Text style={{ textAlign: "center", flex: 1 }} type="TitleMedium">
             {i18n.t("profile.changeLanguage")}
           </Text>
           <TouchableOpacity
@@ -320,7 +327,7 @@ const ChangeLanguageModal = ({ modalRef }: ChangePasswordModalProps) => {
       </BottomSheetView>
     </BottomSheetModal>
   );
-};
+});
 
 export default function ProfileScreen() {
   const { black, primary, text, background } = useThemeColor();
@@ -338,10 +345,7 @@ export default function ProfileScreen() {
   }
 
   return (
-    <ScrollView
-      style={{ flex: 1, backgroundColor: black }}
-      showsVerticalScrollIndicator={false}
-    >
+    <View style={{ flex: 1, backgroundColor: black }}>
       <Header title={i18n.t("profile.title")} />
       <View
         style={{
@@ -351,85 +355,89 @@ export default function ProfileScreen() {
           gap: heightPixel(12),
         }}
       >
-        <TouchableOpacity
-          style={[styles.editProfileButton, { backgroundColor: primary }]}
-        >
-          <View style={styles.userInfo}>
-            <Image
-              source={require("@/assets/images/user-header.png")}
-              style={styles.image}
-            />
-            <View>
-              <Text type="HeadingMediumBold">
-                {session?.user.firstname} {session?.user.lastname}
-              </Text>
-              <Text type="BodySmall">
-                {session?.casino.roulettes &&
-                session?.casino.roulettes.length > 0
-                  ? session?.casino.roulettes[0].identifier
-                  : session?.casino.name}
-              </Text>
-            </View>
-          </View>
-        </TouchableOpacity>
-        <View
+        <ScrollView
           style={{
-            backgroundColor: background,
+            backgroundColor: black,
             borderRadius: 10,
-            marginBottom: 20,
+            // marginBottom: 8,
           }}
+          showsVerticalScrollIndicator={false}
         >
+          <TouchableOpacity
+            style={[styles.editProfileButton, { backgroundColor: primary }]}
+          >
+            <View style={styles.userInfo}>
+              <Image
+                source={require("@/assets/images/user-header.jpeg")}
+                style={styles.image}
+              />
+              <View>
+                <Text type="HeadingMediumBold">
+                  {session?.user.firstname} {session?.user.lastname}
+                </Text>
+                <Text type="BodySmall">
+                  {session?.casino.roulettes &&
+                  session?.casino.roulettes.length > 0
+                    ? session?.casino.roulettes[0].identifier
+                    : session?.casino.name}
+                </Text>
+              </View>
+            </View>
+          </TouchableOpacity>
           {/* <Link href="profile/EditProfile" asChild> */}
-          <NavigationButton
-            icon={User}
-            text={i18n.t("profile.myProfile")}
-            description={i18n.t("profile.makeChangesToMyProfile")}
-            onPress={() => {
-              navigate("profile/EditProfile");
-            }}
-          />
-          <NavigationButton
-            icon={Money}
-            text={i18n.t("profile.mySalaries")}
-            description={i18n.t("profile.viewMyLatestSalaries")}
-          />
-          <NavigationButton
-            icon={TwoUsers}
-            text={i18n.t("profile.myAbsences")}
-            description={i18n.t("profile.checkMyAbsences")}
-          />
-          <NavigationButton
-            icon={Suitcase}
-            text={i18n.t("profile.mySchedule")}
-            description={i18n.t("profile.viewMySchedule")}
-          />
-          <NavigationButton
-            icon={AlertCircle}
-            text={i18n.t("profile.mySanctions")}
-            description={i18n.t("profile.makeChangesToYourAccount")}
-          />
-          <NavigationButton
-            icon={CreditCard}
-            text={i18n.t("profile.salaryAdvances")}
-            description={i18n.t("profile.viewMySalaryAdvances")}
-          />
-          <NavigationButton
-            icon={CurvedFlag}
-            text={i18n.t("profile.changeLanguage")}
-            description={i18n.t("profile.changeLanguageOfTheApp")}
-            onPress={handleChangeLanguagePress}
-          />
-          <NavigationButton
-            icon={LogOut}
-            text={i18n.t("profile.logOut")}
-            description={i18n.t("profile.logOutMyAccount")}
-            containerStyle={{ borderBottomWidth: 0 }}
-            onPress={handleSignOut}
-          />
-        </View>
+          <View style={{ backgroundColor: background, marginTop: 14 }}>
+            <NavigationButton
+              icon={User}
+              text={i18n.t("profile.myProfile")}
+              description={i18n.t("profile.makeChangesToMyProfile")}
+              onPress={() => {
+                navigate("profile/EditProfile");
+              }}
+            />
+            <NavigationButton
+              icon={Money}
+              text={i18n.t("profile.mySalaries")}
+              description={i18n.t("profile.viewMyLatestSalaries")}
+            />
+            <NavigationButton
+              icon={TwoUsers}
+              text={i18n.t("profile.myAbsences")}
+              description={i18n.t("profile.checkMyAbsences")}
+            />
+            <NavigationButton
+              icon={Suitcase}
+              text={i18n.t("profile.mySchedule")}
+              description={i18n.t("profile.viewMySchedule")}
+            />
+            <NavigationButton
+              icon={AlertCircle}
+              text={i18n.t("profile.mySanctions")}
+              description={i18n.t("profile.makeChangesToYourAccount")}
+            />
+            <NavigationButton
+              icon={CreditCard}
+              text={i18n.t("profile.salaryAdvances")}
+              description={i18n.t("profile.viewMySalaryAdvances")}
+            />
+            <NavigationButton
+              icon={CurvedFlag}
+              text={i18n.t("profile.changeLanguage")}
+              description={i18n.t("profile.changeLanguageOfTheApp")}
+              onPress={handleChangeLanguagePress}
+            />
+            <NavigationButton
+              icon={LogOut}
+              text={i18n.t("profile.logOut")}
+              description={i18n.t("profile.logOutMyAccount")}
+              containerStyle={{ borderBottomWidth: 0 }}
+              onPress={handleSignOut}
+              showChevron={false}
+            />
+          </View>
+        </ScrollView>
       </View>
-      <ChangeLanguageModal modalRef={modalRef} />
-    </ScrollView>
+      <ChangeLanguageModal ref={modalRef} />
+    </View>
   );
 }
 
