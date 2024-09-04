@@ -64,7 +64,7 @@ const FORM_WIDTH = width - 32;
 const SVG_HEIGHT = height / 1.2;
 
 let CURRENT_TIME = new Date();
-// CURRENT_TIME.setHours(CURRENT_TIME.getHours() + 20);
+// CURRENT_TIME.setHours(CURRENT_TIME.getHours());
 
 const originalWidth = 393;
 const originalHeight = 604;
@@ -333,6 +333,7 @@ const GetCurrentLocation = forwardRef<
               label="Get"
               onPress={handleSubmit}
               loading={buttonLoading}
+              disabled={!location}
             />
           </BottomSheetView>
         </BottomSheetModal>
@@ -1533,7 +1534,7 @@ export default function AddReportScreen() {
   const { black, success, danger } = useThemeColor();
   const { session, signOut } = useSession() as IAuthContext;
   const [startTime, endTime] = useMemo(() => {
-    if (!session?.casino.shift) return [null, null, null];
+    if (!session?.casino.shift) return [null, null];
 
     const [start, end] = session?.casino.shift.split(" - ");
 
@@ -1547,6 +1548,7 @@ export default function AddReportScreen() {
       startHour,
       startMinute
     );
+    startTime.setMinutes(startTime.getMinutes() - 15);
 
     const endTime = new Date(
       CURRENT_TIME.getFullYear(),
@@ -1555,6 +1557,10 @@ export default function AddReportScreen() {
       endHour,
       endMinute
     );
+
+    // console.log("START TIME: ", startTime);
+    // console.log("CURRENT TIME: ", CURRENT_TIME);
+    // console.log("END TIME: ", endTime);
     return [startTime, endTime];
   }, []);
 
@@ -1565,7 +1571,7 @@ export default function AddReportScreen() {
 
   useEffect(() => {
     const interval = setInterval(() => {
-      CURRENT_TIME.setSeconds(CURRENT_TIME.getSeconds() + 1);
+      CURRENT_TIME = new Date();
       let localActiveSection = activeSection; //Cannot wait for a re render to set new time
 
       if (!session || !startTime || !endTime) return signOut();
@@ -1602,6 +1608,7 @@ export default function AddReportScreen() {
       // console.log(localActiveSection);
 
       if (showModal) return;
+
       if (
         localActiveSection === Sections.AFTER_SHIFT_TIMER ||
         localActiveSection === Sections.END_SHIFT

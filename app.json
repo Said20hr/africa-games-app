@@ -1,6 +1,6 @@
 {
   "expo": {
-    "name": "africa-games",
+    "name": "KAPLACE",
     "slug": "africa-games",
     "version": "1.0.0",
     "orientation": "portrait",
@@ -23,8 +23,12 @@
               "NSExceptionAllowsInsecureHTTPLoads": true
             }
           }
+        },
+        "config": {
+          "usesNonExemptEncryption": false
         }
-      }
+      },
+      "buildNumber": "2"
     },
     "android": {
       "adaptiveIcon": {

@@ -228,6 +228,7 @@ export default function MovementScreen() {
   const { session } = useSession();
   const [provisions, setProvisions] = useState([]);
   const [withdrawals, setWithdrawals] = useState([]);
+  const [activeIndex, setActiveIndex] = useState<number>(0);
   const {
     data: provisionsData,
     error: provisionsError,
@@ -341,29 +342,33 @@ export default function MovementScreen() {
   useLayoutEffect(() => {
     setOptions({
       headerRight: () => (
-        <TouchableOpacity
-          style={{
-            paddingHorizontal: 10,
-            paddingVertical: 4,
-            borderWidth: 1,
-            borderColor: primary,
-            flexDirection: "row",
-            gap: 6,
-            alignItems: "center",
-            borderRadius: 100,
-            marginRight: 20,
-          }}
-          onPress={openAddProvisionModal}
-        >
-          <Plus color={text} width={16} />
-          <Text type="InputText">
-            {i18n.t("movements.addProvision.buttonText")}{" "}
-            {i18n.t("movements.provisions")}
-          </Text>
-        </TouchableOpacity>
+        <>
+          {activeIndex === 0 && (
+            <TouchableOpacity
+              style={{
+                paddingHorizontal: 10,
+                paddingVertical: 4,
+                borderWidth: 1,
+                borderColor: primary,
+                flexDirection: "row",
+                gap: 6,
+                alignItems: "center",
+                borderRadius: 100,
+                marginRight: 20,
+              }}
+              onPress={openAddProvisionModal}
+            >
+              <Plus color={text} width={16} />
+              <Text type="InputText">
+                {i18n.t("movements.addProvision.buttonText")}{" "}
+                {i18n.t("movements.provisions")}
+              </Text>
+            </TouchableOpacity>
+          )}
+        </>
       ),
     });
-  }, []);
+  }, [activeIndex]);
 
   return (
     <Container style={{ paddingTop: 20, paddingHorizontal: 0 }}>
@@ -372,6 +377,8 @@ export default function MovementScreen() {
           { key: "provisions", title: "movements.provisions" },
           { key: "movements", title: "movements.withdrawals" },
         ]}
+        activeIndex={activeIndex}
+        setActiveIndex={setActiveIndex}
       >
         <View
           style={{

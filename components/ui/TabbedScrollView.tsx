@@ -1,5 +1,5 @@
 import { i18n } from "@/constants/i18n";
-import React, { useRef, useState } from "react";
+import React, { Dispatch, SetStateAction, useRef, useState } from "react";
 import {
   View,
   ScrollView,
@@ -17,13 +17,20 @@ const SCREEN_WIDTH = Dimensions.get("window").width;
 type TabbedScrollViewProps = {
   tabs: { key: string; title: string }[];
   children: React.ReactNode;
+  activeIndex: number;
+  setActiveIndex: Dispatch<SetStateAction<number>>;
 };
 
-const TabbedScrollView = ({ tabs, children }: TabbedScrollViewProps) => {
+const TabbedScrollView = ({
+  tabs,
+  children,
+  activeIndex,
+  setActiveIndex,
+}: TabbedScrollViewProps) => {
   const scrollRefUserDetails = useRef<ScrollView>(null);
   const translateX = useRef(new Animated.Value(0)).current;
   const { primary, accent, text, black } = useThemeColor();
-  const [activeIndex, setActiveIndex] = useState<number>(0);
+  // const [activeIndex, setActiveIndex] = useState<number>(0);
 
   const onPressSection = (index: number) => {
     setActiveIndex(index);

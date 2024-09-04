@@ -71,7 +71,8 @@ export function SessionProvider(props: { children: ReactNode }) {
             },
           }
         );
-        console.log(response.data.data);
+        // console.log(response.data.data.check_in);
+        // console.log(response.data.data.check_out);
         return response.data;
       } catch (error) {}
     },
