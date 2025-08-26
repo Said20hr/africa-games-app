@@ -50,6 +50,7 @@ export default function Login() {
   const { mutate, isPending } = useMutation({
     mutationFn: async (data: ILoginPayload) => {
       try {
+        console.log(process.env.EXPO_PUBLIC_API_URL);
         const response = await axios.post(
           `${process.env.EXPO_PUBLIC_API_URL}/login`,
           data
@@ -79,6 +80,7 @@ export default function Login() {
   });
 
   const onSubmit = (data: IOnSubmitForm) => {
+
     storage.setItem(REMEMBER_ME, data.checked);
     mutate({
       matricule: data.matricule,
